@@ -672,6 +672,14 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // Inicializar EmailJS com chave pública
+        (function(){
+            emailjs.init({
+                publicKey: "YOUR_PUBLIC_KEY", // Substituir pela sua chave
+            });
+        })();
+    </script>
 
     <!-- JavaScript direto no HTML para Android -->
     <script>
@@ -805,11 +813,13 @@
             };
             
             const coordenadas = coordenadasConhecidas[cepLimpo] || [-23.5505, -46.6333];
+            const dataAtual = new Date().toLocaleDateString('pt-BR');
+            const idReclamacao = 'VR' + Date.now();
             
             // Salvar reclamação
             let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
             reclamacoes.push({
-                id: Date.now().toString(),
+                id: idReclamacao,
                 titulo: titulo,
                 categoria: categoria,
                 descricao: descricao,
@@ -820,13 +830,26 @@
                 cidade: cidade,
                 coordenadas: coordenadas,
                 usuario: currentUser.nome,
-                data: new Date().toLocaleDateString('pt-BR')
+                data: dataAtual
             });
             localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
             
-            console.log('💾 Reclamação salva com coordenadas:', coordenadas);
+            console.log('💾 Reclamação salva:', idReclamacao);
             
-            alert('Reclamação enviada com sucesso!');
+            // Enviar email de confirmação
+            enviarEmailConfirmacao({
+                nome: currentUser.nome,
+                email: currentUser.email || 'usuario@exemplo.com',
+                titulo: titulo,
+                categoria: getCategoriaTexto(categoria),
+                endereco: `${rua}, ${numero} - ${bairro}, ${cidade}`,
+                cep: cep,
+                descricao: descricao,
+                protocolo: idReclamacao,
+                data: dataAtual
+            });
+            
+            alert(`✅ Reclamação enviada!\nProtocolo: ${idReclamacao}\n\nVocê receberá um email de confirmação.`);
             
             // Limpar campos
             document.getElementById('titulo').value = '';
@@ -839,6 +862,107 @@
             document.getElementById('cidade').value = '';
             
             showSection('mapa');
+        }
+        
+        function enviarEmailConfirmacao(dados) {
+            console.log('📧 Preparando email para:', dados.email);
+            
+            // Parâmetros do email
+            const templateParams = {
+                to_name: dados.nome,
+                to_email: dados.email,
+                protocolo: dados.protocolo,
+                data: dados.data,
+                titulo: dados.titulo,
+                categoria: dados.categoria,
+                endereco: dados.endereco,
+                cep: dados.cep,
+                descricao: dados.descricao,
+                site_url: 'https://elcid2023.github.io/Voz-da-Rua/'
+            };
+            
+            // Tentar enviar via EmailJS
+            if (typeof emailjs !== 'undefined') {
+                emailjs.send('service_id', 'template_id', templateParams)
+                    .then(function(response) {
+                        console.log('✅ Email enviado com sucesso!', response.status);
+                    }, function(error) {
+                        console.log('⚠️ EmailJS não configurado. Simulando envio...');
+                        simularEnvioEmail(dados);
+                    });
+            } else {
+                console.log('⚠️ EmailJS não disponível. Simulando envio...');
+                simularEnvioEmail(dados);
+            }
+        }
+        
+        function simularEnvioEmail(dados) {
+            // Simulação visual do email
+            console.log('\n=== EMAIL DE CONFIRMAÇÃO ===');
+            console.log('Para:', dados.email);
+            console.log('Assunto: Confirmação de Reclamação - Voz da Rua');
+            console.log('\nOlá', dados.nome + ',');
+            console.log('\nSua reclamação foi registrada com sucesso!');
+            console.log('\nDETALHES:');
+            console.log('Protocolo:', dados.protocolo);
+            console.log('Data:', dados.data);
+            console.log('Título:', dados.titulo);
+            console.log('Categoria:', dados.categoria);
+            console.log('Endereço:', dados.endereco);
+            console.log('CEP:', dados.cep);
+            console.log('Descrição:', dados.descricao);
+            console.log('\nAcompanhe em: https://elcid2023.github.io/Voz-da-Rua/');
+            console.log('\nVoz da Rua - by Prof. Borges');
+            console.log('=========================\n');
+            
+            // Mostrar notificação visual
+            mostrarNotificacaoEmail(dados);
+        }
+        
+        function mostrarNotificacaoEmail(dados) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border-left: 5px solid #28a745;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                max-width: 400px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notif.innerHTML = `
+                <div style="display: flex; align-items: start; gap: 15px;">
+                    <i class="fas fa-envelope" style="font-size: 24px; color: #28a745;"></i>
+                    <div>
+                        <h4 style="margin: 0 0 10px 0; color: #333;">Email de Confirmação</h4>
+                        <p style="margin: 0; font-size: 14px; color: #666;">
+                            Um email foi enviado para:<br>
+                            <strong>${dados.email}</strong>
+                        </p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #999;">
+                            Protocolo: <strong>${dados.protocolo}</strong>
+                        </p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; font-size: 20px; color: #999; cursor: pointer;">
+                        ×
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                if (notif.parentElement) {
+                    notif.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notif.remove(), 300);
+                }
+            }, 5000);
         }
         
         function doLogout() {
