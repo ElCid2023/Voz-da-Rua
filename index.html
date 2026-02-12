@@ -805,14 +805,65 @@
             // Buscar coordenadas
             const cepLimpo = cep.replace(/\D/g, '');
             const coordenadasConhecidas = {
+                // Zona Leste
                 '08330310': [-23.619619, -46.466918],
                 '08330260': [-23.6195, -46.4668],
+                '03828000': [-23.5558, -46.4730],
+                '08220000': [-23.5558, -46.3730],
+                
+                // Zona Norte
+                '02177000': [-23.4886, -46.6194],  // Santana
+                '02011000': [-23.5186, -46.6294],  // Santana
+                '02012000': [-23.5086, -46.6294],  // Santana
+                '02013000': [-23.4986, -46.6294],  // Santana
+                '02014000': [-23.4886, -46.6294],  // Santana
+                '02015000': [-23.4786, -46.6294],  // Santana
+                '02400000': [-23.4786, -46.6094],  // Tucuruvi
+                '02500000': [-23.5086, -46.6594],  // Casa Verde
+                
+                // Centro
                 '01310100': [-23.5505, -46.6333],
                 '01310200': [-23.5489, -46.6388],
+                '01000000': [-23.5505, -46.6333],
+                '08010000': [-23.5431, -46.6291],
+                
+                // Zona Sul
                 '04543907': [-23.6278, -46.6997],
+                '04021000': [-23.5733, -46.6417],
+                
+                // Zona Oeste
+                '05508000': [-23.5629, -46.7208],
+                '05402000': [-23.5558, -46.7330],
+                '03310000': [-23.5558, -46.5730],
             };
             
-            const coordenadas = coordenadasConhecidas[cepLimpo] || [-23.5505, -46.6333];
+            let coordenadas = coordenadasConhecidas[cepLimpo];
+            
+            // Se não encontrou, tentar por bairro
+            if (!coordenadas && bairro) {
+                const coordenadasPorBairro = {
+                    'santana': [-23.4886, -46.6194],
+                    'tucuruvi': [-23.4786, -46.6094],
+                    'casa verde': [-23.5086, -46.6594],
+                    'itaquera': [-23.5558, -46.4730],
+                    'são mateus': [-23.6095, -46.4730],
+                    'vila ester': [-23.6195, -46.4668],
+                    'jardim ester': [-23.619619, -46.466918],
+                    'vila mariana': [-23.5733, -46.6417],
+                    'brooklin': [-23.6278, -46.6997],
+                    'pinheiros': [-23.5558, -46.7330],
+                    'centro': [-23.5505, -46.6333],
+                };
+                coordenadas = coordenadasPorBairro[bairro.toLowerCase()];
+            }
+            
+            // Fallback: Centro de SP
+            if (!coordenadas) {
+                coordenadas = [-23.5505, -46.6333];
+                console.log('⚠️ Usando coordenadas do centro de SP para CEP:', cep);
+            } else {
+                console.log('✅ Coordenadas encontradas para CEP:', cep, coordenadas);
+            }
             const dataAtual = new Date().toLocaleDateString('pt-BR');
             const idReclamacao = 'VR' + Date.now();
             
@@ -849,7 +900,12 @@
                 data: dataAtual
             });
             
-            alert(`✅ Reclamação enviada!\nProtocolo: ${idReclamacao}\n\nVocê receberá um email de confirmação.`);
+            alert(`✅ Reclamação enviada!\nProtocolo: ${idReclamacao}\n\n⚠️ ATENÇÃO: O email está em modo SIMULAÇÃO.\nPara ativar envio real, configure o EmailJS.\nVeja o guia: GUIA-EMAIL-SMS.html`);
+            
+            // Mostrar no console que é simulação
+            console.log('%c⚠️ EMAIL EM MODO SIMULAÇÃO', 'background: #ffc107; color: black; font-size: 16px; padding: 10px;');
+            console.log('Para ativar envio REAL de emails, configure o EmailJS.');
+            console.log('Guia completo: GUIA-EMAIL-SMS.html');
             
             // Limpar campos
             document.getElementById('titulo').value = '';
@@ -898,7 +954,7 @@
         
         function simularEnvioEmail(dados) {
             // Simulação visual do email
-            console.log('\n=== EMAIL DE CONFIRMAÇÃO ===');
+            console.log('%c=== EMAIL DE CONFIRMAÇÃO (SIMULAÇÃO) ===', 'background: #007bff; color: white; font-size: 14px; padding: 5px;');
             console.log('Para:', dados.email);
             console.log('Assunto: Confirmação de Reclamação - Voz da Rua');
             console.log('\nOlá', dados.nome + ',');
@@ -913,7 +969,9 @@
             console.log('Descrição:', dados.descricao);
             console.log('\nAcompanhe em: https://elcid2023.github.io/Voz-da-Rua/');
             console.log('\nVoz da Rua - by Prof. Borges');
-            console.log('=========================\n');
+            console.log('%c=========================', 'color: #999;');
+            console.log('%c⚠️ ISTO É UMA SIMULAÇÃO - Email não foi enviado de verdade', 'background: #ffc107; color: black; font-weight: bold; padding: 5px;');
+            console.log('Para ativar envio REAL, configure o EmailJS: GUIA-EMAIL-SMS.html\n');
             
             // Mostrar notificação visual
             mostrarNotificacaoEmail(dados);
@@ -1246,20 +1304,33 @@
                 
                 // Base de coordenadas conhecidas (São Paulo)
                 const coordenadasConhecidas = {
-                    '08330310': [-23.619619, -46.466918], // Rua Coronel Pacheco do Couto
-                    '08330260': [-23.6195, -46.4668],     // Vila Ester
-                    '01310100': [-23.5505, -46.6333],     // Av. Paulista
-                    '01310200': [-23.5489, -46.6388],     // Bela Vista
-                    '04543907': [-23.6278, -46.6997],     // Brooklin
-                    '03828000': [-23.5558, -46.4730],     // Itaquera
-                    '08220000': [-23.5558, -46.3730],     // São Mateus
-                    '08010000': [-23.5431, -46.6291],     // Brás
-                    '01000000': [-23.5505, -46.6333],     // Centro
-                    '05508000': [-23.5629, -46.7208],     // Butantã
-                    '04021000': [-23.5733, -46.6417],     // Vila Mariana
-                    '02011000': [-23.5186, -46.6294],     // Santana
-                    '03310000': [-23.5558, -46.5730],     // Tatuapé
-                    '05402000': [-23.5558, -46.7330],     // Pinheiros
+                    // Zona Leste
+                    '08330310': [-23.619619, -46.466918],
+                    '08330260': [-23.6195, -46.4668],
+                    '03828000': [-23.5558, -46.4730],
+                    '08220000': [-23.5558, -46.3730],
+                    
+                    // Zona Norte
+                    '02177000': [-23.4886, -46.6194],
+                    '02011000': [-23.5186, -46.6294],
+                    '02012000': [-23.5086, -46.6294],
+                    '02400000': [-23.4786, -46.6094],
+                    '02500000': [-23.5086, -46.6594],
+                    
+                    // Centro
+                    '01310100': [-23.5505, -46.6333],
+                    '01310200': [-23.5489, -46.6388],
+                    '01000000': [-23.5505, -46.6333],
+                    '08010000': [-23.5431, -46.6291],
+                    
+                    // Zona Sul
+                    '04543907': [-23.6278, -46.6997],
+                    '04021000': [-23.5733, -46.6417],
+                    
+                    // Zona Oeste
+                    '05508000': [-23.5629, -46.7208],
+                    '05402000': [-23.5558, -46.7330],
+                    '03310000': [-23.5558, -46.5730],
                 };
                 
                 // Se temos coordenadas conhecidas, usar
