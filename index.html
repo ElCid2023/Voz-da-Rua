@@ -865,8 +865,27 @@
         }
         
         function showSection(sectionId) {
+            console.log('Mostrando seção:', sectionId);
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
+            
+            // Verificar autenticação ao abrir nova reclamação
+            if (sectionId === 'nova-reclamacao') {
+                const authRequired = document.getElementById('authRequired');
+                const reclamacaoForm = document.getElementById('reclamacaoForm');
+                
+                console.log('Usuário atual:', currentUser);
+                
+                if (currentUser) {
+                    console.log('✅ Usuário logado - mostrando formulário');
+                    authRequired.classList.add('hidden');
+                    reclamacaoForm.classList.remove('hidden');
+                } else {
+                    console.log('❌ Usuário NÃO logado - pedindo login');
+                    authRequired.classList.remove('hidden');
+                    reclamacaoForm.classList.add('hidden');
+                }
+            }
         }
         
         // Inicialização
