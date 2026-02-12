@@ -404,9 +404,9 @@
                     <li><a href="javascript:void(0)" class="nav-link hidden" id="logoutBtn" onclick="doLogout()">Sair</a></li>
                 </ul>
             </nav>
-            <div class="user-info hidden" id="userInfo">
-                <span id="userName"></span>
-                <i class="fas fa-user-circle"></i>
+            <div class="user-info hidden" id="userInfo" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 25px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; border: 2px solid white;" id="userAvatar"></div>
+                <span id="userName" style="font-weight: 600; color: white;"></span>
             </div>
         </div>
     </header>
@@ -852,13 +852,42 @@
         function updateHomeButtons() {
             const notLoggedIn = document.getElementById('homeNotLoggedIn');
             const loggedIn = document.getElementById('homeLoggedIn');
+            const loginBtn = document.getElementById('loginBtn');
+            const cadastroBtn = document.getElementById('cadastroBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            const userAvatar = document.getElementById('userAvatar');
             
             if (currentUser) {
+                // Esconder botões de login/cadastro
                 notLoggedIn.classList.add('hidden');
                 loggedIn.classList.remove('hidden');
+                loginBtn.classList.add('hidden');
+                cadastroBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                
+                // Mostrar info do usuário
+                userInfo.classList.remove('hidden');
+                userName.textContent = currentUser.nome;
+                
+                // Criar iniciais para o avatar
+                const iniciais = currentUser.nome
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase();
+                userAvatar.textContent = iniciais;
+                
+                console.log('✅ Usuário logado:', currentUser.nome);
             } else {
                 notLoggedIn.classList.remove('hidden');
                 loggedIn.classList.add('hidden');
+                loginBtn.classList.remove('hidden');
+                cadastroBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                userInfo.classList.add('hidden');
             }
         }
         
@@ -950,6 +979,11 @@
             const reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
             console.log('Total de reclamações:', reclamacoes.length);
             
+            if (reclamacoes.length === 0) {
+                alert('⚠️ Nenhuma reclamação cadastrada ainda. Cadastre uma para ver no mapa!');
+                return;
+            }
+            
             let marcadoresAdicionados = 0;
             
             for (const rec of reclamacoes) {
@@ -971,24 +1005,81 @@
                     const cor = obterCorCategoria(rec.categoria);
                     
                     const marker = L.circleMarker([lat, lon], {
-                        radius: 8,
+                        radius: 10,
                         fillColor: cor,
                         color: '#fff',
-                        weight: 2,
+                        weight: 3,
                         opacity: 1,
                         fillOpacity: 0.8
                     });
                     
-                    // Adicionar popup
-                    marker.bindPopup(`
-                        <div style="min-width: 200px;">
-                            <h3 style="margin: 0 0 10px 0; color: ${cor};">${rec.titulo}</h3>
-                            <p style="margin: 5px 0;"><strong>Categoria:</strong> ${rec.categoria}</p>
-                            <p style="margin: 5px 0;"><strong>CEP:</strong> ${rec.cep}</p>
-                            <p style="margin: 5px 0;">${rec.descricao}</p>
-                            <p style="margin: 5px 0; color: #666;"><small>${rec.data}</small></p>
+                    // Criar conteúdo do popup
+                    const popupContent = `
+                        <div style="min-width: 250px; max-width: 300px;">
+                            <h3 style="margin: 0 0 10px 0; color: ${cor}; font-size: 16px;">
+                                <i class="fas fa-exclamation-circle"></i> ${rec.titulo}
+                            </h3>
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                                <p style="margin: 5px 0; font-size: 13px;">
+                                    <strong><i class="fas fa-tag"></i> Categoria:</strong> 
+                                    <span style="color: ${cor}; font-weight: bold;">${getCategoriaTexto(rec.categoria)}</span>
+                                </p>
+                                <p style="margin: 5px 0; font-size: 13px;">
+                                    <strong><i class="fas fa-map-marker-alt"></i> Local:</strong> ${rec.rua || 'N/A'}, ${rec.numero || 'S/N'}
+                                </p>
+                                <p style="margin: 5px 0; font-size: 13px;">
+                                    <strong><i class="fas fa-home"></i> Bairro:</strong> ${rec.bairro || 'N/A'}
+                                </p>
+                                <p style="margin: 5px 0; font-size: 13px;">
+                                    <strong><i class="fas fa-mail-bulk"></i> CEP:</strong> ${rec.cep || 'N/A'}
+                                </p>
+                            </div>
+                            <p style="margin: 10px 0; font-size: 13px; line-height: 1.5;">
+                                <strong><i class="fas fa-comment"></i> Descrição:</strong><br>
+                                ${rec.descricao}
+                            </p>
+                            <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+                            <p style="margin: 5px 0; color: #666; font-size: 12px;">
+                                <i class="fas fa-user"></i> <strong>Reportado por:</strong> ${rec.usuario}
+                            </p>
+                            <p style="margin: 5px 0; color: #666; font-size: 12px;">
+                                <i class="fas fa-calendar"></i> <strong>Data:</strong> ${rec.data}
+                            </p>
                         </div>
-                    `);
+                    `;
+                    
+                    // Adicionar popup
+                    marker.bindPopup(popupContent, {
+                        maxWidth: 300,
+                        className: 'custom-popup'
+                    });
+                    
+                    // Tooltip ao passar o mouse
+                    marker.bindTooltip(`
+                        <div style="text-align: center;">
+                            <strong>${rec.titulo}</strong><br>
+                            <small>${rec.bairro || 'N/A'}</small>
+                        </div>
+                    `, {
+                        permanent: false,
+                        direction: 'top',
+                        offset: [0, -10]
+                    });
+                    
+                    // Efeito hover
+                    marker.on('mouseover', function() {
+                        this.setStyle({
+                            radius: 12,
+                            weight: 4
+                        });
+                    });
+                    
+                    marker.on('mouseout', function() {
+                        this.setStyle({
+                            radius: 10,
+                            weight: 3
+                        });
+                    });
                     
                     marker.addTo(markersLayer);
                     marcadoresAdicionados++;
@@ -997,11 +1088,26 @@
             
             console.log(`✅ ${marcadoresAdicionados} marcadores adicionados!`);
             
-            // Ajustar zoom para mostrar todos os marcadores
-            if (marcadoresAdicionados > 0) {
+            if (marcadoresAdicionados === 0) {
+                alert('⚠️ Nenhuma reclamação possui localização válida para exibir no mapa.');
+            } else {
+                // Ajustar zoom para mostrar todos os marcadores
                 const bounds = markersLayer.getBounds();
                 mapaObj.fitBounds(bounds, { padding: [50, 50] });
             }
+        }
+        
+        function getCategoriaTexto(categoria) {
+            const categorias = {
+                'iluminacao': 'Iluminação Pública',
+                'asfalto': 'Asfalto/Pavimentação',
+                'limpeza': 'Limpeza Urbana',
+                'seguranca': 'Segurança',
+                'transporte': 'Transporte Público',
+                'agua': 'Água e Esgoto',
+                'outros': 'Outros'
+            };
+            return categorias[categoria] || categoria;
         }
         
         async function buscarCoordenadasPorCEP(cep) {
