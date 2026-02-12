@@ -1,0 +1,1194 @@
+===============================================================================
+                        PAINTBALL ARENA - GUIA COMPLETO DE DESENVOLVIMENTO
+                                    FPS Mobile para PlayStore
+===============================================================================
+
+ÍNDICE:
+1. CONCEITO E DESIGN DO JOGO
+2. ESPECIFICAÇÕES TÉCNICAS
+3. INSTALAÇÃO E CONFIGURAÇÃO UNITY
+4. ARQUITETURA DO PROJETO
+5. SCRIPTS PRINCIPAIS
+6. SISTEMA DE MONETIZAÇÃO
+7. ROADMAP DE DESENVOLVIMENTO
+8. PRÓXIMOS PASSOS
+
+===============================================================================
+1. CONCEITO E DESIGN DO JOGO
+===============================================================================
+
+NOME: Paintball Arena
+GÊNERO: FPS Casual/Esportivo
+PLATAFORMA: Android (PlayStore)
+PÚBLICO: 10+ anos (família-friendly)
+SESSÃO: 3-8 minutos por partida
+
+CONCEITO PRINCIPAL:
+"O primeiro FPS verdadeiramente família-friendly"
+- Competição esportiva real de paintball
+- Zero violência, 100% diversão
+- Foco em habilidade e estratégia
+- Visual colorido e alegre
+
+DIFERENCIAIS COMPETITIVOS:
+1. Único FPS família-friendly no mercado
+2. Tema esportivo real (paintball existe)
+3. Zero violência - aprovação parental
+4. Visual único e colorido
+5. Mecânicas inovadoras (sistema de tinta)
+
+MECÂNICAS CORE:
+
+Sistema de Tiro:
+- Marcadores de paintball realistas
+- Trajetória parabólica (não linear)
+- Tinta splatter visual em superfícies
+- Recarga manual de cápsulas
+- Mira com mira laser
+
+Sistema de Eliminação:
+- Hit = Eliminado temporariamente
+- Respawn após 15 segundos
+- Área de respawn protegida
+- Indicador visual de quem foi eliminado
+
+Sistema de Tinta:
+- 6 cores por time (vermelho vs azul base)
+- Tintas especiais (neon, brilhante, metálica)
+- Marcação territorial - tinta marca o mapa
+- Limpeza automática entre rounds
+
+MODOS DE JOGO:
+
+1. Team Elimination (5v5)
+- Eliminar todo time adversário
+- 3 rounds, melhor de 3
+- Duração: 2-3 minutos por round
+
+2. Capture the Flag
+- Capturar bandeira inimiga
+- Levar para base própria
+- Duração: 5 minutos
+
+3. King of the Hill
+- Controlar área central
+- Primeiro a 100 pontos
+- Duração: 4-6 minutos
+
+4. Paint the Map
+- Cobrir mais território com sua cor
+- Medido por % do mapa pintado
+- Duração: 6 minutos
+
+MAPAS/ARENAS:
+
+Arena Floresta:
+- Tema: Mata densa com obstáculos naturais
+- Elementos: Árvores, pedras, riachos
+- Estratégia: Emboscadas e flanqueamento
+
+Arena Urbana:
+- Tema: Cidade abandonada
+- Elementos: Carros, containers, prédios baixos
+- Estratégia: Combate vertical
+
+Arena Deserto:
+- Tema: Base militar no deserto
+- Elementos: Bunkers, torres, veículos
+- Estratégia: Longas distâncias
+
+Arena Neon (Premium):
+- Tema: Cyberpunk com luzes neon
+- Elementos: Plataformas flutuantes
+- Estratégia: Movimento 3D
+
+CUSTOMIZAÇÃO:
+
+Marcadores (Armas):
+- Básico: Marcador padrão
+- Sniper: Longo alcance, recarga lenta
+- Automático: Rajada rápida, baixa precisão
+- Shotgun: Múltiplos projéteis, curto alcance
+- Premium: Designs únicos, efeitos especiais
+
+Equipamentos:
+- Máscaras: 20+ designs diferentes
+- Uniformes: Camuflagens, cores, padrões
+- Luvas: Diferentes estilos
+- Botas: Velocidade vs proteção
+
+Tintas Especiais:
+- Neon: Brilha no escuro
+- Metálica: Efeito cromado
+- Arco-íris: Muda de cor
+- Explosiva: Área de efeito maior
+
+===============================================================================
+2. ESPECIFICAÇÕES TÉCNICAS
+===============================================================================
+
+ENGINE RECOMENDADA:
+- Unity 3D (melhor para mobile FPS)
+- Multiplayer: Photon PUN2
+- Analytics: Unity Analytics + Firebase
+
+VERSÃO UNITY:
+- Unity 2022.3.21f1 LTS (Long Term Support)
+- Melhor performance para mobile
+- Compatibilidade com Android mais recentes
+- Photon PUN2 funciona perfeitamente
+- PlayStore aceita sem problemas
+
+REQUISITOS MÍNIMOS:
+- Android 7.0+
+- 2GB RAM
+- 1GB armazenamento
+- OpenGL ES 3.0
+
+CONTROLES MOBILE:
+- Joystick virtual (movimento)
+- Touch para mirar (giroscópio opcional)
+- Botão de tiro grande e responsivo
+- Gestos para ações especiais
+
+DIREÇÃO VISUAL:
+- Low-poly colorido (otimizado para mobile)
+- Paleta vibrante mas não agressiva
+- Animações fluidas e responsivas
+- UI limpa e intuitiva
+
+EFEITOS ESPECIAIS:
+- Splatter de tinta realista
+- Partículas coloridas nos impactos
+- Trails de projétil visíveis
+- Feedback visual forte
+
+===============================================================================
+3. INSTALAÇÃO E CONFIGURAÇÃO UNITY
+===============================================================================
+
+DOWNLOAD E VERSÃO:
+
+Versão Recomendada: Unity 2022.3.21f1 LTS
+
+Links Diretos:
+- Unity Hub: https://unity.com/download
+- Windows: https://download.unity3d.com/download_unity/bf09ca542b87/Windows64EditorInstaller/UnitySetup64-2022.3.21f1.exe
+- Mac: https://download.unity3d.com/download_unity/bf09ca542b87/MacEditorInstaller/Unity-2022.3.21f1.pkg
+- Archive: https://unity.com/releases/editor/archive
+
+Módulos Android Necessários:
+✅ Android Build Support
+✅ Android SDK & NDK Tools
+✅ OpenJDK
+✅ Visual Studio (Windows)
+
+Tamanho do Download:
+- Unity Editor: ~2.5GB
+- Android Modules: ~1.5GB
+- Total: ~4GB
+
+CONFIGURAÇÃO PASSO A PASSO:
+
+PASSO 1: Criar Projeto
+Unity Hub → Projects → New Project
+Template: 3D (URP)
+Project Name: PaintballArena
+Location: C:/GameDev/
+Unity Version: 2022.3.21f1
+
+PASSO 2: Configurar para Mobile
+File → Build Settings
+Platform: Android
+✅ Switch Platform
+
+Player Settings:
+• Company Name: SeuNome
+• Product Name: Paintball Arena
+• Package Name: com.seunome.paintball
+• Minimum API Level: 24 (Android 7.0)
+• Target API Level: 33
+
+PASSO 3: Instalar Photon PUN2
+Window → Package Manager
+My Registries → PUN 2 - FREE
+✅ Import
+
+Ou Asset Store:
+• Procure "PUN2 FREE"
+• Download + Import
+
+===============================================================================
+4. ARQUITETURA DO PROJETO
+===============================================================================
+
+ESTRUTURA DE PASTAS:
+
+📁 PaintballArena/
+├── 📁 Assets/
+│   ├── 📁 Scripts/
+│   │   ├── 📁 Player/
+│   │   ├── 📁 Weapons/
+│   │   ├── 📁 GameModes/
+│   │   └── 📁 UI/
+│   ├── 📁 Prefabs/
+│   │   ├── 📁 Player/
+│   │   ├── 📁 Weapons/
+│   │   └── 📁 Environment/
+│   ├── 📁 Materials/
+│   ├── 📁 Textures/
+│   ├── 📁 Models/
+│   └── 📁 Scenes/
+│       ├── MainMenu.unity
+│       ├── GameArena.unity
+│       └── TestScene.unity
+
+ARQUITETURA DO JOGO:
+
+GameManager ◄──► PlayerManager ◄──► UIManager
+│                │                   │
+│ • Game Mode    │ • Movement        │ • HUD
+│ • Score        │ • Health          │ • Menus
+│ • Timer        │ • Weapons         │ • Settings
+│                │                   │
+▼                ▼                   ▼
+NetworkManager   WeaponSystem        AudioManager
+│                │                   │
+│ • Photon       │ • Shooting        │ • SFX
+│ • Sync         │ • Paint           │ • Music
+│ • Rooms        │ • Effects         │ • Voice
+
+SISTEMA DE MOVIMENTO DO PLAYER:
+
+INPUT SYSTEM → MOVEMENT LOGIC
+Touch Joystick → Transform Position
+Camera Look → Rigidbody Velocity
+
+FEATURES:
+• Mobile joystick
+• Touch camera rotation
+• Jump mechanics
+• Crouch system
+
+SISTEMA DE ARMAS:
+
+AIM → SHOOT → IMPACT
+│      │       │
+│ • Crosshair  │ • Projectile  │ • Paint
+│ • Laser      │ • Trajectory  │ • Splatter
+│ • Zoom       │ • Sound       │ • Damage
+
+PAINT PROJECTILE PHYSICS:
+Start ● → Gravity → ● Impact → SPLAT!
+
+SISTEMA DE TINTA:
+
+PAINT IMPACT SEQUENCE:
+1. COLLISION → 2. SPLATTER → 3. MARK
+Projectile Hits → Particle Explosion → Decal On Surface
+
+VISUAL EFFECTS:
+● Paintball → 💥 Splash → 🎨 Paint Mark
+
+PAINT COLORS:
+🔴 Red Team    🔵 Blue Team   ⭐ Special
+🟡 Yellow      🟢 Green       ✨ Neon
+🟠 Orange      🟣 Purple      🌈 Rainbow
+
+DESIGN DO MAPA:
+
+FOREST ARENA (Top View):
+🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲
+🌲  🔴 SPAWN     🏁 FLAG      🔵 SPAWN  🌲
+🌲     │           │           │       🌲
+🌲     ▼           ▼           ▼       🌲
+🌲  ┌─────┐    ┌─────┐    ┌─────┐     🌲
+🌲  │COVER│    │TOWER│    │COVER│     🌲
+🌲  └─────┘    └─────┘    └─────┘     🌲
+🌲     🪨         🌊         🪨       🌲
+🌲   ROCKS      RIVER      ROCKS      🌲
+🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲🌲
+
+ELEMENTS:
+🌲 Trees (Cover)    🪨 Rocks (Cover)
+🌊 River (Obstacle) 🏁 Objective
+🔴🔵 Team Spawns    🗼 Watchtower
+
+UI MOBILE LAYOUT:
+
+┌─────────────────────────────────────────────────────┐
+│  [❤️ 100]  [⏱️ 2:30]  [🎯 5 KILLS]  [⚙️]        │
+│                                                     │
+│                GAME VIEW                           │
+│                    ┌───┐                          │
+│                    │ + │ ← Crosshair              │
+│                    └───┘                          │
+│                                                     │
+│  ┌─────┐                              ┌─────┐     │
+│  │  🕹️  │                              │ 🔫  │     │
+│  │MOVE │                              │SHOOT│     │
+│  └─────┘                              └─────┘     │
+│     ┌─────┐  ┌─────┐  ┌─────┐                     │
+│     │JUMP │  │CROUCH│ │RELOAD│                     │
+│     └─────┘  └─────┘  └─────┘                     │
+└─────────────────────────────────────────────────────┘
+
+===============================================================================
+5. SISTEMA DE MONETIZAÇÃO
+===============================================================================
+
+MODELO FREEMIUM:
+- Jogo base: Gratuito
+- Anúncios: Entre partidas (opcional)
+- Compras: Equipamentos premium
+
+MOEDAS DO JOGO:
+- Paint Coins: Ganhas jogando
+- Premium Gems: Compradas com dinheiro
+
+PACOTES DE COMPRA:
+- Starter Pack: $2.99 (marcador + máscara)
+- Pro Player: $9.99 (equipamento completo)
+- Arena Master: $19.99 (tudo + tintas especiais)
+
+BATTLE PASS SEMANAL:
+- Gratuito: Recompensas básicas
+- Premium ($4.99): Equipamentos exclusivos
+
+MONETIZATION FLOW:
+
+FREE PLAYER JOURNEY:
+Download → Play → Earn Coins → Buy Items → Enjoy
+
+PREMIUM PLAYER JOURNEY:
+Download → Buy Pack → Premium Items → VIP Status
+
+REVENUE STREAMS:
+💰 Equipment Packs
+📺 Rewarded Video Ads
+⭐ Battle Pass ($4.99)
+💎 Premium Currency
+🎨 Special Paint Colors
+
+===============================================================================
+6. ROADMAP DE DESENVOLVIMENTO
+===============================================================================
+
+FASE 1 (MVP - 3 meses):
+- 1 mapa básico
+- 1 modo de jogo (Team Elimination)
+- Marcador básico
+- Customização simples
+- Multiplayer local
+
+FASE 2 (Beta - 2 meses):
+- 3 mapas
+- 2 modos de jogo
+- Sistema de progressão
+- Monetização básica
+- Multiplayer online
+
+FASE 3 (Launch - 1 mês):
+- 4 mapas
+- 4 modos de jogo
+- Sistema completo de customização
+- Battle pass
+- Marketing e ASO
+
+DEVELOPMENT ROADMAP DETALHADO:
+
+WEEK 1-2: SETUP & BASIC MOVEMENT
+✅ Unity project setup
+✅ Player controller
+✅ Mobile controls
+✅ Basic arena
+
+WEEK 3-4: WEAPON SYSTEM
+🔫 Paintball gun mechanics
+🎨 Paint projectile physics
+💥 Impact effects
+🎯 Aiming system
+
+WEEK 5-6: MULTIPLAYER
+🌐 Photon PUN2 integration
+👥 Room system
+🔄 Player synchronization
+📡 Network optimization
+
+WEEK 7-8: GAME MODES
+⚔️ Team Elimination
+🚩 Capture the Flag
+🎨 Paint the Map
+🏆 Scoring system
+
+WEEK 9-10: UI & POLISH
+📱 Mobile UI
+🎵 Audio system
+✨ Visual effects
+🐛 Bug fixes
+
+WEEK 11-12: MONETIZATION & LAUNCH
+💰 In-app purchases
+📊 Analytics
+🚀 PlayStore preparation
+📈 Marketing materials
+
+===============================================================================
+7. PRÓXIMOS PASSOS
+===============================================================================
+
+CHECKLIST DE INSTALAÇÃO:
+□ 1. Baixar Unity Hub
+□ 2. Instalar Unity Hub
+□ 3. Criar conta Unity (se não tiver)
+□ 4. Instalar Unity 2022.3.21f1
+□ 5. Adicionar módulos Android
+□ 6. Configurar Android SDK
+□ 7. Testar criação de projeto
+
+QUANDO TERMINAR A INSTALAÇÃO:
+1. ✅ Criar o projeto Paintball Arena
+2. ✅ Configurar para Android
+3. ✅ Instalar Photon PUN2
+4. ✅ Importar os scripts principais
+
+SCRIPTS PRINCIPAIS A SEREM CRIADOS:
+1. 🎮 PlayerController.cs - Movimento e controles
+2. 🔫 PaintballGun.cs - Sistema de armas
+3. 🎨 PaintballProjectile.cs - Projéteis e física
+4. 💥 PaintSplatter.cs - Sistema de manchas
+5. 🎯 GameManager.cs - Gerencia modos de jogo
+6. 🌐 NetworkManager.cs - Multiplayer com Photon
+7. 📱 MobileUI.cs - Interface mobile
+8. 🏆 ScoreManager.cs - Sistema de pontuação
+
+TUTORIAIS DISPONÍVEIS:
+1. 🔫 Sistema de Armas Detalhado
+2. 🌐 Configuração Multiplayer
+3. 🎨 Sistema de Efeitos Visuais
+4. 📱 Otimização Mobile
+5. 💰 Implementação de Monetização
+
+===============================================================================
+8. SCRIPTS PRINCIPAIS - CÓDIGO COMPLETO
+===============================================================================
+
+SCRIPT 1: PlayerController.cs
+------------------------------
+
+using UnityEngine;
+using Photon.Pun;
+
+public class PlayerController : MonoBehaviourPunPV, IPunObservable
+{
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
+    public float jumpForce = 8f;
+    public float mouseSensitivity = 2f;
+    public float crouchSpeed = 2f;
+
+    [Header("Components")]
+    public Camera playerCamera;
+    public Rigidbody rb;
+    public CapsuleCollider playerCollider;
+    public Transform cameraHolder;
+
+    [Header("Mobile Controls")]
+    public FixedJoystick moveJoystick;
+    public FixedButton jumpButton;
+    public FixedButton crouchButton;
+    public FixedButton shootButton;
+
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    // Private variables
+    private float xRotation = 0f;
+    private bool isGrounded;
+    private bool isCrouching = false;
+    private float originalHeight;
+    private Vector3 originalCameraPos;
+    private Vector3 networkPosition;
+    private Quaternion networkRotation;
+
+    void Start()
+    {
+        // Store original values
+        originalHeight = playerCollider.height;
+        originalCameraPos = cameraHolder.localPosition;
+
+        if (photonView.IsMine)
+        {
+            // Enable camera for local player
+            playerCamera.enabled = true;
+
+            // Setup mobile UI
+            SetupMobileControls();
+        }
+        else
+        {
+            // Disable camera for remote players
+            playerCamera.enabled = false;
+
+            // Disable mobile controls for remote players
+            if (moveJoystick) moveJoystick.gameObject.SetActive(false);
+        }
+
+        // Set network position
+        networkPosition = transform.position;
+        networkRotation = transform.rotation;
+    }
+
+    void Update()
+    {
+        if (photonView.IsMine)
+        {
+            HandleInput();
+            HandleMovement();
+            HandleCameraRotation();
+            HandleJump();
+            HandleCrouch();
+        }
+        else
+        {
+            // Smooth network position for remote players
+            transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 10f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 10f);
+        }
+
+        CheckGrounded();
+    }
+
+    void SetupMobileControls()
+    {
+        // Find mobile controls in scene
+        if (!moveJoystick)
+            moveJoystick = FindObjectOfType<FixedJoystick>();
+
+        if (!jumpButton)
+            jumpButton = GameObject.Find("JumpButton")?.GetComponent<FixedButton>();
+
+        if (!crouchButton)
+            crouchButton = GameObject.Find("CrouchButton")?.GetComponent<FixedButton>();
+
+        if (!shootButton)
+            shootButton = GameObject.Find("ShootButton")?.GetComponent<FixedButton>();
+    }
+
+    void HandleInput()
+    {
+        // Mobile input
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            // Handle touch input for camera rotation
+            HandleTouchInput();
+        }
+        else
+        {
+            // PC input for testing
+            HandlePCInput();
+        }
+    }
+
+    void HandleTouchInput()
+    {
+        // Camera rotation with touch
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            // Only rotate camera if touch is not on UI
+            if (!IsPointerOverUIObject())
+            {
+                if (touch.phase == TouchPhase.Moved)
+                {
+                    float touchX = touch.deltaPosition.x * mouseSensitivity * 0.01f;
+                    float touchY = touch.deltaPosition.y * mouseSensitivity * 0.01f;
+
+                    RotateCamera(touchX, touchY);
+                }
+            }
+        }
+    }
+
+    void HandlePCInput()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+
+        RotateCamera(mouseX, mouseY);
+    }
+
+    void RotateCamera(float mouseX, float mouseY)
+    {
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        cameraHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.Rotate(Vector3.up * mouseX);
+    }
+
+    void HandleMovement()
+    {
+        float horizontal = 0f;
+        float vertical = 0f;
+
+        // Get input based on platform
+        if (Application.platform == RuntimePlatform.Android && moveJoystick)
+        {
+            horizontal = moveJoystick.Horizontal;
+            vertical = moveJoystick.Vertical;
+        }
+        else
+        {
+            horizontal = Input.GetAxis("Horizontal");
+            vertical = Input.GetAxis("Vertical");
+        }
+
+        // Calculate movement direction
+        Vector3 direction = transform.right * horizontal + transform.forward * vertical;
+        direction.Normalize();
+
+        // Apply speed modifier
+        float currentSpeed = isCrouching ? crouchSpeed : moveSpeed;
+
+        // Move the player
+        Vector3 moveVelocity = direction * currentSpeed;
+        rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);
+    }
+
+    void HandleJump()
+    {
+        bool jumpInput = false;
+
+        if (Application.platform == RuntimePlatform.Android && jumpButton)
+        {
+            jumpInput = jumpButton.Pressed;
+        }
+        else
+        {
+            jumpInput = Input.GetButtonDown("Jump");
+        }
+
+        if (jumpInput && isGrounded && !isCrouching)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+    void HandleCrouch()
+    {
+        bool crouchInput = false;
+
+        if (Application.platform == RuntimePlatform.Android && crouchButton)
+        {
+            crouchInput = crouchButton.Pressed;
+        }
+        else
+        {
+            crouchInput = Input.GetKey(KeyCode.LeftControl);
+        }
+
+        if (crouchInput && !isCrouching)
+        {
+            StartCrouch();
+        }
+        else if (!crouchInput && isCrouching)
+        {
+            StopCrouch();
+        }
+    }
+
+    void StartCrouch()
+    {
+        isCrouching = true;
+        playerCollider.height = originalHeight * 0.5f;
+        cameraHolder.localPosition = new Vector3(originalCameraPos.x, originalCameraPos.y * 0.5f, originalCameraPos.z);
+    }
+
+    void StopCrouch()
+    {
+        isCrouching = false;
+        playerCollider.height = originalHeight;
+        cameraHolder.localPosition = originalCameraPos;
+    }
+
+    void CheckGrounded()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+    }
+
+    bool IsPointerOverUIObject()
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.touchCount > 0)
+            {
+                return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+            }
+        }
+        return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+    }
+
+    // Network synchronization
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // Send position and rotation
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+            stream.SendNext(cameraHolder.rotation);
+        }
+        else
+        {
+            // Receive position and rotation
+            networkPosition = (Vector3)stream.ReceiveNext();
+            networkRotation = (Quaternion)stream.ReceiveNext();
+            cameraHolder.rotation = (Quaternion)stream.ReceiveNext();
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheck)
+        {
+            Gizmos.color = isGrounded ? Color.green : Color.red;
+            Gizmos.DrawWireSphere(groundCheck.position, groundDistance);
+        }
+    }
+}
+
+SCRIPT 2: PaintballGun.cs
+--------------------------
+
+using UnityEngine;
+using Photon.Pun;
+
+public class PaintballGun : MonoBehaviourPunPV
+{
+    [Header("Gun Settings")]
+    public float fireRate = 3f;
+    public float range = 100f;
+    public float projectileSpeed = 20f;
+    public int maxAmmo = 30;
+    public float reloadTime = 2f;
+
+    [Header("Components")]
+    public Transform firePoint;
+    public GameObject paintballPrefab;
+    public ParticleSystem muzzleFlash;
+    public AudioSource audioSource;
+    public AudioClip shootSound;
+    public AudioClip reloadSound;
+
+    [Header("UI References")]
+    public TMPro.TextMeshProUGUI ammoText;
+    public UnityEngine.UI.Button reloadButton;
+
+    [Header("Mobile Controls")]
+    public FixedButton shootButton;
+    public FixedButton reloadButtonMobile;
+
+    // Private variables
+    private float nextTimeToFire = 0f;
+    private int currentAmmo;
+    private bool isReloading = false;
+    private PlayerController playerController;
+
+    void Start()
+    {
+        currentAmmo = maxAmmo;
+        playerController = GetComponent<PlayerController>();
+
+        if (photonView.IsMine)
+        {
+            UpdateAmmoUI();
+            SetupMobileControls();
+        }
+        else
+        {
+            // Disable shooting for remote players
+            enabled = false;
+        }
+    }
+
+    void Update()
+    {
+        if (!photonView.IsMine) return;
+
+        HandleShooting();
+        HandleReload();
+    }
+
+    void SetupMobileControls()
+    {
+        if (!shootButton)
+            shootButton = GameObject.Find("ShootButton")?.GetComponent<FixedButton>();
+
+        if (!reloadButtonMobile)
+            reloadButtonMobile = GameObject.Find("ReloadButton")?.GetComponent<FixedButton>();
+
+        if (reloadButton)
+            reloadButton.onClick.AddListener(StartReload);
+    }
+
+    void HandleShooting()
+    {
+        bool shootInput = false;
+
+        if (Application.platform == RuntimePlatform.Android && shootButton)
+        {
+            shootInput = shootButton.Pressed;
+        }
+        else
+        {
+            shootInput = Input.GetButton("Fire1");
+        }
+
+        if (shootInput && Time.time >= nextTimeToFire && currentAmmo > 0 && !isReloading)
+        {
+            nextTimeToFire = Time.time + 1f / fireRate;
+            Shoot();
+        }
+    }
+
+    void HandleReload()
+    {
+        bool reloadInput = false;
+
+        if (Application.platform == RuntimePlatform.Android && reloadButtonMobile)
+        {
+            reloadInput = reloadButtonMobile.Pressed;
+        }
+        else
+        {
+            reloadInput = Input.GetKeyDown(KeyCode.R);
+        }
+
+        if (reloadInput && currentAmmo < maxAmmo && !isReloading)
+        {
+            StartReload();
+        }
+    }
+
+    void Shoot()
+    {
+        currentAmmo--;
+        UpdateAmmoUI();
+
+        // Create paintball projectile
+        photonView.RPC("FirePaintball", RpcTarget.All, firePoint.position, firePoint.rotation);
+
+        // Play effects locally
+        if (muzzleFlash)
+            muzzleFlash.Play();
+
+        if (audioSource && shootSound)
+            audioSource.PlayOneShot(shootSound);
+    }
+
+    [PunRPC]
+    void FirePaintball(Vector3 position, Quaternion rotation)
+    {
+        if (paintballPrefab)
+        {
+            GameObject paintball = Instantiate(paintballPrefab, position, rotation);
+
+            // Add velocity to paintball
+            Rigidbody rb = paintball.GetComponent<Rigidbody>();
+            if (rb)
+            {
+                rb.velocity = rotation * Vector3.forward * projectileSpeed;
+            }
+
+            // Set team color
+            PaintballProjectile projectile = paintball.GetComponent<PaintballProjectile>();
+            if (projectile && photonView.IsMine)
+            {
+                projectile.SetTeamColor(GetPlayerTeam());
+                projectile.SetShooter(photonView.owner);
+            }
+        }
+    }
+
+    void StartReload()
+    {
+        if (isReloading || currentAmmo >= maxAmmo) return;
+
+        isReloading = true;
+
+        if (audioSource && reloadSound)
+            audioSource.PlayOneShot(reloadSound);
+
+        Invoke(nameof(FinishReload), reloadTime);
+    }
+
+    void FinishReload()
+    {
+        currentAmmo = maxAmmo;
+        isReloading = false;
+        UpdateAmmoUI();
+    }
+
+    void UpdateAmmoUI()
+    {
+        if (ammoText)
+        {
+            ammoText.text = $"{currentAmmo}/{maxAmmo}";
+
+            if (isReloading)
+                ammoText.text = "Reloading...";
+        }
+    }
+
+    string GetPlayerTeam()
+    {
+        // Get team from custom properties
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("team", out object team))
+        {
+            return team.ToString();
+        }
+        return "red"; // Default team
+    }
+}
+
+SCRIPT 3: PaintballProjectile.cs
+--------------------------------
+
+using UnityEngine;
+using Photon.Pun;
+
+public class PaintballProjectile : MonoBehaviourPunPV
+{
+    [Header("Projectile Settings")]
+    public float lifetime = 5f;
+    public float gravity = 9.81f;
+    public LayerMask hitLayers = -1;
+
+    [Header("Paint Settings")]
+    public GameObject paintSplatterPrefab;
+    public ParticleSystem impactParticles;
+    public AudioClip impactSound;
+
+    [Header("Team Colors")]
+    public Material redTeamMaterial;
+    public Material blueTeamMaterial;
+    public Material[] specialMaterials;
+
+    // Private variables
+    private Rigidbody rb;
+    private string teamColor = "red";
+    private Photon.Realtime.Player shooter;
+    private bool hasHit = false;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+
+        // Apply gravity
+        rb.useGravity = true;
+
+        // Destroy after lifetime
+        Destroy(gameObject, lifetime);
+
+        // Set initial material
+        SetTeamMaterial();
+    }
+
+    void Update()
+    {
+        // Add custom gravity for more realistic paintball physics
+        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+    }
+
+    public void SetTeamColor(string color)
+    {
+        teamColor = color;
+        SetTeamMaterial();
+    }
+
+    public void SetShooter(Photon.Realtime.Player player)
+    {
+        shooter = player;
+    }
+
+    void SetTeamMaterial()
+    {
+        Renderer renderer = GetComponent<Renderer>();
+        if (!renderer) return;
+
+        switch (teamColor.ToLower())
+        {
+            case "red":
+                if (redTeamMaterial)
+                    renderer.material = redTeamMaterial;
+                break;
+            case "blue":
+                if (blueTeamMaterial)
+                    renderer.material = blueTeamMaterial;
+                break;
+            default:
+                // Use special materials for premium colors
+                if (specialMaterials.Length > 0)
+                    renderer.material = specialMaterials[0];
+                break;
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (hasHit) return;
+        hasHit = true;
+
+        // Check if hit a player
+        PlayerController hitPlayer = collision.gameObject.GetComponent<PlayerController>();
+        if (hitPlayer && hitPlayer.photonView.owner != shooter)
+        {
+            // Hit enemy player
+            HitPlayer(hitPlayer);
+        }
+
+        // Create paint splatter
+        CreatePaintSplatter(collision);
+
+        // Play impact effects
+        PlayImpactEffects(collision.contacts[0].point);
+
+        // Destroy projectile
+        if (photonView.IsMine)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
+    }
+
+    void HitPlayer(PlayerController player)
+    {
+        if (!photonView.IsMine) return;
+
+        // Send hit notification
+        player.photonView.RPC("OnHitByPaintball", RpcTarget.All, shooter.NickName, teamColor);
+
+        // Award points to shooter
+        GameManager.Instance?.AddScore(shooter, 10);
+    }
+
+    void CreatePaintSplatter(Collision collision)
+    {
+        if (!paintSplatterPrefab) return;
+
+        Vector3 hitPoint = collision.contacts[0].point;
+        Vector3 hitNormal = collision.contacts[0].normal;
+
+        // Create splatter decal
+        GameObject splatter = Instantiate(paintSplatterPrefab, hitPoint, Quaternion.LookRotation(hitNormal));
+
+        // Set splatter color
+        PaintSplatter splatterComponent = splatter.GetComponent<PaintSplatter>();
+        if (splatterComponent)
+        {
+            splatterComponent.SetColor(teamColor);
+        }
+
+        // Network sync the splatter
+        if (photonView.IsMine)
+        {
+            photonView.RPC("SyncPaintSplatter", RpcTarget.Others, hitPoint, hitNormal, teamColor);
+        }
+    }
+
+    [PunRPC]
+    void SyncPaintSplatter(Vector3 position, Vector3 normal, string color)
+    {
+        if (paintSplatterPrefab)
+        {
+            GameObject splatter = Instantiate(paintSplatterPrefab, position, Quaternion.LookRotation(normal));
+            PaintSplatter splatterComponent = splatter.GetComponent<PaintSplatter>();
+            if (splatterComponent)
+            {
+                splatterComponent.SetColor(color);
+            }
+        }
+    }
+
+    void PlayImpactEffects(Vector3 position)
+    {
+        // Play particle effect
+        if (impactParticles)
+        {
+            ParticleSystem particles = Instantiate(impactParticles, position, Quaternion.identity);
+
+            // Set particle color based on team
+            var main = particles.main;
+            switch (teamColor.ToLower())
+            {
+                case "red":
+                    main.startColor = Color.red;
+                    break;
+                case "blue":
+                    main.startColor = Color.blue;
+                    break;
+                default:
+                    main.startColor = Color.white;
+                    break;
+            }
+
+            particles.Play();
+            Destroy(particles.gameObject, 2f);
+        }
+
+        // Play sound effect
+        if (impactSound)
+        {
+            AudioSource.PlayClipAtPoint(impactSound, position);
+        }
+    }
+}
+
+===============================================================================
+                                    FIM DO GUIA
+===============================================================================
+
+Este documento contém todo o planejamento, estrutura e código principal para
+desenvolver o Paintball Arena, um FPS família-friendly para mobile.
+
+CONTEÚDO INCLUÍDO:
+✅ Conceito completo do jogo
+✅ Especificações técnicas
+✅ Guia de instalação Unity
+✅ Arquitetura do projeto
+✅ Scripts principais (PlayerController, PaintballGun, PaintballProjectile)
+✅ Sistema de monetização
+✅ Roadmap de desenvolvimento
+✅ Próximos passos
+
+SCRIPTS ADICIONAIS DISPONÍVEIS:
+- GameManager.cs (gerenciamento de jogo)
+- NetworkManager.cs (multiplayer)
+- PaintSplatter.cs (sistema de manchas)
+- MobileUI.cs (interface mobile)
+- ScoreManager.cs (pontuação)
+
+Para continuar o desenvolvimento:
+1. Instalar Unity 2022.3.21f1 LTS
+2. Configurar projeto para Android
+3. Instalar Photon PUN2
+4. Implementar scripts fornecidos
+5. Testar e iterar
+6. Publicar na PlayStore
+
+Boa sorte no desenvolvimento! 🎮🚀
+
+Este documento contém todo o planejamento e estrutura para desenvolver o
+Paintball Arena, um FPS família-friendly para mobile. 
+
+Para continuar o desenvolvimento, siga a ordem:
+1. Instalar Unity
+2. Configurar projeto
+3. Implementar scripts
+4. Testar e iterar
+5. Publicar na PlayStore
+
+Boa sorte no desenvolvimento! 🎮🚀

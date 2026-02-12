@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEP com Mapa - Teste Simples</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        input[readonly] {
+            background: #f8f9fa;
+            color: #666;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .coord-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #155724;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        .loading {
+            text-align: center;
+            color: #007bff;
+            font-style: italic;
+            margin: 1rem 0;
+        }
+        .row {
+            display: flex;
+            gap: 1rem;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-map-pin"></i> Sistema CEP com Mapa</h1>
+        <p>Teste o sistema de localização por CEP com visualização no mapa</p>
+
+        <div class="form-group">
+            <label for="cep">CEP:</label>
+            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+            <small>Digite o CEP para buscar automaticamente</small>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="rua">Rua:</label>
+                <input type="text" id="rua" readonly>
+            </div>
+            <div class="form-group">
+                <label for="numero">Número:</label>
+                <input type="text" id="numero" placeholder="123">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="bairro">Bairro:</label>
+                <input type="text" id="bairro" readonly>
+            </div>
+            <div class="form-group">
+                <label for="cidade">Cidade:</label>
+                <input type="text" id="cidade" readonly>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i> Buscando CEP...
+        </div>
+
+        <div id="enderecoInfo" class="info-box" style="display: none;">
+            <h4><i class="fas fa-home"></i> Endereço Completo</h4>
+            <div id="enderecoTexto"></div>
+        </div>
+
+        <div id="coordInfo" class="coord-box" style="display: none;">
+            <h4><i class="fas fa-crosshairs"></i> Coordenadas GPS</h4>
+            <div id="coordTexto"></div>
+        </div>
+
+        <h3><i class="fas fa-map"></i> Mapa da Localização</h3>
+        <div id="map"></div>
+
+        <div style="text-align: center; margin: 2rem 0;">
+            <button class="btn btn-success" onclick="criarReclamacao()">
+                <i class="fas fa-plus"></i> Criar Reclamação
+            </button>
+            <button class="btn btn-warning" onclick="limpar()">
+                <i class="fas fa-eraser"></i> Limpar
+            </button>
+        </div>
+
+        <h3><i class="fas fa-list"></i> CEPs para Teste</h3>
+        <div class="test-buttons">
+            <button class="btn" onclick="testarCEP('08330-310')" style="background: #28a745;">
+                Seu CEP<br>08330-310
+            </button>
+            <button class="btn" onclick="testarCEP('08340-000')">
+                São Mateus<br>08340-000
+            </button>
+            <button class="btn" onclick="testarCEP('08330-000')">
+                São Rafael<br>08330-000
+            </button>
+            <button class="btn" onclick="testarCEP('01310-100')">
+                Av. Paulista<br>01310-100
+            </button>
+            <button class="btn" onclick="testarCEP('01001-000')">
+                Centro SP<br>01001-000
+            </button>
+        </div>
+
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 1rem; margin: 2rem 0;">
+            <h4><i class="fas fa-info-circle"></i> Como Funciona</h4>
+            <ol>
+                <li>Digite um CEP ou clique nos botões de teste</li>
+                <li>Sistema busca automaticamente o endereço</li>
+                <li>Digite o número da residência</li>
+                <li>Sistema encontra coordenadas GPS precisas</li>
+                <li>Localização aparece no mapa abaixo</li>
+                <li>Clique "Criar Reclamação" para salvar</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let marker;
+        let dadosCEP = {};
+        let coordenadas = null;
+
+        // Inicializar mapa imediatamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando página...');
+            inicializarMapa();
+            configurarCEP();
+        });
+
+        // Inicializar mapa
+        function inicializarMapa() {
+            try {
+                console.log('Criando mapa...');
+                map = L.map('map').setView([-23.5505, -46.6333], 11);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                
+                console.log('✅ Mapa criado com sucesso');
+                
+                // Adicionar marcador inicial no centro de SP
+                marker = L.marker([-23.5505, -46.6333])
+                    .addTo(map)
+                    .bindPopup('Centro de São Paulo - Digite um CEP para localizar');
+                
+            } catch (error) {
+                console.error('❌ Erro ao criar mapa:', error);
+                document.getElementById('map').innerHTML = '<p style="text-align: center; padding: 2rem; color: red;">Erro ao carregar mapa</p>';
+            }
+        }
+
+        // Configurar CEP
+        function configurarCEP() {
+            const cepInput = document.getElementById('cep');
+            const numeroInput = document.getElementById('numero');
+            
+            // Máscara do CEP
+            cepInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 5) {
+                    value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                }
+                e.target.value = value;
+                
+                if (value.length === 9) {
+                    buscarCEP(value);
+                }
+            });
+            
+            // Atualizar quando número mudar
+            numeroInput.addEventListener('input', function() {
+                if (dadosCEP.logradouro) {
+                    atualizarEndereco();
+                    geocodificar();
+                }
+            });
+        }
+
+        // Buscar CEP
+        async function buscarCEP(cep) {
+            const cepLimpo = cep.replace(/\D/g, '');
+            console.log('CEP digitado:', cep, 'CEP limpo:', cepLimpo);
+
+            if (cepLimpo.length !== 8) {
+                console.log('CEP incompleto, aguardando...');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            try {
+                console.log('🔍 Buscando CEP:', cepLimpo);
+
+                const url = `https://viacep.com.br/ws/${cepLimpo}/json/`;
+                console.log('URL da API:', url);
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                console.log('Resposta da API:', data);
+
+                if (data.erro) {
+                    throw new Error('CEP não encontrado na base dos Correios');
+                }
+
+                if (!data.logradouro) {
+                    console.log('⚠️ CEP encontrado mas sem logradouro específico');
+                }
+
+                // Preencher campos
+                document.getElementById('rua').value = data.logradouro || 'Logradouro não especificado';
+                document.getElementById('bairro').value = data.bairro || 'Bairro não especificado';
+                document.getElementById('cidade').value = data.localidade || 'São Paulo';
+
+                dadosCEP = {
+                    cep: cepLimpo,
+                    logradouro: data.logradouro || 'Logradouro não especificado',
+                    bairro: data.bairro || 'Bairro não especificado',
+                    localidade: data.localidade || 'São Paulo',
+                    uf: data.uf || 'SP'
+                };
+
+                atualizarEndereco();
+                geocodificar();
+
+                console.log('✅ CEP processado com sucesso:', dadosCEP);
+
+            } catch (error) {
+                console.error('❌ Erro ao buscar CEP:', error);
+                alert(`Erro ao buscar CEP ${cep}: ${error.message}\n\nTente novamente ou verifique se o CEP está correto.`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Atualizar endereço
+        function atualizarEndereco() {
+            const numero = document.getElementById('numero').value || '[NÚMERO]';
+            const endereco = `${dadosCEP.logradouro}, ${numero} - ${dadosCEP.bairro}, ${dadosCEP.localidade} - ${dadosCEP.uf}`;
+            
+            const info = document.getElementById('enderecoInfo');
+            const texto = document.getElementById('enderecoTexto');
+            
+            texto.innerHTML = `<strong>${endereco}</strong>`;
+            info.style.display = 'block';
+        }
+
+        // Geocodificar
+        async function geocodificar() {
+            if (!dadosCEP.logradouro) {
+                console.log('Sem logradouro para geocodificar');
+                return;
+            }
+
+            const numero = document.getElementById('numero').value || '1';
+
+            // Tentar múltiplas variações do endereço
+            const enderecosParaTestar = [
+                `${dadosCEP.logradouro} ${numero}, ${dadosCEP.bairro}, ${dadosCEP.localidade}, SP`,
+                `${dadosCEP.logradouro}, ${dadosCEP.bairro}, ${dadosCEP.localidade}, SP`,
+                `${dadosCEP.bairro}, ${dadosCEP.localidade}, SP`,
+                `CEP ${dadosCEP.cep}, ${dadosCEP.localidade}, SP`
+            ];
+
+            for (let i = 0; i < enderecosParaTestar.length; i++) {
+                const endereco = enderecosParaTestar[i];
+
+                try {
+                    console.log(`🗺️ Tentativa ${i + 1} - Geocodificando:`, endereco);
+
+                    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}&limit=1&countrycodes=br`);
+                    const data = await response.json();
+
+                    console.log(`Resposta tentativa ${i + 1}:`, data);
+
+                    if (data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        coordenadas = [lat, lon];
+
+                        // Mostrar coordenadas
+                        const coordInfo = document.getElementById('coordInfo');
+                        const coordTexto = document.getElementById('coordTexto');
+
+                        coordTexto.innerHTML = `
+                            <strong>Latitude:</strong> ${lat.toFixed(6)}<br>
+                            <strong>Longitude:</strong> ${lon.toFixed(6)}<br>
+                            <small>Encontrado via: ${endereco}</small>
+                        `;
+                        coordInfo.style.display = 'block';
+
+                        // Atualizar mapa
+                        atualizarMapa(lat, lon, endereco);
+
+                        console.log(`✅ Geocodificação bem-sucedida na tentativa ${i + 1}:`, coordenadas);
+                        return; // Sucesso, parar tentativas
+                    }
+
+                } catch (error) {
+                    console.error(`❌ Erro na tentativa ${i + 1}:`, error);
+                }
+            }
+
+            // Se chegou aqui, nenhuma tentativa funcionou
+            console.log('⚠️ Geocodificação falhou em todas as tentativas');
+            alert(`Não foi possível encontrar coordenadas precisas para este endereço.
+
+CEP: ${dadosCEP.cep}
+Endereço: ${dadosCEP.logradouro}, ${dadosCEP.bairro}
+
+O mapa será posicionado na região aproximada.`);
+
+            // Posicionar na região de São Paulo como fallback
+            coordenadas = [-23.5505, -46.6333];
+            atualizarMapa(coordenadas[0], coordenadas[1], 'Região de São Paulo (aproximado)');
+        }
+
+        // Atualizar mapa
+        function atualizarMapa(lat, lon, endereco) {
+            try {
+                console.log('Atualizando mapa para:', lat, lon);
+                
+                // Mover mapa
+                map.setView([lat, lon], 16);
+                
+                // Remover marcador anterior
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+                
+                // Adicionar novo marcador
+                marker = L.marker([lat, lon])
+                    .addTo(map)
+                    .bindPopup(`<strong>📍 Localização</strong><br>${endereco}`)
+                    .openPopup();
+                
+                console.log('✅ Mapa atualizado com sucesso');
+                
+            } catch (error) {
+                console.error('❌ Erro ao atualizar mapa:', error);
+            }
+        }
+
+        // Testar CEP
+        function testarCEP(cep) {
+            document.getElementById('cep').value = cep;
+            buscarCEP(cep);
+        }
+
+        // Criar reclamação
+        function criarReclamacao() {
+            if (!coordenadas) {
+                alert('Primeiro digite um CEP válido e aguarde a localização!');
+                return;
+            }
+            
+            const numero = document.getElementById('numero').value || '1';
+            const endereco = `${dadosCEP.logradouro}, ${numero} - ${dadosCEP.bairro}, ${dadosCEP.localidade}`;
+            
+            const reclamacao = {
+                id: Date.now().toString(),
+                titulo: 'Teste Sistema CEP - ' + new Date().toLocaleTimeString(),
+                categoria: 'outros',
+                descricao: 'Reclamação de teste criada pelo sistema CEP',
+                localizacao: endereco,
+                cep: document.getElementById('cep').value,
+                rua: dadosCEP.logradouro,
+                numero: numero,
+                bairro: dadosCEP.bairro,
+                cidade: dadosCEP.localidade,
+                coordenadas: coordenadas,
+                status: 'pendente',
+                usuario: 'Usuário Teste CEP',
+                usuarioId: 'teste-cep',
+                dataReclamacao: new Date().toISOString(),
+                midia: []
+            };
+            
+            // Salvar
+            let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            reclamacoes.push(reclamacao);
+            localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+            
+            alert(`✅ Reclamação criada!
+
+📍 Endereço: ${endereco}
+🗺️ Coordenadas: ${coordenadas[0].toFixed(6)}, ${coordenadas[1].toFixed(6)}
+
+Agora vá para o site principal e verifique se aparece no mapa!`);
+        }
+
+        // Limpar
+        function limpar() {
+            document.getElementById('cep').value = '';
+            document.getElementById('rua').value = '';
+            document.getElementById('numero').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('cidade').value = '';
+            
+            document.getElementById('enderecoInfo').style.display = 'none';
+            document.getElementById('coordInfo').style.display = 'none';
+            
+            dadosCEP = {};
+            coordenadas = null;
+            
+            // Voltar para centro de SP
+            if (map && marker) {
+                map.setView([-23.5505, -46.6333], 11);
+                map.removeLayer(marker);
+                marker = L.marker([-23.5505, -46.6333])
+                    .addTo(map)
+                    .bindPopup('Centro de São Paulo - Digite um CEP para localizar');
+            }
+        }
+    </script>
+</body>
+</html>

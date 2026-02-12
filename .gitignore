@@ -1,0 +1,26 @@
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos temporários
+*.tmp
+*.temp
+~*
+
+# Arquivos do Word/Office
+*.docx
+*.doc
+
+# Logs
+*.log
+
+# Arquivos de debug e teste
+debug-*.html
+teste-*.html
+diagnostico-*.html
+verificar-*.html
+
+# Arquivos de configuração local
+.vscode/
+.idea/

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-buster" content="20250106-MOBILE-FIXED">
+    <meta name="description" content="Portal para cidadãos fazerem reclamações sobre problemas em seus bairros com upload de fotos e vídeos">
+    <meta name="keywords" content="reclamações, bairro, cidadania, problemas urbanos, comunidade">
+    <meta name="author" content="Meu Bairro Alerta">
+    <title>Meu Bairro Alerta - Portal de Reclamações</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <style>
+        /* Melhorias específicas para mobile */
+        @media (max-width: 768px) {
+            .header .container {
+                padding: 0.75rem 15px;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 1rem;
+                background: #f8f9fa;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .form-container {
+                padding: 1.5rem 1rem;
+                margin: 1rem 0.5rem;
+                border-radius: 12px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px; /* Evita zoom no iOS */
+                padding: 0.875rem;
+                border-radius: 10px;
+                min-height: 44px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 1.125rem;
+                font-size: 16px;
+                border-radius: 10px;
+                margin-top: 1.5rem;
+                min-height: 50px;
+            }
+            
+            .btn.loading {
+                position: relative;
+                color: transparent;
+            }
+            
+            .btn.loading::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 20px;
+                height: 20px;
+                margin: -10px 0 0 -10px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .field-error {
+                color: #dc3545;
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+                display: block;
+            }
+            
+            .message {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                right: 20px;
+                padding: 1rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 3000;
+                font-size: 14px;
+            }
+            
+            .message-success {
+                background-color: #28a745;
+            }
+            
+            .message-error {
+                background-color: #dc3545;
+            }
+            
+            .message-info {
+                background-color: #17a2b8;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.25rem 0.75rem;
+                margin: 0.5rem 0.25rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.75rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-row .form-group {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <h1>Meu Bairro Alerta</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#home" class="nav-link active">Início</a></li>
+                    <li><a href="#reclamacoes" class="nav-link">Reclamações</a></li>
+                    <li><a href="#mapa" class="nav-link">Mapa</a></li>
+                    <li><a href="#nova-reclamacao" class="nav-link">Nova Reclamação</a></li>
+                    <li><a href="tutorial.html" class="nav-link">Tutorial</a></li>
+                    <li><a href="#login" class="nav-link" id="loginBtn">Login</a></li>
+                    <li><a href="#cadastro" class="nav-link" id="cadastroBtn">Cadastro</a></li>
+                    <li><a href="#" class="nav-link hidden" id="logoutBtn">Sair</a></li>
+                </ul>
+            </nav>
+            <div class="user-info hidden" id="userInfo">
+                <span id="userName"></span>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="container">
+                    <h2>Faça sua voz ser ouvida!</h2>
+                    <p>Relate problemas do seu bairro e ajude a melhorar sua comunidade</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="totalReclamacoes">0</span>
+                            <span class="stat-label">Reclamações</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="totalUsuarios">0</span>
+                            <span class="stat-label">Usuários</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="reclamacoesResolvidas">0</span>
+                            <span class="stat-label">Resolvidas</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showSection('nova-reclamacao')">
+                        <i class="fas fa-plus"></i> Fazer Reclamação
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email:</label>
+                            <input type="email" id="loginEmail" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Senha:</label>
+                            <input type="password" id="loginPassword" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </button>
+                    </form>
+                    <p>Não tem conta? <a href="#" onclick="showSection('cadastro')">Cadastre-se aqui</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cadastro Section -->
+        <section id="cadastro" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-user-plus"></i> Cadastro</h2>
+                    <form id="cadastroForm">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Senha:</label>
+                            <input type="password" id="password" required autocomplete="new-password" minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Senha:</label>
+                            <input type="password" id="confirmPassword" required autocomplete="new-password" minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone">Telefone:</label>
+                            <input type="tel" id="telefone" placeholder="(11) 99999-9999" required autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label for="endereco">Endereço:</label>
+                            <input type="text" id="endereco" placeholder="Rua das Flores, 123" required autocomplete="street-address">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro">Bairro:</label>
+                            <input type="text" id="bairro" placeholder="Centro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade:</label>
+                            <input type="text" id="cidade" placeholder="São Paulo" required autocomplete="address-level2">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Cadastrar
+                        </button>
+                    </form>
+                    <p>Já tem conta? <a href="#" onclick="showSection('login')">Faça login aqui</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nova Reclamação Section -->
+        <section id="nova-reclamacao" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Nova Reclamação</h2>
+                    <div class="auth-required" id="authRequired">
+                        <p><i class="fas fa-lock"></i> Você precisa estar logado para fazer uma reclamação.</p>
+                        <button class="btn btn-primary" onclick="showSection('login')">Fazer Login</button>
+                    </div>
+                    <form id="reclamacaoForm" class="hidden">
+                        <div class="form-group">
+                            <label for="titulo">Título da Reclamação:</label>
+                            <input type="text" id="titulo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoria:</label>
+                            <select id="categoria" required>
+                                <option value="">Selecione uma categoria</option>
+                                <option value="iluminacao">Iluminação Pública</option>
+                                <option value="asfalto">Asfalto/Pavimentação</option>
+                                <option value="limpeza">Limpeza Urbana</option>
+                                <option value="seguranca">Segurança</option>
+                                <option value="transporte">Transporte Público</option>
+                                <option value="agua">Água e Esgoto</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição:</label>
+                            <textarea id="descricao" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="cep">CEP:</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9" required>
+                            <div class="file-info">Digite o CEP para preenchimento automático</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 3;">
+                                <label for="rua">Rua/Logradouro:</label>
+                                <input type="text" id="rua" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="numero">Número:</label>
+                                <input type="text" id="numero" placeholder="123" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bairro">Bairro:</label>
+                                <input type="text" id="bairro" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="cidade">Cidade:</label>
+                                <input type="text" id="cidade" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                        </div>
+                        <div class="cep-loading" id="cepLoading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Buscando informações do CEP...
+                        </div>
+                        <div class="localizacao-status" id="localizacaoStatus" style="display: none;">
+                            <div class="status-item" id="statusCEP">
+                                <i class="fas fa-check-circle"></i> CEP encontrado
+                            </div>
+                            <div class="status-item" id="statusCoordenadas">
+                                <i class="fas fa-crosshairs"></i> <span id="statusCoordenadasTexto">Buscando localização exata...</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="midia">Fotos/Vídeos:</label>
+                            <input type="file" id="midia" multiple accept="image/*,video/*">
+                            <div class="file-info">Aceita imagens e vídeos (máx. 10MB cada)</div>
+                        </div>
+                        <div id="mediaPreview" class="media-preview"></div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Enviar Reclamação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reclamações Section -->
+        <section id="reclamacoes" class="section">
+            <div class="container">
+                <h2><i class="fas fa-list"></i> Reclamações</h2>
+
+                <!-- Barra de busca e filtros -->
+                <div class="search-filters">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Buscar reclamações...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="filters">
+                        <select id="filtroCategoria">
+                            <option value="">Todas as categorias</option>
+                            <option value="iluminacao">Iluminação Pública</option>
+                            <option value="asfalto">Asfalto/Pavimentação</option>
+                            <option value="limpeza">Limpeza Urbana</option>
+                            <option value="seguranca">Segurança</option>
+                            <option value="transporte">Transporte Público</option>
+                            <option value="agua">Água e Esgoto</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                        <select id="filtroStatus">
+                            <option value="">Todos os status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="em-andamento">Em Andamento</option>
+                            <option value="resolvida">Resolvida</option>
+                        </select>
+                        <select id="ordenacao">
+                            <option value="recente">Mais recentes</option>
+                            <option value="antigo">Mais antigas</option>
+                            <option value="titulo">Por título</option>
+                            <option value="categoria">Por categoria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Estatísticas das reclamações -->
+                <div class="reclamacoes-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalFiltradas">0</span>
+                        <span class="stat-label">Encontradas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="pendentesFiltradas">0</span>
+                        <span class="stat-label">Pendentes</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="resolvidasFiltradas">0</span>
+                        <span class="stat-label">Resolvidas</span>
+                    </div>
+                </div>
+
+                <div id="listaReclamacoes" class="reclamacoes-grid">
+                    <!-- Reclamações serão carregadas aqui -->
+                </div>
+
+                <!-- Mensagem quando não há reclamações -->
+                <div id="noReclamacoes" class="no-results hidden">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhuma reclamação encontrada</h3>
+                    <p>Tente ajustar os filtros ou fazer uma nova busca.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mapa Section -->
+        <section id="mapa" class="section">
+            <div class="container">
+                <h2><i class="fas fa-map-marked-alt"></i> Mapa de Reclamações</h2>
+
+                <!-- Controles do Mapa -->
+                <div class="map-controls">
+                    <div class="map-filters">
+                        <select id="mapFiltroCategoria">
+                            <option value="">Todas as categorias</option>
+                            <option value="iluminacao">Iluminação Pública</option>
+                            <option value="asfalto">Asfalto/Pavimentação</option>
+                            <option value="limpeza">Limpeza Urbana</option>
+                            <option value="seguranca">Segurança</option>
+                            <option value="transporte">Transporte Público</option>
+                            <option value="agua">Água e Esgoto</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                        <select id="mapFiltroStatus">
+                            <option value="">Todos os status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="em-andamento">Em Andamento</option>
+                            <option value="resolvida">Resolvida</option>
+                        </select>
+                    </div>
+                    <div class="map-actions">
+                        <button class="btn btn-secondary" onclick="clearMapFilters()">
+                            <i class="fas fa-filter"></i> Limpar Filtros
+                        </button>
+                        <button class="btn btn-secondary" onclick="showOnlyWithMedia()">
+                            <i class="fas fa-camera"></i> Com Mídia
+                        </button>
+                        <button class="btn btn-secondary" id="centerMapBtn">
+                            <i class="fas fa-crosshairs"></i> Centralizar
+                        </button>
+                        <button class="btn btn-secondary" id="fullscreenMapBtn">
+                            <i class="fas fa-expand"></i> Tela Cheia
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Container do Mapa -->
+                <div id="mapContainer" class="map-container">
+                    <div id="map" class="map"></div>
+                    <div class="map-loading" id="mapLoading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando mapa...</p>
+                    </div>
+                </div>
+
+                <!-- Estatísticas do Mapa -->
+                <div class="map-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="mapTotalReclamacoes">0</span>
+                        <span class="stat-label">No Mapa</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="mapComMedia">0</span>
+                        <span class="stat-label">Com Mídia</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="mapPendentes">0</span>
+                        <span class="stat-label">Pendentes</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Meu Bairro Alerta. Todos os direitos reservados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+                <i class="fas fa-code"></i> Versão Corrigida - Mobile Otimizada
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal para visualizar reclamação -->
+    <div id="modalReclamacao" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet MarkerCluster JavaScript -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- Scripts corrigidos -->
+    <script src="js/app.js?v=MOBILE-FIXED"></script>
+    <script src="js/map.js?v=MOBILE-FIXED"></script>
+    <script src="js/notifications.js"></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Bairro Alerta - Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .nav button {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .nav button.active {
+            background: #0056b3;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        button:active {
+            background: #0056b3;
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Meu Bairro Alerta</h1>
+        
+        <div class="nav">
+            <button onclick="showSection('home')" class="active">Início</button>
+            <button onclick="showSection('login')">Login</button>
+            <button onclick="showSection('cadastro')">Cadastro</button>
+            <button onclick="showSection('reclamacao')">Reclamação</button>
+        </div>
+        
+        <div id="message" class="message hidden"></div>
+        
+        <!-- Início -->
+        <div id="home" class="section active">
+            <h2>Bem-vindo!</h2>
+            <p>Faça login ou cadastre-se para começar a usar o sistema.</p>
+        </div>
+        
+        <!-- Login -->
+        <div id="login" class="section">
+            <h2>Login</h2>
+            <form onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="password" id="loginSenha" required>
+                </div>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+        
+        <!-- Cadastro -->
+        <div id="cadastro" class="section">
+            <h2>Cadastro</h2>
+            <form onsubmit="return handleCadastro(event)">
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" id="cadNome" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="cadEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="password" id="cadSenha" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Telefone:</label>
+                    <input type="tel" id="cadTelefone" required>
+                </div>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </div>
+        
+        <!-- Reclamação -->
+        <div id="reclamacao" class="section">
+            <h2>Nova Reclamação</h2>
+            <div id="loginRequired" class="message error">
+                Você precisa fazer login primeiro!
+            </div>
+            <form id="reclamacaoForm" onsubmit="return handleReclamacao(event)" class="hidden">
+                <div class="form-group">
+                    <label>Título:</label>
+                    <input type="text" id="recTitulo" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoria:</label>
+                    <select id="recCategoria" required>
+                        <option value="">Selecione</option>
+                        <option value="iluminacao">Iluminação</option>
+                        <option value="asfalto">Asfalto</option>
+                        <option value="limpeza">Limpeza</option>
+                        <option value="seguranca">Segurança</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Descrição:</label>
+                    <textarea id="recDescricao" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>CEP:</label>
+                    <input type="text" id="recCep" placeholder="00000-000" maxlength="9" required>
+                </div>
+                <div class="form-group">
+                    <label>Rua:</label>
+                    <input type="text" id="recRua" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Número:</label>
+                    <input type="text" id="recNumero" required>
+                </div>
+                <div class="form-group">
+                    <label>Bairro:</label>
+                    <input type="text" id="recBairro" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Cidade:</label>
+                    <input type="text" id="recCidade" readonly>
+                </div>
+                <button type="submit">Enviar Reclamação</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+        let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+        
+        // Navegação
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (sectionId === 'reclamacao') {
+                checkAuth();
+            }
+        }
+        
+        // Mensagens
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            msg.classList.remove('hidden');
+            
+            setTimeout(() => {
+                msg.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const senha = document.getElementById('loginSenha').value.trim();
+            
+            if (!email || !senha) {
+                showMessage('Preencha todos os campos!', 'error');
+                return false;
+            }
+            
+            // Criar usuário de exemplo se não existir
+            if (usuarios.length === 0) {
+                usuarios.push({
+                    id: '1',
+                    nome: 'Usuário Exemplo',
+                    email: 'usuario@exemplo.com',
+                    senha: '123456',
+                    telefone: '(11) 99999-9999'
+                });
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            }
+            
+            const user = usuarios.find(u => u.email === email && u.senha === senha);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showMessage('Login realizado com sucesso!', 'success');
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginSenha').value = '';
+                showSection('home');
+            } else {
+                showMessage('Email ou senha incorretos!', 'error');
+            }
+            
+            return false;
+        }
+        
+        // Cadastro
+        function handleCadastro(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('cadNome').value.trim();
+            const email = document.getElementById('cadEmail').value.trim();
+            const senha = document.getElementById('cadSenha').value.trim();
+            const telefone = document.getElementById('cadTelefone').value.trim();
+            
+            if (!nome || !email || !senha || !telefone) {
+                showMessage('Preencha todos os campos!', 'error');
+                return false;
+            }
+            
+            if (senha.length < 6) {
+                showMessage('Senha deve ter pelo menos 6 caracteres!', 'error');
+                return false;
+            }
+            
+            if (usuarios.find(u => u.email === email)) {
+                showMessage('Este email já está cadastrado!', 'error');
+                return false;
+            }
+            
+            const novoUsuario = {
+                id: Date.now().toString(),
+                nome,
+                email,
+                senha,
+                telefone
+            };
+            
+            usuarios.push(novoUsuario);
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            
+            showMessage('Cadastro realizado com sucesso!', 'success');
+            document.getElementById('cadNome').value = '';
+            document.getElementById('cadEmail').value = '';
+            document.getElementById('cadSenha').value = '';
+            document.getElementById('cadTelefone').value = '';
+            
+            showSection('login');
+            return false;
+        }
+        
+        // Verificar autenticação
+        function checkAuth() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('loginRequired').classList.add('hidden');
+                document.getElementById('reclamacaoForm').classList.remove('hidden');
+            } else {
+                document.getElementById('loginRequired').classList.remove('hidden');
+                document.getElementById('reclamacaoForm').classList.add('hidden');
+            }
+        }
+        
+        // CEP
+        document.getElementById('recCep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+            
+            if (value.length === 9) {
+                buscarCEP(value);
+            }
+        });
+        
+        async function buscarCEP(cep) {
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep.replace(/\D/g, '')}/json/`);
+                const data = await response.json();
+                
+                if (!data.erro) {
+                    document.getElementById('recRua').value = data.logradouro || '';
+                    document.getElementById('recBairro').value = data.bairro || '';
+                    document.getElementById('recCidade').value = data.localidade || '';
+                    showMessage('CEP encontrado!', 'success');
+                }
+            } catch (error) {
+                showMessage('Erro ao buscar CEP', 'error');
+            }
+        }
+        
+        // Reclamação
+        function handleReclamacao(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showMessage('Faça login primeiro!', 'error');
+                return false;
+            }
+            
+            const titulo = document.getElementById('recTitulo').value.trim();
+            const categoria = document.getElementById('recCategoria').value;
+            const descricao = document.getElementById('recDescricao').value.trim();
+            const cep = document.getElementById('recCep').value.trim();
+            const rua = document.getElementById('recRua').value.trim();
+            const numero = document.getElementById('recNumero').value.trim();
+            const bairro = document.getElementById('recBairro').value.trim();
+            const cidade = document.getElementById('recCidade').value.trim();
+            
+            if (!titulo || !categoria || !descricao || !cep || !numero) {
+                showMessage('Preencha todos os campos obrigatórios!', 'error');
+                return false;
+            }
+            
+            const novaReclamacao = {
+                id: Date.now().toString(),
+                titulo,
+                categoria,
+                descricao,
+                endereco: `${rua}, ${numero} - ${bairro}, ${cidade}`,
+                cep,
+                usuario: currentUser.nome,
+                data: new Date().toLocaleDateString('pt-BR'),
+                status: 'pendente'
+            };
+            
+            reclamacoes.push(novaReclamacao);
+            localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+            
+            showMessage('Reclamação enviada com sucesso!', 'success');
+            
+            // Limpar formulário
+            document.getElementById('recTitulo').value = '';
+            document.getElementById('recCategoria').value = '';
+            document.getElementById('recDescricao').value = '';
+            document.getElementById('recCep').value = '';
+            document.getElementById('recRua').value = '';
+            document.getElementById('recNumero').value = '';
+            document.getElementById('recBairro').value = '';
+            document.getElementById('recCidade').value = '';
+            
+            return false;
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+        });
+    </script>
+</body>
+</html>

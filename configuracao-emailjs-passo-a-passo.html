@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração EmailJS - Passo a Passo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .config-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .config-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #007bff;
+        }
+        .config-header h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        .config-header p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+        .step-container {
+            margin: 3rem 0;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .step-container:hover {
+            border-color: #007bff;
+            box-shadow: 0 5px 20px rgba(0,123,255,0.1);
+        }
+        .step-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+        .step-number {
+            background: rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .step-title {
+            flex: 1;
+        }
+        .step-title h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .step-title p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        .step-content {
+            padding: 2rem;
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .substep {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .substep h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        .template-preview {
+            background: #f8f9fa;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .template-preview h4 {
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+        .screenshot-placeholder {
+            background: #e9ecef;
+            border: 2px dashed #6c757d;
+            border-radius: 8px;
+            padding: 3rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: #6c757d;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .warning-box i {
+            color: #856404;
+            font-size: 1.5rem;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .success-box i {
+            color: #155724;
+            font-size: 1.5rem;
+        }
+        .credentials-box {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .credentials-box h3 {
+            margin-bottom: 1rem;
+        }
+        .credential-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        .test-section {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .variable-list {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .variable-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .variable-item:last-child {
+            border-bottom: none;
+        }
+        .variable-name {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .variable-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="config-container">
+        <div class="config-header">
+            <h1><i class="fas fa-envelope"></i> Configuração EmailJS</h1>
+            <p>Guia completo para configurar notificações automáticas</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <p id="progressText">0% Concluído</p>
+        </div>
+
+        <!-- Passo 1: Criar Conta -->
+        <div class="step-container">
+            <div class="step-header" onclick="toggleStep(1)">
+                <div class="step-number">1</div>
+                <div class="step-title">
+                    <h3>Criar Conta no EmailJS</h3>
+                    <p>Cadastro gratuito na plataforma</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="step-content" id="step1">
+                <div class="substep">
+                    <h4><i class="fas fa-user-plus"></i> Cadastro</h4>
+                    <ol>
+                        <li>Acesse <a href="https://www.emailjs.com" target="_blank">emailjs.com</a></li>
+                        <li>Clique em <strong>"Sign Up"</strong></li>
+                        <li>Preencha os dados:
+                            <ul>
+                                <li><strong>Email:</strong> cidborgesead2020@gmail.com</li>
+                                <li><strong>Password:</strong> (escolha uma senha segura)</li>
+                                <li><strong>First Name:</strong> Administrador</li>
+                                <li><strong>Last Name:</strong> Meu Bairro Alerta</li>
+                            </ul>
+                        </li>
+                        <li>Confirme o email clicando no link enviado</li>
+                    </ol>
+                </div>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Importante:</strong> Use o email cidborgesead2020@gmail.com para receber as notificações.
+                    </div>
+                </div>
+
+                <button class="btn" onclick="markStepComplete(1)">
+                    <i class="fas fa-check"></i> Conta Criada
+                </button>
+            </div>
+        </div>
+
+        <!-- Passo 2: Configurar Serviço -->
+        <div class="step-container">
+            <div class="step-header" onclick="toggleStep(2)">
+                <div class="step-number">2</div>
+                <div class="step-title">
+                    <h3>Configurar Serviço de Email</h3>
+                    <p>Conectar Gmail para envio</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="step-content" id="step2">
+                <div class="substep">
+                    <h4><i class="fas fa-cog"></i> Adicionar Serviço</h4>
+                    <ol>
+                        <li>No painel do EmailJS, vá em <strong>"Email Services"</strong></li>
+                        <li>Clique <strong>"Add New Service"</strong></li>
+                        <li>Escolha <strong>"Gmail"</strong></li>
+                        <li>Clique <strong>"Connect Account"</strong></li>
+                        <li>Faça login com cidborgesead2020@gmail.com</li>
+                        <li>Autorize o EmailJS</li>
+                        <li>Anote o <strong>Service ID</strong> (ex: service_xxxxxxx)</li>
+                    </ol>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>Aqui você verá a tela de serviços do EmailJS</p>
+                </div>
+
+                <div class="credentials-box">
+                    <h3><i class="fas fa-key"></i> Anote seu Service ID</h3>
+                    <div class="credential-item">
+                        Service ID: <span id="serviceIdDisplay">service_xxxxxxx</span>
+                        <button class="copy-btn" onclick="copyToClipboard('serviceIdDisplay')">Copiar</button>
+                    </div>
+                    <input type="text" id="serviceIdInput" placeholder="Cole aqui seu Service ID" 
+                           style="width: 100%; padding: 0.5rem; margin-top: 1rem; border-radius: 5px; border: 1px solid rgba(255,255,255,0.3);">
+                </div>
+
+                <button class="btn" onclick="markStepComplete(2)">
+                    <i class="fas fa-check"></i> Serviço Configurado
+                </button>
+            </div>
+        </div>
+
+        <!-- Passo 3: Criar Template -->
+        <div class="step-container">
+            <div class="step-header" onclick="toggleStep(3)">
+                <div class="step-number">3</div>
+                <div class="step-title">
+                    <h3>Criar Template de Email</h3>
+                    <p>Template para notificações de reclamações</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="step-content" id="step3">
+                <div class="substep">
+                    <h4><i class="fas fa-plus"></i> Novo Template</h4>
+                    <ol>
+                        <li>Vá em <strong>"Email Templates"</strong></li>
+                        <li>Clique <strong>"Create New Template"</strong></li>
+                        <li>Configure o template conforme abaixo</li>
+                    </ol>
+                </div>
+
+                <div class="substep">
+                    <h4><i class="fas fa-edit"></i> Configurações Básicas</h4>
+                    <div class="variable-list">
+                        <div class="variable-item">
+                            <span><strong>Template Name:</strong></span>
+                            <span>Nova Reclamação - Meu Bairro Alerta</span>
+                        </div>
+                        <div class="variable-item">
+                            <span><strong>Subject:</strong></span>
+                            <span class="variable-name">🚨 Nova Reclamação - {{reclamacao_titulo}}</span>
+                        </div>
+                        <div class="variable-item">
+                            <span><strong>From Name:</strong></span>
+                            <span>Meu Bairro Alerta</span>
+                        </div>
+                        <div class="variable-item">
+                            <span><strong>To Email:</strong></span>
+                            <span class="variable-name">{{to_email}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4><i class="fas fa-code"></i> Conteúdo do Email</h4>
+                    <p>Copie e cole o template abaixo no campo "Content":</p>
+                    
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyEmailTemplate()">Copiar Template</button>
+<pre id="emailTemplate">Olá Administrador,
+
+Uma nova reclamação foi registrada no sistema Meu Bairro Alerta:
+
+📋 DETALHES DA RECLAMAÇÃO:
+• Título: {{reclamacao_titulo}}
+• Categoria: {{reclamacao_categoria}}
+• Descrição: {{reclamacao_descricao}}
+• Localização: {{reclamacao_localizacao}}
+• Usuário: {{usuario_nome}}
+• Data: {{data_reclamacao}}
+
+🔗 AÇÕES:
+Acesse a área administrativa para gerenciar esta reclamação:
+{{admin_url}}
+
+⚡ PRÓXIMOS PASSOS:
+1. Analisar a reclamação em até 24 horas
+2. Atualizar status para "Em Andamento"
+3. Adicionar resposta oficial
+4. Marcar como "Resolvida" quando concluir
+
+---
+Meu Bairro Alerta
+Sistema de Gestão de Reclamações Urbanas
+{{site_url}}
+
+Este é um email automático. Não responda a esta mensagem.</pre>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4><i class="fas fa-list"></i> Variáveis do Template</h4>
+                    <div class="variable-list">
+                        <div class="variable-item">
+                            <span class="variable-name">{{to_email}}</span>
+                            <span class="variable-desc">Email do destinatário</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{reclamacao_titulo}}</span>
+                            <span class="variable-desc">Título da reclamação</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{reclamacao_categoria}}</span>
+                            <span class="variable-desc">Categoria da reclamação</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{reclamacao_descricao}}</span>
+                            <span class="variable-desc">Descrição completa</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{reclamacao_localizacao}}</span>
+                            <span class="variable-desc">Localização do problema</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{usuario_nome}}</span>
+                            <span class="variable-desc">Nome do usuário</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{data_reclamacao}}</span>
+                            <span class="variable-desc">Data e hora</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{admin_url}}</span>
+                            <span class="variable-desc">Link para área admin</span>
+                        </div>
+                        <div class="variable-item">
+                            <span class="variable-name">{{site_url}}</span>
+                            <span class="variable-desc">Link do site principal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Dica:</strong> Salve o template e anote o Template ID que será gerado.
+                    </div>
+                </div>
+
+                <div class="credentials-box">
+                    <h3><i class="fas fa-key"></i> Anote seu Template ID</h3>
+                    <div class="credential-item">
+                        Template ID: <span id="templateIdDisplay">template_xxxxxxx</span>
+                    </div>
+                    <input type="text" id="templateIdInput" placeholder="Cole aqui seu Template ID" 
+                           style="width: 100%; padding: 0.5rem; margin-top: 1rem; border-radius: 5px; border: 1px solid rgba(255,255,255,0.3);">
+                </div>
+
+                <button class="btn" onclick="markStepComplete(3)">
+                    <i class="fas fa-check"></i> Template Criado
+                </button>
+            </div>
+        </div>
+
+        <!-- Passo 4: Obter Public Key -->
+        <div class="step-container">
+            <div class="step-header" onclick="toggleStep(4)">
+                <div class="step-number">4</div>
+                <div class="step-title">
+                    <h3>Obter Public Key</h3>
+                    <p>Chave para integração com o site</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="step-content" id="step4">
+                <div class="substep">
+                    <h4><i class="fas fa-key"></i> Localizar Public Key</h4>
+                    <ol>
+                        <li>No painel do EmailJS, vá em <strong>"Account"</strong></li>
+                        <li>Clique em <strong>"General"</strong></li>
+                        <li>Encontre a seção <strong>"Public Key"</strong></li>
+                        <li>Copie a chave (ex: user_xxxxxxxxxxxxxxxx)</li>
+                    </ol>
+                </div>
+
+                <div class="credentials-box">
+                    <h3><i class="fas fa-key"></i> Anote sua Public Key</h3>
+                    <div class="credential-item">
+                        Public Key: <span id="publicKeyDisplay">user_xxxxxxxxxxxxxxxx</span>
+                    </div>
+                    <input type="text" id="publicKeyInput" placeholder="Cole aqui sua Public Key" 
+                           style="width: 100%; padding: 0.5rem; margin-top: 1rem; border-radius: 5px; border: 1px solid rgba(255,255,255,0.3);">
+                </div>
+
+                <button class="btn" onclick="markStepComplete(4)">
+                    <i class="fas fa-check"></i> Public Key Copiada
+                </button>
+            </div>
+        </div>
+
+        <!-- Passo 5: Configurar no Sistema -->
+        <div class="step-container">
+            <div class="step-header" onclick="toggleStep(5)">
+                <div class="step-number">5</div>
+                <div class="step-title">
+                    <h3>Configurar no Sistema</h3>
+                    <p>Inserir credenciais na área administrativa</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="step-content" id="step5">
+                <div class="substep">
+                    <h4><i class="fas fa-cog"></i> Área Administrativa</h4>
+                    <ol>
+                        <li>Acesse <a href="admin.html" target="_blank">admin.html</a></li>
+                        <li>Faça login com as credenciais de admin</li>
+                        <li>Clique em <strong>"Notificações"</strong> no menu</li>
+                        <li>Preencha os campos com suas credenciais:</li>
+                    </ol>
+                </div>
+
+                <div class="variable-list">
+                    <div class="variable-item">
+                        <span><strong>Service ID:</strong></span>
+                        <span id="finalServiceId">Aguardando...</span>
+                    </div>
+                    <div class="variable-item">
+                        <span><strong>Template ID:</strong></span>
+                        <span id="finalTemplateId">Aguardando...</span>
+                    </div>
+                    <div class="variable-item">
+                        <span><strong>Public Key:</strong></span>
+                        <span id="finalPublicKey">Aguardando...</span>
+                    </div>
+                    <div class="variable-item">
+                        <span><strong>Email Admin:</strong></span>
+                        <span>cidborgesead2020@gmail.com</span>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Quase pronto!</strong> Após inserir as credenciais, clique em "Salvar Configuração".
+                    </div>
+                </div>
+
+                <button class="btn" onclick="markStepComplete(5)">
+                    <i class="fas fa-check"></i> Configuração Salva
+                </button>
+            </div>
+        </div>
+
+        <!-- Passo 6: Testar -->
+        <div class="step-container">
+            <div class="step-header" onclick="toggleStep(6)">
+                <div class="step-number">6</div>
+                <div class="step-title">
+                    <h3>Testar o Sistema</h3>
+                    <p>Verificar se tudo está funcionando</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="step-content" id="step6">
+                <div class="test-section">
+                    <h3><i class="fas fa-paper-plane"></i> Teste de Envio</h3>
+                    <p>Na área administrativa, clique em "Enviar Teste" para verificar se o email chega.</p>
+                    <a href="admin.html" target="_blank" class="btn btn-success">
+                        <i class="fas fa-shield-alt"></i> Ir para Área Admin
+                    </a>
+                </div>
+
+                <div class="substep">
+                    <h4><i class="fas fa-list-check"></i> Verificações</h4>
+                    <ul>
+                        <li>✅ Email de teste recebido em cidborgesead2020@gmail.com</li>
+                        <li>✅ Notificações habilitadas no sistema</li>
+                        <li>✅ Criar uma reclamação de teste</li>
+                        <li>✅ Verificar se recebe notificação automática</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <strong>Parabéns!</strong> Seu sistema de notificações está configurado e funcionando!
+                    </div>
+                </div>
+
+                <button class="btn btn-success" onclick="markStepComplete(6)">
+                    <i class="fas fa-trophy"></i> Configuração Completa!
+                </button>
+            </div>
+        </div>
+
+        <!-- Resumo Final -->
+        <div id="finalSummary" style="display: none;">
+            <div class="success-box" style="padding: 2rem; text-align: center;">
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h2>🎉 Configuração Concluída!</h2>
+                <p>Agora você receberá notificações automáticas em <strong>cidborgesead2020@gmail.com</strong> sempre que uma nova reclamação for criada!</p>
+                
+                <div style="margin: 2rem 0;">
+                    <a href="admin.html" class="btn btn-success">
+                        <i class="fas fa-shield-alt"></i> Área Administrativa
+                    </a>
+                    <a href="index.html" class="btn">
+                        <i class="fas fa-home"></i> Site Principal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #f8f9fa; padding: 2rem; text-align: center; border-top: 1px solid #e9ecef; margin-top: 3rem;">
+        <p style="margin: 0; color: #666;">&copy; 2024 Meu Bairro Alerta. Todos os direitos reservados.</p>
+        <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">
+            <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+        </p>
+    </footer>
+
+    <script>
+        let completedSteps = 0;
+        const totalSteps = 6;
+
+        function toggleStep(stepNumber) {
+            const content = document.getElementById(`step${stepNumber}`);
+            const isActive = content.classList.contains('active');
+            
+            // Fechar todos os steps
+            document.querySelectorAll('.step-content').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Abrir o step clicado se não estava ativo
+            if (!isActive) {
+                content.classList.add('active');
+            }
+        }
+
+        function markStepComplete(stepNumber) {
+            const stepHeader = document.querySelector(`.step-container:nth-child(${stepNumber + 1}) .step-header`);
+            stepHeader.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+            
+            completedSteps++;
+            updateProgress();
+            
+            // Auto-abrir próximo step
+            if (stepNumber < totalSteps) {
+                setTimeout(() => {
+                    toggleStep(stepNumber + 1);
+                }, 500);
+            } else {
+                // Mostrar resumo final
+                setTimeout(() => {
+                    document.getElementById('finalSummary').style.display = 'block';
+                    document.getElementById('finalSummary').scrollIntoView({ behavior: 'smooth' });
+                }, 500);
+            }
+            
+            // Atualizar credenciais finais
+            updateFinalCredentials();
+        }
+
+        function updateProgress() {
+            const progress = (completedSteps / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Concluído';
+        }
+
+        function updateFinalCredentials() {
+            const serviceId = document.getElementById('serviceIdInput').value || 'Aguardando...';
+            const templateId = document.getElementById('templateIdInput').value || 'Aguardando...';
+            const publicKey = document.getElementById('publicKeyInput').value || 'Aguardando...';
+            
+            document.getElementById('finalServiceId').textContent = serviceId;
+            document.getElementById('finalTemplateId').textContent = templateId;
+            document.getElementById('finalPublicKey').textContent = publicKey;
+        }
+
+        function copyEmailTemplate() {
+            const template = document.getElementById('emailTemplate').textContent;
+            navigator.clipboard.writeText(template).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copiado!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#007bff';
+                }, 2000);
+            });
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text);
+        }
+
+        // Auto-atualizar credenciais quando digitadas
+        document.addEventListener('DOMContentLoaded', function() {
+            ['serviceIdInput', 'templateIdInput', 'publicKeyInput'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', updateFinalCredentials);
+                }
+            });
+            
+            // Abrir primeiro step automaticamente
+            toggleStep(1);
+        });
+    </script>
+</body>
+</html>

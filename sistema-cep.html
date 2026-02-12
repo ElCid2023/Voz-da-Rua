@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Localização por CEP - Meu Bairro Alerta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #28a745;
+        }
+        .idea-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: #155724;
+        }
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 4px solid #28a745;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .btn-info { background: #17a2b8; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-danger { background: #dc3545; }
+        .test-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px solid #28a745;
+        }
+        .resultado {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            display: none;
+        }
+        .cep-info {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-map-marked-alt"></i> Sistema de Localização por CEP</h1>
+            <p>Solução precisa usando CEP para localizar reclamações no mapa</p>
+        </div>
+
+        <!-- Ideia Genial -->
+        <div class="idea-box">
+            <h3><i class="fas fa-lightbulb"></i> Excelente Ideia!</h3>
+            <p><strong>Usar CEP é muito mais preciso!</strong> Em vez de depender de nomes de bairros que podem variar, o CEP fornece localização exata.</p>
+            <p><strong>Vantagens:</strong></p>
+            <ul>
+                <li>✅ <strong>Precisão:</strong> CEP localiza endereço exato</li>
+                <li>✅ <strong>Automático:</strong> API busca coordenadas automaticamente</li>
+                <li>✅ <strong>Padronizado:</strong> CEP é único e oficial</li>
+                <li>✅ <strong>Completo:</strong> Rua + Bairro + CEP = localização perfeita</li>
+            </ul>
+        </div>
+
+        <!-- Formulário de Teste -->
+        <div class="form-section">
+            <h3><i class="fas fa-search"></i> Teste de Localização por CEP</h3>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" id="cep" placeholder="08340-000" maxlength="9">
+                    <small>Formato: 00000-000</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="numero">Número:</label>
+                    <input type="text" id="numero" placeholder="123">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="rua">Rua/Logradouro:</label>
+                <input type="text" id="rua" placeholder="Será preenchido automaticamente" readonly>
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" id="bairro" placeholder="Será preenchido automaticamente" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" id="cidade" placeholder="Será preenchido automaticamente" readonly>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i> Buscando informações do CEP...
+            </div>
+            
+            <div style="text-align: center; margin: 2rem 0;">
+                <button class="btn" onclick="buscarCEP()">
+                    <i class="fas fa-search"></i> Buscar CEP
+                </button>
+                <button class="btn btn-info" onclick="localizarNoMapa()">
+                    <i class="fas fa-map-pin"></i> Localizar no Mapa
+                </button>
+                <button class="btn btn-warning" onclick="implementarSistema()">
+                    <i class="fas fa-cog"></i> Implementar Sistema
+                </button>
+            </div>
+        </div>
+
+        <!-- Informações do CEP -->
+        <div id="cepInfo" class="cep-info" style="display: none;">
+            <h4>📍 Informações do CEP</h4>
+            <div id="cepDetalhes"></div>
+        </div>
+
+        <!-- Mapa de Teste -->
+        <div class="form-section">
+            <h3><i class="fas fa-map"></i> Mapa de Teste</h3>
+            <div id="testMap" class="test-map"></div>
+        </div>
+
+        <!-- Resultado -->
+        <div id="resultado" class="resultado">
+            <h4><i class="fas fa-check-circle"></i> Resultado da Localização</h4>
+            <div id="resultadoTexto"></div>
+        </div>
+
+        <!-- CEPs de Exemplo -->
+        <div class="form-section">
+            <h3><i class="fas fa-list"></i> CEPs de Exemplo para Teste</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <button class="btn btn-info" onclick="testarCEP('08340-000')">
+                    São Mateus<br><small>08340-000</small>
+                </button>
+                <button class="btn btn-info" onclick="testarCEP('08330-000')">
+                    São Rafael<br><small>08330-000</small>
+                </button>
+                <button class="btn btn-info" onclick="testarCEP('01310-100')">
+                    Av. Paulista<br><small>01310-100</small>
+                </button>
+                <button class="btn btn-info" onclick="testarCEP('01001-000')">
+                    Centro SP<br><small>01001-000</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- Implementação -->
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+            <h4><i class="fas fa-code"></i> Como Implementar no Site</h4>
+            <ol>
+                <li><strong>Modificar formulário:</strong> Adicionar campos CEP, Rua, Número</li>
+                <li><strong>API de CEP:</strong> Usar ViaCEP para buscar endereço automaticamente</li>
+                <li><strong>Geocodificação:</strong> Converter endereço completo em coordenadas</li>
+                <li><strong>Salvar dados:</strong> Armazenar endereço completo + coordenadas</li>
+                <li><strong>Exibir no mapa:</strong> Usar coordenadas precisas</li>
+            </ol>
+        </div>
+
+        <!-- Links -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="index.html" target="_blank" class="btn btn-info">
+                <i class="fas fa-home"></i> Site Principal
+            </a>
+            <a href="forcar-coordenadas.html" class="btn btn-warning">
+                <i class="fas fa-tools"></i> Forçar Coordenadas
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
+            <p style="color: #666;">&copy; 2024 Meu Bairro Alerta</p>
+            <p style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        let testMap;
+        let currentMarker;
+        let enderecoCompleto = {};
+
+        // Inicializar mapa
+        document.addEventListener('DOMContentLoaded', function() {
+            criarMapaTeste();
+            setupCEPMask();
+        });
+
+        function criarMapaTeste() {
+            try {
+                testMap = L.map('testMap').setView([-23.5505, -46.6333], 11);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(testMap);
+                
+                console.log('Mapa de teste criado');
+            } catch (error) {
+                console.error('Erro ao criar mapa:', error);
+            }
+        }
+
+        function setupCEPMask() {
+            const cepInput = document.getElementById('cep');
+            cepInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 5) {
+                    value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                }
+                e.target.value = value;
+                
+                // Auto-buscar quando CEP estiver completo
+                if (value.length === 9) {
+                    setTimeout(buscarCEP, 500);
+                }
+            });
+        }
+
+        async function buscarCEP() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) {
+                alert('CEP deve ter 8 dígitos');
+                return;
+            }
+            
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                console.log('Buscando CEP:', cep);
+                
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+                
+                if (data.erro) {
+                    throw new Error('CEP não encontrado');
+                }
+                
+                // Preencher campos
+                document.getElementById('rua').value = data.logradouro;
+                document.getElementById('bairro').value = data.bairro;
+                document.getElementById('cidade').value = data.localidade;
+                
+                // Salvar dados
+                enderecoCompleto = {
+                    cep: cep,
+                    logradouro: data.logradouro,
+                    bairro: data.bairro,
+                    localidade: data.localidade,
+                    uf: data.uf
+                };
+                
+                // Mostrar informações
+                mostrarInfoCEP(data);
+                
+                console.log('CEP encontrado:', data);
+                
+            } catch (error) {
+                console.error('Erro ao buscar CEP:', error);
+                alert('Erro ao buscar CEP: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function mostrarInfoCEP(data) {
+            const cepInfo = document.getElementById('cepInfo');
+            const cepDetalhes = document.getElementById('cepDetalhes');
+            
+            cepDetalhes.innerHTML = `
+                <strong>CEP:</strong> ${data.cep}<br>
+                <strong>Logradouro:</strong> ${data.logradouro}<br>
+                <strong>Bairro:</strong> ${data.bairro}<br>
+                <strong>Cidade:</strong> ${data.localidade}<br>
+                <strong>UF:</strong> ${data.uf}<br>
+                <strong>DDD:</strong> ${data.ddd}
+            `;
+            
+            cepInfo.style.display = 'block';
+        }
+
+        async function localizarNoMapa() {
+            if (!enderecoCompleto.logradouro) {
+                alert('Busque um CEP primeiro');
+                return;
+            }
+            
+            const numero = document.getElementById('numero').value || '';
+            const enderecoCompleto_str = `${enderecoCompleto.logradouro} ${numero}, ${enderecoCompleto.bairro}, ${enderecoCompleto.localidade}, ${enderecoCompleto.uf}`;
+            
+            try {
+                console.log('Geocodificando endereço:', enderecoCompleto_str);
+                
+                // Usar Nominatim para geocodificação
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoCompleto_str)}&limit=1`);
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    throw new Error('Endereço não encontrado');
+                }
+                
+                const lat = parseFloat(data[0].lat);
+                const lon = parseFloat(data[0].lon);
+                
+                // Remover marcador anterior
+                if (currentMarker) {
+                    testMap.removeLayer(currentMarker);
+                }
+                
+                // Adicionar novo marcador
+                currentMarker = L.marker([lat, lon])
+                    .bindPopup(`
+                        <strong>📍 Localização Encontrada</strong><br>
+                        <strong>Endereço:</strong> ${enderecoCompleto_str}<br>
+                        <strong>Coordenadas:</strong> ${lat.toFixed(6)}, ${lon.toFixed(6)}
+                    `)
+                    .addTo(testMap);
+                
+                // Centralizar mapa
+                testMap.setView([lat, lon], 16);
+                currentMarker.openPopup();
+                
+                // Mostrar resultado
+                mostrarResultado(enderecoCompleto_str, lat, lon);
+                
+                console.log('Localização encontrada:', lat, lon);
+                
+            } catch (error) {
+                console.error('Erro na geocodificação:', error);
+                alert('Erro ao localizar endereço: ' + error.message);
+            }
+        }
+
+        function mostrarResultado(endereco, lat, lon) {
+            const resultado = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            
+            resultado.style.display = 'block';
+            resultadoTexto.innerHTML = `
+                <p><strong>✅ Localização encontrada com sucesso!</strong></p>
+                <p><strong>Endereço:</strong> ${endereco}</p>
+                <p><strong>Latitude:</strong> ${lat.toFixed(6)}</p>
+                <p><strong>Longitude:</strong> ${lon.toFixed(6)}</p>
+                <p><strong>Precisão:</strong> Endereço exato baseado em CEP</p>
+                
+                <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 1rem; margin: 1rem 0;">
+                    <strong>🎯 Vantagens desta abordagem:</strong><br>
+                    • Localização precisa ao nível de rua<br>
+                    • Funciona para qualquer CEP do Brasil<br>
+                    • Dados oficiais dos Correios<br>
+                    • Coordenadas exatas via geocodificação
+                </div>
+            `;
+            
+            resultado.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function testarCEP(cep) {
+            document.getElementById('cep').value = cep;
+            buscarCEP();
+        }
+
+        function implementarSistema() {
+            alert(`🚀 Para implementar este sistema no site:
+
+1. MODIFICAR FORMULÁRIO:
+   • Adicionar campo CEP
+   • Adicionar campo Número
+   • Manter campos Rua e Bairro (preenchimento automático)
+
+2. INTEGRAR API:
+   • ViaCEP para buscar endereço
+   • Nominatim para geocodificação
+
+3. SALVAR DADOS:
+   • Endereço completo
+   • Coordenadas precisas
+   • CEP para referência
+
+4. EXIBIR NO MAPA:
+   • Usar coordenadas exatas
+   • Popup com endereço completo
+
+Quer que eu implemente isso no formulário principal?`);
+        }
+    </script>
+</body>
+</html>

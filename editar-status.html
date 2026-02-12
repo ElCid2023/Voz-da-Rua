@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Status das Reclamações - Meu Bairro Alerta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .editor-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .editor-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #007bff;
+        }
+        .reclamacao-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+        .reclamacao-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .reclamacao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .reclamacao-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pendente {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status-em-andamento {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #99d6ff;
+        }
+        .status-resolvida {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .reclamacao-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+        .status-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-pendente {
+            background: #ffc107;
+            color: #333;
+        }
+        .btn-pendente:hover {
+            background: #e0a800;
+        }
+        .btn-andamento {
+            background: #007bff;
+            color: white;
+        }
+        .btn-andamento:hover {
+            background: #0056b3;
+        }
+        .btn-resolvida {
+            background: #28a745;
+            color: white;
+        }
+        .btn-resolvida:hover {
+            background: #1e7e34;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background: #138496;
+        }
+        .search-container {
+            margin: 2rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .filter-select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            background: white;
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            display: none;
+        }
+        .no-results {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="editor-header">
+            <h1><i class="fas fa-edit"></i> Editor de Status das Reclamações</h1>
+            <p>Altere o status das reclamações de forma rápida e fácil</p>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number" id="totalReclamacoes">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalPendentes">0</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalAndamento">0</div>
+                <div class="stat-label">Em Andamento</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalResolvidas">0</div>
+                <div class="stat-label">Resolvidas</div>
+            </div>
+        </div>
+
+        <!-- Busca e Filtros -->
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por título, localização ou usuário...">
+            <select id="statusFilter" class="filter-select">
+                <option value="">Todos os Status</option>
+                <option value="pendente">Pendentes</option>
+                <option value="em-andamento">Em Andamento</option>
+                <option value="resolvida">Resolvidas</option>
+            </select>
+            <button class="btn btn-info" onclick="atualizarLista()">
+                <i class="fas fa-sync"></i> Atualizar
+            </button>
+        </div>
+
+        <!-- Mensagem de Sucesso -->
+        <div id="successMessage" class="success-message">
+            <i class="fas fa-check-circle"></i> Status alterado com sucesso!
+        </div>
+
+        <!-- Lista de Reclamações -->
+        <div id="reclamacoesList">
+            <div class="no-results">Carregando reclamações...</div>
+        </div>
+
+        <!-- Links -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="index.html" class="btn btn-info">
+                <i class="fas fa-home"></i> Site Principal
+            </a>
+            <a href="admin.html" class="btn btn-info">
+                <i class="fas fa-shield-alt"></i> Área Admin
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
+            <p style="color: #666;">&copy; 2024 Meu Bairro Alerta</p>
+            <p style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        let reclamacoes = [];
+        let filteredReclamacoes = [];
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarReclamacoes();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filtrarReclamacoes);
+            document.getElementById('statusFilter').addEventListener('change', filtrarReclamacoes);
+        }
+
+        function carregarReclamacoes() {
+            try {
+                reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+                console.log('Reclamações carregadas:', reclamacoes.length);
+                atualizarEstatisticas();
+                filtrarReclamacoes();
+            } catch (error) {
+                console.error('Erro ao carregar reclamações:', error);
+                document.getElementById('reclamacoesList').innerHTML = 
+                    '<div class="no-results">Erro ao carregar reclamações</div>';
+            }
+        }
+
+        function atualizarEstatisticas() {
+            const total = reclamacoes.length;
+            const pendentes = reclamacoes.filter(r => r.status === 'pendente').length;
+            const andamento = reclamacoes.filter(r => r.status === 'em-andamento').length;
+            const resolvidas = reclamacoes.filter(r => r.status === 'resolvida').length;
+
+            document.getElementById('totalReclamacoes').textContent = total;
+            document.getElementById('totalPendentes').textContent = pendentes;
+            document.getElementById('totalAndamento').textContent = andamento;
+            document.getElementById('totalResolvidas').textContent = resolvidas;
+        }
+
+        function filtrarReclamacoes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredReclamacoes = reclamacoes.filter(reclamacao => {
+                const matchesSearch = !searchTerm || 
+                    reclamacao.titulo.toLowerCase().includes(searchTerm) ||
+                    reclamacao.localizacao.toLowerCase().includes(searchTerm) ||
+                    reclamacao.usuario.toLowerCase().includes(searchTerm) ||
+                    reclamacao.categoria.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = !statusFilter || reclamacao.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderizarReclamacoes();
+        }
+
+        function renderizarReclamacoes() {
+            const container = document.getElementById('reclamacoesList');
+
+            if (filteredReclamacoes.length === 0) {
+                container.innerHTML = '<div class="no-results">Nenhuma reclamação encontrada</div>';
+                return;
+            }
+
+            const html = filteredReclamacoes.map(reclamacao => `
+                <div class="reclamacao-card">
+                    <div class="reclamacao-header">
+                        <div class="reclamacao-title">${reclamacao.titulo}</div>
+                        <div class="status-badge status-${reclamacao.status}">
+                            ${getStatusLabel(reclamacao.status)}
+                        </div>
+                    </div>
+                    
+                    <div class="reclamacao-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${reclamacao.localizacao}
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-user"></i>
+                            ${reclamacao.usuario}
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-tag"></i>
+                            ${getCategoriaLabel(reclamacao.categoria)}
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar"></i>
+                            ${formatDate(reclamacao.dataReclamacao)}
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 1rem 0; color: #666; font-size: 0.9rem;">
+                        ${reclamacao.descricao.substring(0, 150)}${reclamacao.descricao.length > 150 ? '...' : ''}
+                    </div>
+                    
+                    <div class="status-controls">
+                        <button class="btn btn-pendente" onclick="alterarStatus('${reclamacao.id}', 'pendente')">
+                            <i class="fas fa-clock"></i> Pendente
+                        </button>
+                        <button class="btn btn-andamento" onclick="alterarStatus('${reclamacao.id}', 'em-andamento')">
+                            <i class="fas fa-cog"></i> Em Andamento
+                        </button>
+                        <button class="btn btn-resolvida" onclick="alterarStatus('${reclamacao.id}', 'resolvida')">
+                            <i class="fas fa-check"></i> Resolvida
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function alterarStatus(reclamacaoId, novoStatus) {
+            try {
+                // Encontrar e atualizar a reclamação
+                const index = reclamacoes.findIndex(r => r.id === reclamacaoId);
+                if (index === -1) {
+                    alert('Reclamação não encontrada!');
+                    return;
+                }
+
+                const statusAnterior = reclamacoes[index].status;
+                reclamacoes[index].status = novoStatus;
+                reclamacoes[index].dataAtualizacao = new Date().toISOString();
+
+                // Salvar no localStorage
+                localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+
+                // Mostrar mensagem de sucesso
+                mostrarMensagemSucesso(`Status alterado de "${getStatusLabel(statusAnterior)}" para "${getStatusLabel(novoStatus)}"`);
+
+                // Atualizar interface
+                atualizarEstatisticas();
+                filtrarReclamacoes();
+
+                console.log(`Status da reclamação ${reclamacaoId} alterado para ${novoStatus}`);
+
+            } catch (error) {
+                console.error('Erro ao alterar status:', error);
+                alert('Erro ao alterar status da reclamação');
+            }
+        }
+
+        function mostrarMensagemSucesso(mensagem) {
+            const messageDiv = document.getElementById('successMessage');
+            messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${mensagem}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'pendente': 'Pendente',
+                'em-andamento': 'Em Andamento',
+                'resolvida': 'Resolvida'
+            };
+            return labels[status] || status;
+        }
+
+        function getCategoriaLabel(categoria) {
+            const labels = {
+                'iluminacao': 'Iluminação Pública',
+                'asfalto': 'Asfalto/Pavimentação',
+                'limpeza': 'Limpeza Urbana',
+                'seguranca': 'Segurança',
+                'transporte': 'Transporte Público',
+                'agua': 'Água/Esgoto',
+                'outros': 'Outros'
+            };
+            return labels[categoria] || categoria;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        }
+
+        function atualizarLista() {
+            carregarReclamacoes();
+        }
+    </script>
+</body>
+</html>

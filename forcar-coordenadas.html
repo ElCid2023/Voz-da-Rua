@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forçar Coordenadas Corretas - Meu Bairro Alerta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #dc3545;
+        }
+        .problema-alert {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: #721c24;
+        }
+        .solucao-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: #155724;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        .btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-info { background: #17a2b8; }
+        .btn-large {
+            padding: 1.5rem 3rem;
+            font-size: 1.3rem;
+        }
+        .coordenadas-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .step-box {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        .resultado {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-exclamation-triangle"></i> Forçar Coordenadas Corretas</h1>
+            <p>Solução definitiva para corrigir as coordenadas no mapa</p>
+        </div>
+
+        <!-- Problema -->
+        <div class="problema-alert">
+            <h3><i class="fas fa-bug"></i> Problema Identificado</h3>
+            <p><strong>Situação:</strong> As reclamações continuam aparecendo no centro de São Paulo mesmo após as correções.</p>
+            <p><strong>Causa:</strong> As coordenadas não estão sendo aplicadas corretamente ou há cache impedindo a atualização.</p>
+        </div>
+
+        <!-- Coordenadas Corretas -->
+        <div class="coordenadas-display">
+            <h3>📍 COORDENADAS CORRETAS</h3>
+            <div style="font-size: 1.2rem; margin: 1rem 0;">
+                <strong>Latitude:</strong> -23.5751<br>
+                <strong>Longitude:</strong> -46.4537
+            </div>
+            <small>Estas coordenadas serão aplicadas para São Mateus e São Rafael</small>
+        </div>
+
+        <!-- Solução Principal -->
+        <div class="solucao-box">
+            <h3><i class="fas fa-magic"></i> Solução Definitiva</h3>
+            <p>Esta ferramenta vai forçar a aplicação das coordenadas corretas diretamente no seu navegador.</p>
+            
+            <div style="text-align: center; margin: 2rem 0;">
+                <button class="btn btn-success btn-large" onclick="aplicarCoordenadasForcado()">
+                    <i class="fas fa-rocket"></i> APLICAR COORDENADAS AGORA
+                </button>
+            </div>
+        </div>
+
+        <!-- Passos Detalhados -->
+        <div class="step-box">
+            <h3><i class="fas fa-list-ol"></i> Passos que Serão Executados</h3>
+            
+            <div style="display: flex; align-items: center; margin: 1rem 0;">
+                <span class="step-number">1</span>
+                <span>Limpar coordenadas antigas do cache</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; margin: 1rem 0;">
+                <span class="step-number">2</span>
+                <span>Aplicar coordenadas corretas (-23.5751, -46.4537)</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; margin: 1rem 0;">
+                <span class="step-number">3</span>
+                <span>Atualizar todas as reclamações existentes</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; margin: 1rem 0;">
+                <span class="step-number">4</span>
+                <span>Forçar recarregamento do sistema de mapa</span>
+            </div>
+        </div>
+
+        <!-- Resultado -->
+        <div id="resultado" class="resultado">
+            <h4><i class="fas fa-check-circle"></i> Coordenadas Aplicadas com Sucesso!</h4>
+            <div id="resultadoTexto"></div>
+        </div>
+
+        <!-- Verificação -->
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+            <h4><i class="fas fa-search"></i> Como Verificar se Funcionou</h4>
+            <ol>
+                <li><strong>Vá para o site principal</strong> (index.html ou site online)</li>
+                <li><strong>Pressione Ctrl+F5</strong> para recarregar completamente</li>
+                <li><strong>Vá para a seção "Mapa"</strong></li>
+                <li><strong>Verifique</strong> se as reclamações aparecem na localização correta</li>
+                <li><strong>Se não funcionar,</strong> crie uma nova reclamação de teste</li>
+            </ol>
+        </div>
+
+        <!-- Ações Adicionais -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <button class="btn btn-info" onclick="criarReclamacaoTeste()">
+                <i class="fas fa-plus"></i> Criar Reclamação Teste
+            </button>
+            <button class="btn btn-warning" onclick="limparCacheCompleto()">
+                <i class="fas fa-trash"></i> Limpar Cache Completo
+            </button>
+        </div>
+
+        <!-- Links -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="index.html" target="_blank" class="btn btn-info">
+                <i class="fas fa-home"></i> Site Principal
+            </a>
+            <a href="https://meubairroalerta.netlify.app" target="_blank" class="btn">
+                <i class="fas fa-globe"></i> Site Online
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
+            <p style="color: #666;">&copy; 2024 Meu Bairro Alerta</p>
+            <p style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const coordenadasCorretas = [-23.5751, -46.4537];
+
+        function aplicarCoordenadasForcado() {
+            console.log('🚀 Iniciando aplicação forçada das coordenadas...');
+            
+            try {
+                // 1. Limpar coordenadas antigas
+                localStorage.removeItem('coordenadasCustomizadas');
+                console.log('✅ Cache de coordenadas limpo');
+                
+                // 2. Aplicar coordenadas corretas
+                const novasCoordenadas = {
+                    'são mateus': coordenadasCorretas,
+                    'sao mateus': coordenadasCorretas,
+                    'são rafael': coordenadasCorretas,
+                    'sao rafael': coordenadasCorretas,
+                    'centro': [-23.5505, -46.6333] // Manter centro como referência
+                };
+                
+                localStorage.setItem('coordenadasCustomizadas', JSON.stringify(novasCoordenadas));
+                console.log('✅ Novas coordenadas aplicadas:', novasCoordenadas);
+                
+                // 3. Atualizar reclamações existentes
+                let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+                let reclamacoesAtualizadas = 0;
+                
+                reclamacoes.forEach(reclamacao => {
+                    const loc = reclamacao.localizacao.toLowerCase();
+                    if (loc.includes('são mateus') || loc.includes('sao mateus') || 
+                        loc.includes('são rafael') || loc.includes('sao rafael')) {
+                        reclamacao.coordenadas = coordenadasCorretas;
+                        reclamacao.coordenadasAtualizadas = new Date().toISOString();
+                        reclamacoesAtualizadas++;
+                    }
+                });
+                
+                if (reclamacoesAtualizadas > 0) {
+                    localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+                    console.log(`✅ ${reclamacoesAtualizadas} reclamações atualizadas`);
+                }
+                
+                // 4. Forçar timestamp de atualização
+                localStorage.setItem('coordenadasAtualizadas', Date.now().toString());
+                localStorage.setItem('forceMapReload', 'true');
+                
+                // 5. Mostrar resultado
+                mostrarResultado(reclamacoesAtualizadas);
+                
+                console.log('🎉 Aplicação forçada concluída com sucesso!');
+                
+            } catch (error) {
+                console.error('❌ Erro na aplicação forçada:', error);
+                alert('❌ Erro ao aplicar coordenadas: ' + error.message);
+            }
+        }
+
+        function mostrarResultado(reclamacoesAtualizadas) {
+            const resultado = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            
+            resultado.style.display = 'block';
+            resultadoTexto.innerHTML = `
+                <p><strong>✅ Coordenadas aplicadas com sucesso!</strong></p>
+                <p><strong>📍 Coordenadas:</strong> ${coordenadasCorretas[0]}, ${coordenadasCorretas[1]}</p>
+                <p><strong>🎯 Aplicado para:</strong> São Mateus e São Rafael</p>
+                <p><strong>📊 Reclamações atualizadas:</strong> ${reclamacoesAtualizadas}</p>
+                <p><strong>⏰ Timestamp:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 1rem; margin: 1rem 0;">
+                    <strong>🎯 Próximos Passos:</strong><br>
+                    1. Vá para o site principal<br>
+                    2. Pressione <strong>Ctrl+F5</strong> (força recarregamento)<br>
+                    3. Vá para a seção "Mapa"<br>
+                    4. Verifique se as reclamações aparecem na localização correta
+                </div>
+            `;
+            
+            // Scroll para o resultado
+            resultado.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function criarReclamacaoTeste() {
+            console.log('➕ Criando reclamação de teste...');
+            
+            try {
+                const reclamacao = {
+                    id: Date.now().toString(),
+                    titulo: 'TESTE COORDENADAS FORÇADAS - ' + new Date().toLocaleTimeString('pt-BR'),
+                    categoria: 'outros',
+                    descricao: 'Reclamação de teste para verificar se as coordenadas forçadas estão funcionando corretamente.',
+                    localizacao: 'São Mateus',
+                    status: 'pendente',
+                    usuario: 'Usuário Teste',
+                    usuarioId: 'teste',
+                    dataReclamacao: new Date().toISOString(),
+                    midia: [],
+                    coordenadas: coordenadasCorretas,
+                    coordenadasForcadas: true
+                };
+                
+                let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+                reclamacoes.push(reclamacao);
+                localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+                
+                alert(`✅ Reclamação de teste criada!
+
+📝 Título: ${reclamacao.titulo}
+📍 Localização: São Mateus
+🗺️ Coordenadas: ${coordenadasCorretas[0]}, ${coordenadasCorretas[1]}
+
+Agora vá para o site principal e verifique se aparece na localização correta!`);
+                
+                console.log('✅ Reclamação de teste criada:', reclamacao);
+                
+            } catch (error) {
+                console.error('❌ Erro ao criar reclamação:', error);
+                alert('❌ Erro ao criar reclamação de teste');
+            }
+        }
+
+        function limparCacheCompleto() {
+            if (confirm('⚠️ Isso irá limpar TODOS os dados do cache. Tem certeza?\n\n(Suas reclamações serão mantidas, apenas o cache será limpo)')) {
+                
+                // Salvar dados importantes
+                const reclamacoes = localStorage.getItem('reclamacoes');
+                const usuarios = localStorage.getItem('usuarios');
+                const currentUser = localStorage.getItem('currentUser');
+                
+                // Limpar tudo
+                localStorage.clear();
+                
+                // Restaurar dados importantes
+                if (reclamacoes) localStorage.setItem('reclamacoes', reclamacoes);
+                if (usuarios) localStorage.setItem('usuarios', usuarios);
+                if (currentUser) localStorage.setItem('currentUser', currentUser);
+                
+                // Aplicar coordenadas novamente
+                aplicarCoordenadasForcado();
+                
+                alert('✅ Cache limpo e coordenadas reaplicadas!\n\nRecarregue o site principal (Ctrl+F5)');
+            }
+        }
+
+        // Auto-executar se parâmetro estiver presente
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auto') === 'true') {
+                setTimeout(aplicarCoordenadasForcado, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Reclamação com CEP - Meu Bairro Alerta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .cep-loading {
+            text-align: center;
+            color: #007bff;
+            font-style: italic;
+            margin: 1rem 0;
+        }
+        .form-group input[readonly] {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        .endereco-preview {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        .coordenadas-display {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #155724;
+        }
+        .test-map {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Meu Bairro Alerta</span>
+            </div>
+            <nav class="nav">
+                <a href="index.html"><i class="fas fa-home"></i> Início</a>
+                <a href="#" class="active"><i class="fas fa-plus"></i> Nova Reclamação CEP</a>
+            </nav>
+        </header>
+
+        <main class="main">
+            <section class="hero" style="padding: 2rem 0;">
+                <div class="hero-content">
+                    <h1><i class="fas fa-map-pin"></i> Nova Reclamação com Sistema CEP</h1>
+                    <p>Sistema avançado de localização por CEP - Precisão máxima!</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="form-container">
+                        <h2><i class="fas fa-plus-circle"></i> Criar Nova Reclamação</h2>
+                        
+                        <form id="reclamacaoForm">
+                            <div class="form-group">
+                                <label for="titulo">Título da Reclamação:</label>
+                                <input type="text" id="titulo" placeholder="Ex: Buraco na rua" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoria">Categoria:</label>
+                                <select id="categoria" required>
+                                    <option value="">Selecione uma categoria</option>
+                                    <option value="iluminacao">Iluminação Pública</option>
+                                    <option value="asfalto">Asfalto/Pavimentação</option>
+                                    <option value="limpeza">Limpeza Urbana</option>
+                                    <option value="seguranca">Segurança</option>
+                                    <option value="transporte">Transporte Público</option>
+                                    <option value="agua">Água/Esgoto</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="descricao">Descrição:</label>
+                                <textarea id="descricao" rows="4" placeholder="Descreva o problema em detalhes" required></textarea>
+                            </div>
+
+                            <!-- SISTEMA CEP -->
+                            <h3 style="color: #007bff; margin: 2rem 0 1rem 0;">
+                                <i class="fas fa-map-marker-alt"></i> Localização por CEP
+                            </h3>
+                            
+                            <div class="form-group">
+                                <label for="cep">CEP:</label>
+                                <input type="text" id="cep" placeholder="00000-000" maxlength="9" required>
+                                <div class="file-info">Digite o CEP para preenchimento automático</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 3;">
+                                    <label for="rua">Rua/Logradouro:</label>
+                                    <input type="text" id="rua" placeholder="Será preenchido automaticamente" readonly>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="numero">Número:</label>
+                                    <input type="text" id="numero" placeholder="123" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="bairro">Bairro:</label>
+                                    <input type="text" id="bairro" placeholder="Será preenchido automaticamente" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cidade">Cidade:</label>
+                                    <input type="text" id="cidade" placeholder="Será preenchido automaticamente" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="cep-loading" id="cepLoading" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Buscando informações do CEP...
+                            </div>
+
+                            <!-- Preview do Endereço -->
+                            <div id="enderecoPreview" class="endereco-preview" style="display: none;">
+                                <h4><i class="fas fa-home"></i> Endereço Completo</h4>
+                                <div id="enderecoTexto"></div>
+                            </div>
+
+                            <!-- Coordenadas -->
+                            <div id="coordenadasDisplay" class="coordenadas-display" style="display: none;">
+                                <h4><i class="fas fa-crosshairs"></i> Coordenadas GPS</h4>
+                                <div id="coordenadasTexto"></div>
+                            </div>
+
+                            <!-- Mapa de Preview -->
+                            <div id="mapContainer" style="display: none;">
+                                <h4><i class="fas fa-map"></i> Localização no Mapa</h4>
+                                <div id="previewMap" class="test-map"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="midia">Anexar Fotos/Vídeos (opcional):</label>
+                                <input type="file" id="midia" multiple accept="image/*,video/*">
+                                <div class="file-info">Máximo 5 arquivos, 10MB cada</div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Enviar Reclamação
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="limparFormulario()">
+                                    <i class="fas fa-eraser"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CEPs de Exemplo -->
+            <section class="section" style="background: #f8f9fa;">
+                <div class="container">
+                    <h3><i class="fas fa-list"></i> CEPs para Teste</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        <button class="btn btn-outline" onclick="testarCEP('08340-000')">
+                            São Mateus<br><small>08340-000</small>
+                        </button>
+                        <button class="btn btn-outline" onclick="testarCEP('08330-000')">
+                            São Rafael<br><small>08330-000</small>
+                        </button>
+                        <button class="btn btn-outline" onclick="testarCEP('01310-100')">
+                            Av. Paulista<br><small>01310-100</small>
+                        </button>
+                        <button class="btn btn-outline" onclick="testarCEP('01001-000')">
+                            Centro SP<br><small>01001-000</small>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Meu Bairro Alerta. Todos os direitos reservados.</p>
+                <p>Criado por <strong>ProfBorges</strong></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        let previewMap;
+        let currentMarker;
+        let dadosCEP = {};
+        let coordenadasEncontradas = null;
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCEPListener();
+            setupFormListener();
+        });
+
+        // Configurar listener do CEP
+        function setupCEPListener() {
+            const cepInput = document.getElementById('cep');
+            if (cepInput) {
+                cepInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 5) {
+                        value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                    }
+                    e.target.value = value;
+                    
+                    // Auto-buscar quando CEP estiver completo
+                    if (value.length === 9) {
+                        setTimeout(() => buscarCEP(value), 500);
+                    }
+                });
+            }
+        }
+
+        // Buscar informações do CEP
+        async function buscarCEP(cep) {
+            const cepNumeros = cep.replace(/\D/g, '');
+            
+            if (cepNumeros.length !== 8) return;
+            
+            const loading = document.getElementById('cepLoading');
+            if (loading) loading.style.display = 'block';
+            
+            try {
+                console.log('🔍 Buscando CEP:', cepNumeros);
+                
+                const response = await fetch(`https://viacep.com.br/ws/${cepNumeros}/json/`);
+                const data = await response.json();
+                
+                if (data.erro) {
+                    throw new Error('CEP não encontrado');
+                }
+                
+                // Preencher campos
+                document.getElementById('rua').value = data.logradouro || '';
+                document.getElementById('bairro').value = data.bairro || '';
+                document.getElementById('cidade').value = data.localidade || '';
+                
+                // Salvar dados
+                dadosCEP = {
+                    cep: cepNumeros,
+                    logradouro: data.logradouro,
+                    bairro: data.bairro,
+                    localidade: data.localidade,
+                    uf: data.uf
+                };
+                
+                // Mostrar preview do endereço
+                mostrarPreviewEndereco();
+                
+                // Tentar geocodificar
+                await geocodificarEndereco();
+                
+                console.log('✅ CEP encontrado:', data);
+                
+            } catch (error) {
+                console.error('❌ Erro ao buscar CEP:', error);
+                alert('Erro ao buscar CEP: ' + error.message);
+            } finally {
+                if (loading) loading.style.display = 'none';
+            }
+        }
+
+        // Mostrar preview do endereço
+        function mostrarPreviewEndereco() {
+            const numero = document.getElementById('numero').value || '[NÚMERO]';
+            const enderecoCompleto = `${dadosCEP.logradouro}, ${numero} - ${dadosCEP.bairro}, ${dadosCEP.localidade} - ${dadosCEP.uf}`;
+            
+            const preview = document.getElementById('enderecoPreview');
+            const texto = document.getElementById('enderecoTexto');
+            
+            texto.innerHTML = `<strong>${enderecoCompleto}</strong>`;
+            preview.style.display = 'block';
+        }
+
+        // Geocodificar endereço
+        async function geocodificarEndereco() {
+            if (!dadosCEP.logradouro) return;
+            
+            const numero = document.getElementById('numero').value || '1';
+            const endereco = `${dadosCEP.logradouro} ${numero}, ${dadosCEP.bairro}, ${dadosCEP.localidade}, ${dadosCEP.uf}`;
+            
+            try {
+                console.log('🗺️ Geocodificando:', endereco);
+                
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}&limit=1`);
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    throw new Error('Endereço não encontrado');
+                }
+                
+                const lat = parseFloat(data[0].lat);
+                const lon = parseFloat(data[0].lon);
+                coordenadasEncontradas = [lat, lon];
+                
+                // Mostrar coordenadas
+                const coordDisplay = document.getElementById('coordenadasDisplay');
+                const coordTexto = document.getElementById('coordenadasTexto');
+                
+                coordTexto.innerHTML = `
+                    <strong>Latitude:</strong> ${lat.toFixed(6)}<br>
+                    <strong>Longitude:</strong> ${lon.toFixed(6)}
+                `;
+                coordDisplay.style.display = 'block';
+                
+                // Mostrar no mapa
+                mostrarNoMapa(lat, lon, endereco);
+                
+                console.log('✅ Coordenadas encontradas:', [lat, lon]);
+                
+            } catch (error) {
+                console.error('❌ Erro na geocodificação:', error);
+            }
+        }
+
+        // Mostrar no mapa
+        function mostrarNoMapa(lat, lon, endereco) {
+            const mapContainer = document.getElementById('mapContainer');
+            mapContainer.style.display = 'block';
+            
+            if (!previewMap) {
+                previewMap = L.map('previewMap').setView([lat, lon], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(previewMap);
+            } else {
+                previewMap.setView([lat, lon], 16);
+            }
+            
+            // Remover marcador anterior
+            if (currentMarker) {
+                previewMap.removeLayer(currentMarker);
+            }
+            
+            // Adicionar novo marcador
+            currentMarker = L.marker([lat, lon])
+                .bindPopup(`<strong>📍 Localização</strong><br>${endereco}`)
+                .addTo(previewMap);
+            
+            currentMarker.openPopup();
+        }
+
+        // Configurar listener do formulário
+        function setupFormListener() {
+            const form = document.getElementById('reclamacaoForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    criarReclamacao();
+                });
+            }
+            
+            // Listener do número para atualizar preview
+            const numeroInput = document.getElementById('numero');
+            if (numeroInput) {
+                numeroInput.addEventListener('input', function() {
+                    if (dadosCEP.logradouro) {
+                        mostrarPreviewEndereco();
+                        geocodificarEndereco();
+                    }
+                });
+            }
+        }
+
+        // Criar reclamação
+        function criarReclamacao() {
+            // Validar campos
+            if (!validarFormulario()) return;
+            
+            // Construir dados da reclamação
+            const cep = document.getElementById('cep').value.trim();
+            const rua = document.getElementById('rua').value.trim();
+            const numero = document.getElementById('numero').value.trim();
+            const bairro = document.getElementById('bairro').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            
+            const enderecoCompleto = `${rua}, ${numero} - ${bairro}, ${cidade}`;
+            
+            const reclamacao = {
+                id: Date.now().toString(),
+                titulo: document.getElementById('titulo').value.trim(),
+                categoria: document.getElementById('categoria').value,
+                descricao: document.getElementById('descricao').value.trim(),
+                localizacao: enderecoCompleto,
+                cep: cep,
+                rua: rua,
+                numero: numero,
+                bairro: bairro,
+                cidade: cidade,
+                coordenadas: coordenadasEncontradas,
+                status: 'pendente',
+                usuario: 'Usuário Teste',
+                usuarioId: 'teste',
+                dataReclamacao: new Date().toISOString(),
+                midia: []
+            };
+            
+            // Salvar no localStorage
+            let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            reclamacoes.push(reclamacao);
+            localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+            
+            alert(`✅ Reclamação criada com sucesso!
+
+📝 Título: ${reclamacao.titulo}
+📍 Endereço: ${enderecoCompleto}
+🗺️ Coordenadas: ${coordenadasEncontradas ? coordenadasEncontradas.join(', ') : 'Não encontradas'}
+
+A reclamação foi salva e deve aparecer no mapa principal na localização correta!`);
+            
+            // Limpar formulário
+            limparFormulario();
+        }
+
+        // Validar formulário
+        function validarFormulario() {
+            const campos = ['titulo', 'categoria', 'descricao', 'cep', 'numero'];
+            
+            for (const campo of campos) {
+                const elemento = document.getElementById(campo);
+                if (!elemento.value.trim()) {
+                    alert(`Campo "${elemento.previousElementSibling.textContent}" é obrigatório!`);
+                    elemento.focus();
+                    return false;
+                }
+            }
+            
+            if (!dadosCEP.logradouro) {
+                alert('Aguarde o carregamento dos dados do CEP!');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Testar CEP
+        function testarCEP(cep) {
+            document.getElementById('cep').value = cep;
+            buscarCEP(cep);
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('reclamacaoForm').reset();
+            document.getElementById('enderecoPreview').style.display = 'none';
+            document.getElementById('coordenadasDisplay').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'none';
+            dadosCEP = {};
+            coordenadasEncontradas = null;
+            
+            if (currentMarker && previewMap) {
+                previewMap.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+        }
+    </script>
+</body>
+</html>

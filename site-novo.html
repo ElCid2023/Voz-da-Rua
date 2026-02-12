@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Meu Bairro Alerta - Versão Nova</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <h1>Meu Bairro Alerta</h1>
+                <span class="version">Nova Versão</span>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#" onclick="showSection('home')" class="nav-link active">Início</a></li>
+                    <li><a href="#" onclick="showSection('reclamacoes')" class="nav-link">Reclamações</a></li>
+                    <li><a href="#" onclick="showSection('nova-reclamacao')" class="nav-link">Nova Reclamação</a></li>
+                    <li><a href="#" onclick="showSection('mapa')" class="nav-link">Mapa</a></li>
+                </ul>
+            </nav>
+            <div class="auth-section" id="auth-section">
+                <a href="#" onclick="showSection('login')" class="btn btn-outline">Login</a>
+                <a href="#" onclick="showSection('cadastro')" class="btn btn-primary">Cadastro</a>
+            </div>
+            <div class="user-section" id="user-section" style="display: none;">
+                <span id="user-name"></span>
+                <button onclick="handleLogout()" class="btn btn-outline">Sair</button>
+            </div>
+        </header>
+
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h2>Bem-vindo ao Meu Bairro Alerta</h2>
+                <p>Reporte problemas em seu bairro e ajude a melhorar sua comunidade</p>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="total-reclamacoes">0</h3>
+                        <p>Total de Reclamações</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="pendentes">0</h3>
+                        <p>Pendentes</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="resolvidas">0</h3>
+                        <p>Resolvidas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nova Reclamação Section -->
+        <section id="nova-reclamacao" class="section">
+            <div class="container">
+                <h2><i class="fas fa-plus-circle"></i> Nova Reclamação</h2>
+                
+                <div id="authRequired" class="auth-required">
+                    <div class="auth-message">
+                        <i class="fas fa-lock"></i>
+                        <h3>Login Necessário</h3>
+                        <p>Você precisa estar logado para fazer uma reclamação.</p>
+                        <button onclick="showSection('login')" class="btn btn-primary">Fazer Login</button>
+                    </div>
+                </div>
+
+                <div id="reclamacaoForm" class="reclamacao-form hidden">
+                    <form id="nova-reclamacao-form">
+                        <div class="form-group">
+                            <label for="titulo">Título da Reclamação:</label>
+                            <input type="text" id="titulo" placeholder="Ex: Buraco na rua" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoria:</label>
+                            <select id="categoria" required>
+                                <option value="">Selecione uma categoria</option>
+                                <option value="iluminacao">Iluminação Pública</option>
+                                <option value="asfalto">Asfalto/Pavimentação</option>
+                                <option value="limpeza">Limpeza Urbana</option>
+                                <option value="seguranca">Segurança</option>
+                                <option value="transporte">Transporte Público</option>
+                                <option value="agua">Água/Esgoto</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição:</label>
+                            <textarea id="descricao" rows="4" placeholder="Descreva o problema detalhadamente" required></textarea>
+                        </div>
+                        
+                        <!-- SISTEMA DE CEP - VERSÃO NOVA -->
+                        <div class="form-group">
+                            <label for="cep">CEP:</label>
+                            <input type="text" id="cep" placeholder="08330-310" maxlength="9" required>
+                            <div class="field-help">Digite o CEP para preenchimento automático</div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 3;">
+                                <label for="rua">Rua/Logradouro:</label>
+                                <input type="text" id="rua" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="numero">Número:</label>
+                                <input type="text" id="numero" placeholder="123" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bairro">Bairro:</label>
+                                <input type="text" id="bairro" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="cidade">Cidade:</label>
+                                <input type="text" id="cidade" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                        </div>
+                        
+                        <!-- Status da Localização -->
+                        <div class="localizacao-status" id="localizacaoStatus" style="display: none;">
+                            <div class="status-item" id="statusCEP">
+                                <i class="fas fa-check-circle"></i> CEP encontrado
+                            </div>
+                            <div class="status-item" id="statusCoordenadas">
+                                <i class="fas fa-crosshairs"></i> <span id="statusCoordenadasTexto">Buscando localização exata...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="midia">Fotos/Vídeos (opcional):</label>
+                            <input type="file" id="midia" multiple accept="image/*,video/*">
+                            <div class="file-info">Aceita imagens e vídeos (máx. 10MB cada)</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Enviar Reclamação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reclamações Section -->
+        <section id="reclamacoes" class="section">
+            <div class="container">
+                <h2><i class="fas fa-list"></i> Reclamações</h2>
+                <div id="listaReclamacoes" class="reclamacoes-lista">
+                    <p>Carregando reclamações...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mapa Section -->
+        <section id="mapa" class="section">
+            <div class="container">
+                <h2><i class="fas fa-map"></i> Mapa das Reclamações</h2>
+                <div id="map" style="height: 500px; border-radius: 8px;"></div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section">
+            <div class="container">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Senha:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+                <p>Não tem conta? <a href="#" onclick="showSection('cadastro')">Cadastre-se aqui</a></p>
+            </div>
+        </section>
+
+        <!-- Cadastro Section -->
+        <section id="cadastro" class="section">
+            <div class="container">
+                <h2><i class="fas fa-user-plus"></i> Cadastro</h2>
+                <form id="cadastroForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone:</label>
+                        <input type="tel" id="telefone" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="endereco">Endereço:</label>
+                        <input type="text" id="endereco" placeholder="Rua, número">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bairroUser">Bairro:</label>
+                            <input type="text" id="bairroUser" placeholder="Seu bairro">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidadeUser">Cidade:</label>
+                            <input type="text" id="cidadeUser" value="São Paulo" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </form>
+                <p>Já tem conta? <a href="#" onclick="showSection('login')">Faça login aqui</a></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Message Toast -->
+    <div id="message" class="message hidden"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/app.js?v=novo"></script>
+    <script src="js/map.js?v=novo"></script>
+</body>
+</html>

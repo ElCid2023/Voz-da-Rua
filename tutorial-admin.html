@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tutorial de Gerenciamento - Meu Bairro Alerta">
+    <title>Tutorial de Gerenciamento - Meu Bairro Alerta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tutorial.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Tutorial de Gerenciamento</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="admin.html" class="nav-link">Área Administrativa</a></li>
+                    <li><a href="index.html" class="nav-link">Site Principal</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main tutorial-main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="tutorial-hero">
+                <h1><i class="fas fa-cogs"></i> Tutorial de Gerenciamento</h1>
+                <p>Aprenda a administrar e gerenciar o Meu Bairro Alerta</p>
+                <div class="tutorial-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">0% Concluído</span>
+                </div>
+            </section>
+
+            <!-- Tutorial Navigation -->
+            <nav class="tutorial-nav">
+                <h3>Índice do Tutorial</h3>
+                <ul id="tutorialIndex">
+                    <li><a href="#step1" class="tutorial-nav-link active">1. Acesso Administrativo</a></li>
+                    <li><a href="#step2" class="tutorial-nav-link">2. Dashboard Principal</a></li>
+                    <li><a href="#step3" class="tutorial-nav-link">3. Gerenciar Reclamações</a></li>
+                    <li><a href="#step4" class="tutorial-nav-link">4. Gerenciar Usuários</a></li>
+                    <li><a href="#step5" class="tutorial-nav-link">5. Relatórios Diários</a></li>
+                    <li><a href="#step6" class="tutorial-nav-link">6. Exportação de Dados</a></li>
+                    <li><a href="#step7" class="tutorial-nav-link">7. Backup e Restauração</a></li>
+                    <li><a href="#step8" class="tutorial-nav-link">8. Configurações Avançadas</a></li>
+                    <li><a href="#step9" class="tutorial-nav-link">9. Melhores Práticas</a></li>
+                </ul>
+            </nav>
+
+            <!-- Tutorial Steps -->
+            <div class="tutorial-content">
+                
+                <!-- Step 1: Acesso Administrativo -->
+                <section id="step1" class="tutorial-step active">
+                    <div class="step-header">
+                        <span class="step-number">1</span>
+                        <h2>Acesso Administrativo</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Para gerenciar o site, você precisa acessar a área administrativa com credenciais especiais.</p>
+                        
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse a Área Admin</h4>
+                                    <p>Vá para <strong>admin.html</strong> ou clique no link "Área Administrativa"</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Faça Login como Administrador</h4>
+                                    <p>Use as credenciais de administrador:</p>
+                                    <ul>
+                                        <li><strong>Email:</strong> admin@meubairroalerta.com</li>
+                                        <li><strong>Senha:</strong> admin123</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Acesse o Dashboard</h4>
+                                    <p>Após o login, você será redirecionado para o dashboard administrativo</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Segurança:</strong> Em produção, altere essas credenciais padrão!
+                        </div>
+
+                        <div class="tutorial-demo">
+                            <h4><i class="fas fa-key"></i> Credenciais de Teste</h4>
+                            <div class="demo-login">
+                                <strong>Email:</strong> <code>admin@meubairroalerta.com</code><br>
+                                <strong>Senha:</strong> <code>admin123</code>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 2: Dashboard Principal -->
+                <section id="step2" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">2</span>
+                        <h2>Dashboard Principal</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>O dashboard oferece uma visão geral completa do sistema com estatísticas e gráficos em tempo real.</p>
+                        
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-chart-bar"></i> Estatísticas Principais</h4>
+                            <ul>
+                                <li><strong>Total de Reclamações:</strong> Número total de reclamações no sistema</li>
+                                <li><strong>Pendentes:</strong> Reclamações aguardando análise</li>
+                                <li><strong>Em Andamento:</strong> Reclamações sendo resolvidas</li>
+                                <li><strong>Resolvidas:</strong> Reclamações finalizadas</li>
+                                <li><strong>Usuários Cadastrados:</strong> Total de usuários registrados</li>
+                                <li><strong>Reclamações Hoje:</strong> Novas reclamações do dia atual</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-chart-pie"></i> Gráficos Disponíveis</h4>
+                            <ul>
+                                <li><strong>Gráfico de Pizza:</strong> Distribuição por status (Pendente, Em Andamento, Resolvida)</li>
+                                <li><strong>Gráfico de Barras:</strong> Reclamações por categoria</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-history"></i> Atividade Recente</h4>
+                            <p>Mostra as 10 reclamações mais recentes com:</p>
+                            <ul>
+                                <li>Título da reclamação</li>
+                                <li>Nome do usuário e categoria</li>
+                                <li>Tempo decorrido desde a criação</li>
+                                <li>Ícone colorido por status</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Dica:</strong> O dashboard é atualizado automaticamente quando você faz alterações no sistema.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3: Gerenciar Reclamações -->
+                <section id="step3" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">3</span>
+                        <h2>Gerenciar Reclamações</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>A seção de reclamações permite visualizar, editar, filtrar e gerenciar todas as reclamações do sistema.</p>
+                        
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Visualizar Reclamações</h4>
+                                    <p>Clique em "Reclamações" no menu para ver a tabela completa</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Filtrar Reclamações</h4>
+                                    <p>Use os filtros para encontrar reclamações específicas:</p>
+                                    <ul>
+                                        <li><strong>Por Status:</strong> Pendente, Em Andamento, Resolvida</li>
+                                        <li><strong>Por Categoria:</strong> Iluminação, Asfalto, Limpeza, etc.</li>
+                                        <li><strong>Por Data:</strong> Selecione uma data específica</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Ações Disponíveis</h4>
+                                    <p>Para cada reclamação, você pode:</p>
+                                    <ul>
+                                        <li><strong>Editar (ícone lápis):</strong> Alterar status, categoria, descrição</li>
+                                        <li><strong>Visualizar (ícone olho):</strong> Ver detalhes completos</li>
+                                        <li><strong>Excluir (ícone lixeira):</strong> Remover reclamação</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-edit"></i> Editando uma Reclamação</h4>
+                            <p>Ao editar uma reclamação, você pode:</p>
+                            <ul>
+                                <li>Alterar o título</li>
+                                <li>Mudar o status (Pendente → Em Andamento → Resolvida)</li>
+                                <li>Modificar a categoria</li>
+                                <li>Editar a descrição</li>
+                                <li>Atualizar a localização</li>
+                                <li><strong>Adicionar resposta oficial</strong> como administrador</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-shield-alt"></i>
+                            <strong>Importante:</strong> Sempre adicione uma resposta oficial ao alterar o status para "Resolvida".
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 4: Gerenciar Usuários -->
+                <section id="step4" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">4</span>
+                        <h2>Gerenciar Usuários</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Monitore e gerencie todos os usuários cadastrados no sistema.</p>
+                        
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-users"></i> Informações dos Usuários</h4>
+                            <p>Para cada usuário, você pode ver:</p>
+                            <ul>
+                                <li>ID único do usuário</li>
+                                <li>Nome completo</li>
+                                <li>Email de contato</li>
+                                <li>Bairro e cidade</li>
+                                <li>Data de cadastro</li>
+                                <li>Número total de reclamações feitas</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Visualizar Detalhes</h4>
+                                    <p>Clique no ícone "olho" para ver informações completas do usuário</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Ver Histórico de Reclamações</h4>
+                                    <p>Na visualização detalhada, veja todas as reclamações do usuário</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Excluir Usuário</h4>
+                                    <p>Se necessário, remova usuários e todas suas reclamações</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Atenção:</strong> Ao excluir um usuário, todas as suas reclamações também serão removidas!
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 5: Relatórios Diários -->
+                <section id="step5" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">5</span>
+                        <h2>Relatórios Diários</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Gere relatórios detalhados para acompanhar o desempenho e atividade do sistema.</p>
+                        
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse a Seção Relatórios</h4>
+                                    <p>Clique em "Relatórios" no menu administrativo</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Escolha o Tipo de Relatório</h4>
+                                    <p>Selecione entre:</p>
+                                    <ul>
+                                        <li><strong>Relatório Diário:</strong> Atividades do dia atual</li>
+                                        <li><strong>Relatório Semanal:</strong> Últimos 7 dias</li>
+                                        <li><strong>Relatório Mensal:</strong> Mês atual</li>
+                                        <li><strong>Período Personalizado:</strong> Escolha datas específicas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Gerar e Visualizar</h4>
+                                    <p>Clique em "Gerar Relatório" para ver os dados</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-chart-line"></i> Conteúdo dos Relatórios</h4>
+                            <ul>
+                                <li><strong>Estatísticas Gerais:</strong> Total, pendentes, em andamento, resolvidas</li>
+                                <li><strong>Distribuição por Categoria:</strong> Quantas reclamações por tipo</li>
+                                <li><strong>Lista Detalhada:</strong> Todas as reclamações do período</li>
+                                <li><strong>Informações de Geração:</strong> Data, hora e período analisado</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-calendar"></i>
+                            <strong>Dica:</strong> Para relatórios diários, a data é preenchida automaticamente com o dia atual.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 6: Exportação de Dados -->
+                <section id="step6" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">6</span>
+                        <h2>Exportação de Dados</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Exporte relatórios em diferentes formatos para análise externa ou arquivamento.</p>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Gere um Relatório</h4>
+                                    <p>Primeiro, crie um relatório na seção anterior</p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Escolha o Formato</h4>
+                                    <p>Clique em um dos botões de exportação:</p>
+                                    <ul>
+                                        <li><strong>Exportar PDF:</strong> Documento formatado para impressão</li>
+                                        <li><strong>Exportar Excel:</strong> Planilha para análise de dados</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Download Automático</h4>
+                                    <p>O arquivo será baixado automaticamente para seu computador</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-file-pdf"></i> Exportação PDF</h4>
+                            <ul>
+                                <li>Documento profissional formatado</li>
+                                <li>Inclui cabeçalho com logo e data</li>
+                                <li>Estatísticas organizadas</li>
+                                <li>Ideal para apresentações e relatórios oficiais</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-file-excel"></i> Exportação Excel</h4>
+                            <ul>
+                                <li>Planilha com dados estruturados</li>
+                                <li>Múltiplas abas com diferentes informações</li>
+                                <li>Dados prontos para análise</li>
+                                <li>Ideal para manipulação e cálculos</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-download"></i>
+                            <strong>Dica:</strong> Os arquivos são nomeados automaticamente com a data para facilitar a organização.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 7: Backup e Restauração -->
+                <section id="step7" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">7</span>
+                        <h2>Backup e Restauração</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Proteja seus dados fazendo backups regulares e saiba como restaurá-los quando necessário.</p>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse Configurações</h4>
+                                    <p>Clique em "Configurações" no menu administrativo</p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Fazer Backup</h4>
+                                    <p>Clique em "Fazer Backup" para baixar todos os dados</p>
+                                    <ul>
+                                        <li>Inclui todas as reclamações</li>
+                                        <li>Inclui todos os usuários</li>
+                                        <li>Arquivo JSON com timestamp</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Restaurar Dados</h4>
+                                    <p>Para restaurar um backup:</p>
+                                    <ul>
+                                        <li>Clique em "Restaurar"</li>
+                                        <li>Selecione o arquivo de backup (.json)</li>
+                                        <li>Confirme a restauração</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Importante:</strong> A restauração substitui TODOS os dados atuais. Faça backup antes!
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-shield-alt"></i> Boas Práticas de Backup</h4>
+                            <ul>
+                                <li><strong>Frequência:</strong> Faça backup diariamente</li>
+                                <li><strong>Armazenamento:</strong> Guarde em local seguro (nuvem, HD externo)</li>
+                                <li><strong>Teste:</strong> Teste a restauração periodicamente</li>
+                                <li><strong>Versionamento:</strong> Mantenha múltiplas versões</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 8: Configurações Avançadas -->
+                <section id="step8" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">8</span>
+                        <h2>Configurações Avançadas</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Gerencie configurações avançadas do sistema e manutenção de dados.</p>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-database"></i> Gerenciamento de Dados</h4>
+                            <p>Na seção Configurações, você pode:</p>
+                            <ul>
+                                <li><strong>Fazer Backup:</strong> Salvar todos os dados</li>
+                                <li><strong>Restaurar Dados:</strong> Carregar backup anterior</li>
+                                <li><strong>Limpar Dados:</strong> Remover todos os dados (cuidado!)</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-warning">
+                            <i class="fas fa-trash"></i>
+                            <strong>PERIGO:</strong> "Limpar Dados" remove TUDO permanentemente. Use apenas para reset completo!
+                        </div>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Limpeza de Dados</h4>
+                                    <p>Para limpar todos os dados:</p>
+                                    <ul>
+                                        <li>Faça backup primeiro!</li>
+                                        <li>Clique em "Limpar Tudo"</li>
+                                        <li>Confirme duas vezes</li>
+                                        <li>Todos os dados serão removidos</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Monitoramento</h4>
+                                    <p>Monitore regularmente:</p>
+                                    <ul>
+                                        <li>Número de usuários ativos</li>
+                                        <li>Volume de reclamações</li>
+                                        <li>Taxa de resolução</li>
+                                        <li>Tempo médio de resposta</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 9: Melhores Práticas -->
+                <section id="step9" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">9</span>
+                        <h2>Melhores Práticas</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Dicas e práticas recomendadas para administrar eficientemente o Meu Bairro Alerta.</p>
+
+                        <div class="tips-grid">
+                            <div class="tip-card">
+                                <i class="fas fa-clock"></i>
+                                <h4>Resposta Rápida</h4>
+                                <p>Responda às reclamações em até 24 horas. Atualize o status regularmente para manter os cidadãos informados.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-chart-line"></i>
+                                <h4>Análise Regular</h4>
+                                <p>Gere relatórios semanais para identificar padrões e áreas que precisam de mais atenção.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-users"></i>
+                                <h4>Comunicação Clara</h4>
+                                <p>Use a resposta do administrador para explicar ações tomadas e próximos passos.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Segurança</h4>
+                                <p>Altere as credenciais padrão e faça logout sempre que terminar de usar o sistema.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-database"></i>
+                                <h4>Backup Regular</h4>
+                                <p>Faça backup dos dados diariamente e teste a restauração mensalmente.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-filter"></i>
+                                <h4>Organização</h4>
+                                <p>Use filtros para priorizar reclamações urgentes e organizar o trabalho por categoria.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-star"></i> Fluxo de Trabalho Recomendado</h4>
+                            <ol style="margin-left: 1.5rem;">
+                                <li><strong>Manhã:</strong> Verificar dashboard e novas reclamações</li>
+                                <li><strong>Priorizar:</strong> Atender reclamações urgentes primeiro</li>
+                                <li><strong>Atualizar:</strong> Mudar status conforme progresso</li>
+                                <li><strong>Comunicar:</strong> Adicionar respostas oficiais</li>
+                                <li><strong>Relatório:</strong> Gerar relatório diário</li>
+                                <li><strong>Backup:</strong> Fazer backup dos dados</li>
+                            </ol>
+                        </div>
+
+                        <div class="tutorial-demo">
+                            <h4><i class="fas fa-rocket"></i> Parabéns!</h4>
+                            <p>Você concluiu o tutorial de gerenciamento! Agora você está pronto para administrar eficientemente o Meu Bairro Alerta.</p>
+                            <a href="admin.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-shield-alt"></i> Ir para Área Administrativa
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation Buttons -->
+                <div class="tutorial-navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                        Próximo <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Meu Bairro Alerta. Todos os direitos reservados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+                <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/tutorial.js"></script>
+</body>
+</html>

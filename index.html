@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-buster" content="20250106-MOBILE-FIXED">
+    <meta name="description" content="Portal para cidadãos fazerem reclamações sobre problemas em seus bairros com upload de fotos e vídeos">
+    <meta name="keywords" content="reclamações, bairro, cidadania, problemas urbanos, comunidade">
+    <meta name="author" content="Voz da Rua">
+    <title>Voz da Rua - Portal de Reclamações</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <style>
+        /* CORREÇÃO MOBILE CRÍTICA */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            box-sizing: border-box;
+        }
+        
+        html {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* ANDROID 10 DETECTADO - CORREÇÃO ESPECÍFICA */
+        input, select, textarea, button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 8px;
+            font-size: 16px !important;
+            transform: translateZ(0);
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            outline: none;
+            touch-action: manipulation;
+        }
+        
+        /* Garantir que inputs não causem zoom */
+        input:focus, select:focus, textarea:focus {
+            -webkit-appearance: none;
+            font-size: 16px !important;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: #f0f2f5;
+                font-size: 14px;
+            }
+            
+            /* CRÍTICO: Correção para toque em mobile */
+            * {
+                -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            input, textarea {
+                -webkit-user-select: text;
+                user-select: text;
+            }
+            
+            .header {
+                background: #007bff;
+                color: white;
+                padding: 10px 0;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .header .container {
+                padding: 0 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 18px;
+                margin: 0;
+                text-align: center;
+            }
+            
+            .nav ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .nav-link {
+                padding: 8px 12px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 20px;
+                font-size: 12px;
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: white;
+                border: 1px solid rgba(255,255,255,0.3);
+                white-space: nowrap;
+            }
+            
+            .nav-link.active {
+                background: rgba(255,255,255,0.3);
+                border-color: rgba(255,255,255,0.5);
+            }
+            
+            .main {
+                margin-top: 140px;
+                padding: 0 10px;
+            }
+            
+            .form-container {
+                padding: 20px 15px;
+                margin: 15px 0;
+                border-radius: 12px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+                background: white;
+                max-width: 100%;
+            }
+            
+            .form-group {
+                margin-bottom: 18px;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #333;
+                font-size: 14px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 14px 12px;
+                font-size: 16px !important;
+                line-height: 1.4;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                background: #fff;
+                color: #333;
+                min-height: 50px;
+                box-sizing: border-box;
+                transition: border-color 0.2s ease;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                touch-action: manipulation;
+            }
+            
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+                background: #fff;
+            }
+            
+            .form-group select {
+                background-image: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+                background-repeat: no-repeat;
+                background-position: right 15px center;
+                background-size: 12px;
+                padding-right: 45px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 16px;
+                font-size: 16px !important;
+                font-weight: 600;
+                border: none;
+                border-radius: 8px;
+                margin-top: 20px;
+                min-height: 52px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                text-transform: none;
+                -webkit-appearance: none;
+                touch-action: manipulation;
+            }
+            
+            .btn-primary {
+                background: #007bff;
+                color: white;
+                box-shadow: 0 3px 12px rgba(0, 123, 255, 0.3);
+            }
+            
+            .btn-secondary {
+                background: #6c757d;
+                color: white;
+                box-shadow: 0 3px 12px rgba(108, 117, 125, 0.3);
+            }
+            
+            .btn-danger {
+                background: #dc3545;
+                color: white;
+                box-shadow: 0 3px 12px rgba(220, 53, 69, 0.3);
+            }
+            
+            .btn-primary:active {
+                background: #0056b3;
+                transform: translateY(1px);
+            }
+            
+            .btn-secondary:active {
+                background: #545b62;
+                transform: translateY(1px);
+            }
+            
+            .btn-danger:active {
+                background: #c82333;
+                transform: translateY(1px);
+            }
+            
+            .home-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 30px;
+            }
+            
+            .hidden {
+                display: none !important;
+            }
+            
+            .btn.loading {
+                position: relative;
+                color: transparent !important;
+                pointer-events: none;
+            }
+            
+            .btn.loading::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 24px;
+                height: 24px;
+                margin: -12px 0 0 -12px;
+                border: 3px solid transparent;
+                border-top: 3px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .field-error {
+                color: #dc3545;
+                font-size: 14px;
+                margin-top: 0.5rem;
+                display: block;
+                font-weight: 500;
+            }
+            
+            .message {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 1rem 1.25rem;
+                border-radius: 12px;
+                color: white;
+                font-weight: 600;
+                z-index: 9999;
+                font-size: 15px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                animation: slideDown 0.3s ease;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            .message-success {
+                background: linear-gradient(135deg, #28a745, #20c997);
+            }
+            
+            .message-error {
+                background: linear-gradient(135deg, #dc3545, #c82333);
+            }
+            
+            .message-info {
+                background: linear-gradient(135deg, #17a2b8, #138496);
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-row .form-group {
+                margin-bottom: 2rem;
+            }
+            
+            /* Melhorar área de toque */
+            a, button, input, select, textarea {
+                min-height: 44px;
+            }
+            
+            /* Evitar problemas de viewport */
+            .container {
+                padding: 0 15px;
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.5rem 1rem;
+                margin: 0.5rem 0;
+            }
+            
+            .form-group {
+                margin-bottom: 1.75rem;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-bullhorn"></i>
+                <h1>Voz da Rua</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#home" class="nav-link active">Início</a></li>
+                    <li><a href="#reclamacoes" class="nav-link">Reclamações</a></li>
+                    <li><a href="#nova-reclamacao" class="nav-link">Nova Reclamação</a></li>
+                    <li><a href="#admin" class="nav-link">Admin</a></li>
+                    <li><a href="#login" class="nav-link" id="loginBtn">Login</a></li>
+                    <li><a href="#cadastro" class="nav-link" id="cadastroBtn">Cadastro</a></li>
+                    <li><a href="#" class="nav-link hidden" id="logoutBtn" onclick="doLogout()">Sair</a></li>
+                </ul>
+            </nav>
+            <div class="user-info hidden" id="userInfo">
+                <span id="userName"></span>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="container">
+                    <h2>Voz da Rua</h2>
+                    <p>Sua voz faz a diferença! Faça login para começar</p>
+                    
+                    <!-- Botões quando NÃO logado -->
+                    <div id="homeNotLoggedIn" class="home-buttons">
+                        <button class="btn btn-primary" onclick="showSection('login')">
+                            <i class="fas fa-sign-in-alt"></i> Fazer Login
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('cadastro')">
+                            <i class="fas fa-user-plus"></i> Cadastrar
+                        </button>
+                    </div>
+                    
+                    <!-- Botões quando LOGADO -->
+                    <div id="homeLoggedIn" class="home-buttons hidden">
+                        <button class="btn btn-primary" onclick="showSection('nova-reclamacao')">
+                            <i class="fas fa-plus"></i> Nova Reclamação
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('reclamacoes')">
+                            <i class="fas fa-list"></i> Ver Reclamações
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('admin')">
+                            <i class="fas fa-cog"></i> Admin
+                        </button>
+                        <button class="btn btn-danger" onclick="doLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email:</label>
+                            <input type="email" id="loginEmail" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Senha:</label>
+                            <input type="password" id="loginPassword" required autocomplete="current-password">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="doLogin()">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </button>
+                    </form>
+                    <p>Não tem conta? <a href="#" onclick="showSection('cadastro')">Cadastre-se aqui</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cadastro Section -->
+        <section id="cadastro" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-user-plus"></i> Cadastro</h2>
+                    <form id="cadastroForm">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Senha:</label>
+                            <input type="password" id="password" required autocomplete="new-password" minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Senha:</label>
+                            <input type="password" id="confirmPassword" required autocomplete="new-password" minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone">Telefone:</label>
+                            <input type="tel" id="telefone" placeholder="(11) 99999-9999" required autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label for="endereco">Endereço:</label>
+                            <input type="text" id="endereco" placeholder="Rua das Flores, 123" required autocomplete="street-address">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairroCadastro">Bairro:</label>
+                            <input type="text" id="bairroCadastro" placeholder="Centro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidadeCadastro">Cidade:</label>
+                            <input type="text" id="cidadeCadastro" placeholder="São Paulo" required autocomplete="address-level2">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="doCadastro()">
+                            <i class="fas fa-user-plus"></i> Cadastrar
+                        </button>
+                    </form>
+                    <p>Já tem conta? <a href="#" onclick="showSection('login')">Faça login aqui</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nova Reclamação Section -->
+        <section id="nova-reclamacao" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Nova Reclamação</h2>
+                    <div class="auth-required" id="authRequired">
+                        <p><i class="fas fa-lock"></i> Você precisa estar logado para fazer uma reclamação.</p>
+                        <button class="btn btn-primary" onclick="showSection('login')">Fazer Login</button>
+                    </div>
+                    <form id="reclamacaoForm" class="hidden">
+                        <div class="form-group">
+                            <label for="titulo">Título da Reclamação:</label>
+                            <input type="text" id="titulo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoria:</label>
+                            <select id="categoria" required>
+                                <option value="">Selecione uma categoria</option>
+                                <option value="iluminacao">Iluminação Pública</option>
+                                <option value="asfalto">Asfalto/Pavimentação</option>
+                                <option value="limpeza">Limpeza Urbana</option>
+                                <option value="seguranca">Segurança</option>
+                                <option value="transporte">Transporte Público</option>
+                                <option value="agua">Água e Esgoto</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição:</label>
+                            <textarea id="descricao" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="cep">CEP:</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9" required>
+                            <div class="file-info">Digite o CEP para preenchimento automático</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 3;">
+                                <label for="rua">Rua/Logradouro:</label>
+                                <input type="text" id="rua" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="numero">Número:</label>
+                                <input type="text" id="numero" placeholder="123" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bairro">Bairro:</label>
+                                <input type="text" id="bairro" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="cidade">Cidade:</label>
+                                <input type="text" id="cidade" placeholder="Será preenchido automaticamente" readonly>
+                            </div>
+                        </div>
+                        <div class="cep-loading" id="cepLoading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Buscando informações do CEP...
+                        </div>
+                        <div class="localizacao-status" id="localizacaoStatus" style="display: none;">
+                            <div class="status-item" id="statusCEP">
+                                <i class="fas fa-check-circle"></i> CEP encontrado
+                            </div>
+                            <div class="status-item" id="statusCoordenadas">
+                                <i class="fas fa-crosshairs"></i> <span id="statusCoordenadasTexto">Buscando localização exata...</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="midia">Fotos/Vídeos:</label>
+                            <input type="file" id="midia" multiple accept="image/*,video/*">
+                            <div class="file-info">Aceita imagens e vídeos (máx. 10MB cada)</div>
+                        </div>
+                        <div id="mediaPreview" class="media-preview"></div>
+                        <button type="button" class="btn btn-primary" onclick="doReclamacao()">
+                            <i class="fas fa-paper-plane"></i> Enviar Reclamação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reclamações Section -->
+        <section id="reclamacoes" class="section">
+            <div class="container">
+                <h2><i class="fas fa-list"></i> Reclamações</h2>
+
+                <!-- Barra de busca e filtros -->
+                <div class="search-filters">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Buscar reclamações...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="filters">
+                        <select id="filtroCategoria">
+                            <option value="">Todas as categorias</option>
+                            <option value="iluminacao">Iluminação Pública</option>
+                            <option value="asfalto">Asfalto/Pavimentação</option>
+                            <option value="limpeza">Limpeza Urbana</option>
+                            <option value="seguranca">Segurança</option>
+                            <option value="transporte">Transporte Público</option>
+                            <option value="agua">Água e Esgoto</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                        <select id="filtroStatus">
+                            <option value="">Todos os status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="em-andamento">Em Andamento</option>
+                            <option value="resolvida">Resolvida</option>
+                        </select>
+                        <select id="ordenacao">
+                            <option value="recente">Mais recentes</option>
+                            <option value="antigo">Mais antigas</option>
+                            <option value="titulo">Por título</option>
+                            <option value="categoria">Por categoria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Estatísticas das reclamações -->
+                <div class="reclamacoes-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalFiltradas">0</span>
+                        <span class="stat-label">Encontradas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="pendentesFiltradas">0</span>
+                        <span class="stat-label">Pendentes</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="resolvidasFiltradas">0</span>
+                        <span class="stat-label">Resolvidas</span>
+                    </div>
+                </div>
+
+                <div id="listaReclamacoes" class="reclamacoes-grid">
+                    <!-- Reclamações serão carregadas aqui -->
+                </div>
+
+                <!-- Mensagem quando não há reclamações -->
+                <div id="noReclamacoes" class="no-results hidden">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhuma reclamação encontrada</h3>
+                    <p>Tente ajustar os filtros ou fazer uma nova busca.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section id="admin" class="section">
+            <div class="container">
+                <div class="form-container">
+                    <h2>👨‍💼 Administração</h2>
+                    
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="mostrarUsuarios()">👥 Ver Usuários</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="mostrarReclamacoes()">📋 Ver Reclamações</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="limparDados()">🗑️ Limpar Dados</button>
+                    </div>
+                    
+                    <div id="adminResultado" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Voz da Rua. Todos os direitos reservados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+                <i class="fas fa-code"></i> Versão Corrigida - Mobile Otimizada
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal para visualizar reclamação -->
+    <div id="modalReclamacao" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet MarkerCluster JavaScript -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- JavaScript direto no HTML para Android -->
+    <script>
+        let currentUser = null;
+        let usuarios = JSON.parse(localStorage.getItem('users') || localStorage.getItem('usuarios') || '[]');
+        
+        // Adicionar usuário de exemplo
+        if (usuarios.length === 0) {
+            usuarios.push({
+                id: '1',
+                nome: 'Usuário Exemplo',
+                email: 'usuario@exemplo.com',
+                password: '123456'
+            });
+            localStorage.setItem('users', JSON.stringify(usuarios));
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        }
+        
+        function doLogin() {
+            console.log('Login clicado');
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+            
+            const user = usuarios.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                alert('Login realizado!');
+                updateHomeButtons();
+                showSection('home');
+            } else {
+                alert('Email ou senha incorretos!');
+            }
+        }
+        
+        function doCadastro() {
+            console.log('Cadastro clicado');
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const telefone = document.getElementById('telefone').value;
+            const endereco = document.getElementById('endereco').value;
+            const bairro = document.getElementById('bairroCadastro').value;
+            const cidade = document.getElementById('cidadeCadastro').value;
+            
+            if (!nome || !email || !password || !confirmPassword || !telefone || !endereco || !bairro || !cidade) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Senhas não coincidem!');
+                return;
+            }
+            
+            if (usuarios.find(u => u.email === email)) {
+                alert('Email já cadastrado!');
+                return;
+            }
+            
+            usuarios.push({
+                id: Date.now().toString(),
+                nome: nome,
+                email: email,
+                password: password,
+                telefone: telefone,
+                endereco: endereco,
+                bairro: bairro,
+                cidade: cidade
+            });
+            
+            localStorage.setItem('users', JSON.stringify(usuarios));
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            
+            // DEBUG - mostrar o que foi salvo
+            console.log('Usuarios salvos:', usuarios);
+            console.log('LocalStorage users:', localStorage.getItem('users'));
+            console.log('LocalStorage usuarios:', localStorage.getItem('usuarios'));
+            
+            alert('Cadastro realizado! Total usuarios: ' + usuarios.length);
+            
+            // Limpar campos
+            document.getElementById('nome').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('telefone').value = '';
+            document.getElementById('endereco').value = '';
+            document.getElementById('bairroCadastro').value = '';
+            document.getElementById('cidadeCadastro').value = '';
+            
+            showSection('login');
+        }
+        
+        function doReclamacao() {
+            console.log('Reclamação clicada');
+            if (!currentUser) {
+                alert('Faça login primeiro!');
+                return;
+            }
+            
+            const titulo = document.getElementById('titulo').value;
+            const categoria = document.getElementById('categoria').value;
+            const descricao = document.getElementById('descricao').value;
+            const cep = document.getElementById('cep').value;
+            const numero = document.getElementById('numero').value;
+            
+            if (!titulo || !categoria || !descricao || !cep || !numero) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            // Salvar reclamação
+            let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            reclamacoes.push({
+                id: Date.now().toString(),
+                titulo: titulo,
+                categoria: categoria,
+                descricao: descricao,
+                cep: cep,
+                numero: numero,
+                usuario: currentUser.nome,
+                data: new Date().toLocaleDateString('pt-BR')
+            });
+            localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+            
+            alert('Reclamação enviada com sucesso!');
+            
+            // Limpar campos
+            document.getElementById('titulo').value = '';
+            document.getElementById('categoria').value = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('cep').value = '';
+            document.getElementById('numero').value = '';
+            document.getElementById('rua').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('cidade').value = '';
+        }
+        
+        function doLogout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            alert('Logout realizado!');
+            updateHomeButtons();
+            showSection('home');
+        }
+        
+        function updateHomeButtons() {
+            const notLoggedIn = document.getElementById('homeNotLoggedIn');
+            const loggedIn = document.getElementById('homeLoggedIn');
+            
+            if (currentUser) {
+                notLoggedIn.classList.add('hidden');
+                loggedIn.classList.remove('hidden');
+            } else {
+                notLoggedIn.classList.remove('hidden');
+                loggedIn.classList.add('hidden');
+            }
+        }
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se já está logado
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+            updateHomeButtons();
+            
+            // CEP automático
+            const cepInput = document.getElementById('cep');
+            if (cepInput) {
+                cepInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 5) {
+                        value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                    }
+                    e.target.value = value;
+                    
+                    if (value.length === 9) {
+                        buscarCEP(value);
+                    }
+                });
+            }
+        });
+        
+        async function buscarCEP(cep) {
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep.replace(/\D/g, '')}/json/`);
+                const data = await response.json();
+                
+                if (!data.erro) {
+                    document.getElementById('rua').value = data.logradouro || '';
+                    document.getElementById('bairro').value = data.bairro || '';
+                    document.getElementById('cidade').value = data.localidade || '';
+                    alert('CEP encontrado!');
+                }
+            } catch (error) {
+                console.log('Erro CEP:', error);
+            }
+        }
+        
+        // FUNÇÕES ADMIN MOBILE
+        function mostrarUsuarios() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+            
+            let html = '<h3>👥 Usuários Cadastrados:</h3>';
+            html += '<p><strong>Total users:</strong> ' + users.length + '</p>';
+            html += '<p><strong>Total usuarios:</strong> ' + usuarios.length + '</p>';
+            
+            if (users.length > 0) {
+                html += '<h4>Lista users:</h4><ul>';
+                users.forEach(user => {
+                    html += `<li><strong>${user.nome}</strong> - ${user.email}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (usuarios.length > 0) {
+                html += '<h4>Lista usuarios:</h4><ul>';
+                usuarios.forEach(user => {
+                    html += `<li><strong>${user.nome}</strong> - ${user.email}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            document.getElementById('adminResultado').innerHTML = html;
+        }
+        
+        function mostrarReclamacoes() {
+            const reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            
+            let html = '<h3>📋 Reclamações:</h3>';
+            html += '<p><strong>Total:</strong> ' + reclamacoes.length + '</p>';
+            
+            if (reclamacoes.length > 0) {
+                html += '<ul>';
+                reclamacoes.forEach(rec => {
+                    html += `<li><strong>${rec.titulo}</strong> - ${rec.usuario} (${rec.data || 'sem data'})</li>`;
+                });
+                html += '</ul>';
+            } else {
+                html += '<p>Nenhuma reclamação encontrada.</p>';
+            }
+            
+            document.getElementById('adminResultado').innerHTML = html;
+        }
+        
+        function limparDados() {
+            if (confirm('Tem certeza que quer limpar todos os dados?')) {
+                localStorage.clear();
+                alert('Todos os dados foram limpos!');
+                document.getElementById('adminResultado').innerHTML = '<p style="color: red;">Dados limpos!</p>';
+            }
+        }
+    </script>
+</body>
+</html>

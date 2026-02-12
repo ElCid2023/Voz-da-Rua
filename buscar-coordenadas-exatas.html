@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Coordenadas Exatas - CEP 08330-310</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        #map { height: 400px; width: 100%; border: 2px solid #ccc; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Buscar Coordenadas Exatas - CEP 08330-310</h1>
+    
+    <div class="result info">
+        <h3>📋 Informações do CEP:</h3>
+        <p><strong>CEP:</strong> 08330-310</p>
+        <p><strong>Bairro:</strong> São Rafael</p>
+        <p><strong>Cidade:</strong> São Paulo - SP</p>
+        <p><strong>Região:</strong> Zona Leste</p>
+    </div>
+    
+    <div id="results"></div>
+    
+    <div id="map"></div>
+
+    <!-- Leaflet CSS e JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        let map;
+        
+        function addResult(title, content, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<h4>${title}</h4>${content}`;
+            resultsDiv.appendChild(div);
+        }
+        
+        function addMarkerToMap(lat, lng, title, color = 'red') {
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+            }
+            
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup(`<b>${title}</b><br>Lat: ${lat}<br>Lng: ${lng}`)
+                .openPopup();
+        }
+        
+        // Teste 1: ViaCEP
+        async function testViaCEP() {
+            addResult('🔍 Teste 1: ViaCEP', 'Buscando informações do CEP...', 'info');
+            
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/08330-310/json/`);
+                const data = await response.json();
+                
+                if (!data.erro) {
+                    const content = `
+                        <p><strong>Logradouro:</strong> ${data.logradouro}</p>
+                        <p><strong>Bairro:</strong> ${data.bairro}</p>
+                        <p><strong>Cidade:</strong> ${data.localidade}</p>
+                        <p><strong>UF:</strong> ${data.uf}</p>
+                        <p><strong>Endereço completo:</strong> ${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}</p>
+                    `;
+                    addResult('✅ ViaCEP - Dados do CEP', content, 'success');
+                    
+                    // Buscar coordenadas com Nominatim
+                    await searchNominatim(`${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}, Brasil`);
+                } else {
+                    addResult('❌ ViaCEP - Erro', 'CEP não encontrado', 'error');
+                }
+            } catch (error) {
+                addResult('❌ ViaCEP - Erro', `Erro na requisição: ${error.message}`, 'error');
+            }
+        }
+        
+        // Teste 2: Nominatim (OpenStreetMap)
+        async function searchNominatim(query) {
+            addResult('🗺️ Teste 2: Nominatim (OpenStreetMap)', `Buscando coordenadas para: "${query}"`, 'info');
+            
+            try {
+                const encodedQuery = encodeURIComponent(query);
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedQuery}&limit=5&countrycodes=br`);
+                const data = await response.json();
+                
+                if (data.length > 0) {
+                    let content = '<h5>Resultados encontrados:</h5>';
+                    
+                    data.forEach((result, index) => {
+                        const lat = parseFloat(result.lat);
+                        const lon = parseFloat(result.lon);
+                        const displayName = result.display_name;
+                        
+                        content += `
+                            <div style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                                <p><strong>Resultado ${index + 1}:</strong></p>
+                                <p><strong>Coordenadas:</strong> ${lat}, ${lon}</p>
+                                <p><strong>Endereço:</strong> ${displayName}</p>
+                                <button onclick="addMarkerToMap(${lat}, ${lon}, 'Nominatim ${index + 1}', 'blue')">Ver no mapa</button>
+                            </div>
+                        `;
+                    });
+                    
+                    addResult('✅ Nominatim - Coordenadas encontradas', content, 'success');
+                    
+                    // Usar o primeiro resultado como coordenadas oficiais
+                    const bestResult = data[0];
+                    const officialLat = parseFloat(bestResult.lat);
+                    const officialLon = parseFloat(bestResult.lon);
+                    
+                    addResult('🎯 Coordenadas Oficiais Recomendadas', 
+                        `<p><strong>Latitude:</strong> ${officialLat}</p>
+                         <p><strong>Longitude:</strong> ${officialLon}</p>
+                         <p><strong>Endereço:</strong> ${bestResult.display_name}</p>
+                         <button onclick="addMarkerToMap(${officialLat}, ${officialLon}, 'COORDENADAS OFICIAIS', 'red')">Ver no mapa</button>`, 
+                        'success');
+                    
+                } else {
+                    addResult('❌ Nominatim - Nenhum resultado', 'Nenhuma coordenada encontrada', 'error');
+                }
+            } catch (error) {
+                addResult('❌ Nominatim - Erro', `Erro na requisição: ${error.message}`, 'error');
+            }
+        }
+        
+        // Teste 3: Google Maps (simulado)
+        function testGoogleMaps() {
+            addResult('🗺️ Teste 3: Google Maps (Referência)', 
+                `<p>Para coordenadas mais precisas, você pode usar a API do Google Maps:</p>
+                 <p><strong>Endereço para buscar:</strong> Rua Coronel Pacheco do Couto, São Rafael, São Paulo, SP, 08330-310</p>
+                 <p><strong>URL do Google Maps:</strong> <a href="https://www.google.com/maps/search/Rua+Coronel+Pacheco+do+Couto,+São+Rafael,+São+Paulo,+SP,+08330-310" target="_blank">Ver no Google Maps</a></p>`, 
+                'info');
+        }
+        
+        // Teste 4: Coordenadas atuais vs recomendadas
+        function compareCoordinates() {
+            addResult('⚖️ Comparação de Coordenadas', 
+                `<h5>Coordenadas atuais (incorretas):</h5>
+                 <p><strong>Latitude:</strong> -23.5750</p>
+                 <p><strong>Longitude:</strong> -46.4650</p>
+                 <p><strong>Problema:</strong> Estas coordenadas estão no Parque do Carmo, não em São Rafael</p>
+                 
+                 <h5>Coordenadas recomendadas (serão buscadas):</h5>
+                 <p><strong>Fonte:</strong> Nominatim (OpenStreetMap)</p>
+                 <p><strong>Precisão:</strong> Alta</p>
+                 <p><strong>Localização:</strong> São Rafael, Zona Leste de São Paulo</p>`, 
+                'warning');
+        }
+        
+        // Iniciar testes
+        window.addEventListener('load', async function() {
+            addResult('🚀 Iniciando busca de coordenadas exatas...', '', 'info');
+            
+            compareCoordinates();
+            await testViaCEP();
+            testGoogleMaps();
+            
+            addResult('🏁 Busca concluída!', 'Verifique os resultados acima e use as coordenadas mais precisas encontradas.', 'success');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparação para Deploy - Meu Bairro Alerta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .deploy-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .deploy-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .deploy-header h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .deploy-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .checklist {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .checklist h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            color: #333;
+        }
+        .checklist-item.completed {
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+        .deploy-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .deploy-option {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .deploy-option:hover {
+            border-color: #007bff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .deploy-option.recommended {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9, #e8f5e8);
+        }
+        .deploy-option h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .deploy-option .badge {
+            background: #28a745;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        .deploy-option p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .deploy-option .features {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+        .deploy-option .features li {
+            color: #555;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .deploy-option .features li i {
+            color: #28a745;
+            width: 16px;
+        }
+        .file-structure {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .file-structure h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+        .file-tree {
+            color: #555;
+            line-height: 1.6;
+        }
+        .file-tree .folder {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .file-tree .file {
+            color: #333;
+        }
+        .file-tree .important {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .quick-deploy {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .quick-deploy h3 {
+            margin-bottom: 1rem;
+        }
+        .quick-deploy p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .quick-deploy .btn {
+            background: white;
+            color: #007bff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .quick-deploy .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="deploy-container">
+        <div class="deploy-header">
+            <h1><i class="fas fa-rocket"></i> Preparação para Deploy</h1>
+            <p>Configure e publique seu Meu Bairro Alerta na web</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0% Completo</div>
+            </div>
+        </div>
+
+        <!-- Checklist de Preparação -->
+        <div class="checklist">
+            <h3><i class="fas fa-check-circle"></i> Checklist de Preparação</h3>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="check1" onchange="updateProgress()">
+                <label for="check1">Todos os arquivos estão na pasta do projeto</label>
+            </div>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="check2" onchange="updateProgress()">
+                <label for="check2">Site funciona corretamente no navegador local</label>
+            </div>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="check3" onchange="updateProgress()">
+                <label for="check3">EmailJS configurado (se desejado)</label>
+            </div>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="check4" onchange="updateProgress()">
+                <label for="check4">Testei criação de reclamações</label>
+            </div>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="check5" onchange="updateProgress()">
+                <label for="check5">Área administrativa funcionando</label>
+            </div>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="check6" onchange="updateProgress()">
+                <label for="check6">Escolhi plataforma de hospedagem</label>
+            </div>
+        </div>
+
+        <!-- Estrutura de Arquivos -->
+        <div class="file-structure">
+            <h4><i class="fas fa-folder"></i> Estrutura de Arquivos para Deploy</h4>
+            <div class="file-tree">
+meu-bairro-alerta/<br>
+├── <span class="file important">index.html</span> (página principal)<br>
+├── <span class="file important">admin.html</span> (área administrativa)<br>
+├── <span class="file">tutorial.html</span> (tutorial usuários)<br>
+├── <span class="file">tutorial-admin.html</span> (tutorial admin)<br>
+├── <span class="file">template-email.html</span> (template email)<br>
+├── <span class="folder">css/</span><br>
+│   ├── <span class="file">style.css</span><br>
+│   ├── <span class="file">tutorial.css</span><br>
+│   └── <span class="file">admin.css</span><br>
+├── <span class="folder">js/</span><br>
+│   ├── <span class="file">app.js</span><br>
+│   ├── <span class="file">tutorial.js</span><br>
+│   ├── <span class="file">admin.js</span><br>
+│   ├── <span class="file">map.js</span><br>
+│   └── <span class="file">notifications.js</span><br>
+├── <span class="file">README.md</span><br>
+├── <span class="file">README-ADMIN.md</span><br>
+├── <span class="file">GUIA-EMAILJS.md</span><br>
+└── <span class="file">GUIA-HOSPEDAGEM.md</span>
+            </div>
+        </div>
+
+        <!-- Opções de Deploy -->
+        <h2><i class="fas fa-cloud-upload-alt"></i> Escolha sua Plataforma</h2>
+        
+        <div class="deploy-options">
+            <div class="deploy-option recommended" onclick="selectOption('netlify')">
+                <h4><i class="fas fa-bolt"></i> Netlify <span class="badge">RECOMENDADO</span></h4>
+                <p>Deploy mais rápido e fácil</p>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Deploy em 30 segundos</li>
+                    <li><i class="fas fa-check"></i> SSL automático</li>
+                    <li><i class="fas fa-check"></i> Domínio gratuito</li>
+                    <li><i class="fas fa-check"></i> Formulários funcionam</li>
+                </ul>
+            </div>
+            
+            <div class="deploy-option" onclick="selectOption('github')">
+                <h4><i class="fab fa-github"></i> GitHub Pages</h4>
+                <p>Gratuito e integrado com Git</p>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> 100% gratuito</li>
+                    <li><i class="fas fa-check"></i> Versionamento Git</li>
+                    <li><i class="fas fa-check"></i> SSL incluído</li>
+                    <li><i class="fas fa-check"></i> Backup automático</li>
+                </ul>
+            </div>
+            
+            <div class="deploy-option" onclick="selectOption('vercel')">
+                <h4><i class="fas fa-triangle"></i> Vercel</h4>
+                <p>Performance e otimização</p>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Deploy instantâneo</li>
+                    <li><i class="fas fa-check"></i> CDN global</li>
+                    <li><i class="fas fa-check"></i> Analytics incluído</li>
+                    <li><i class="fas fa-check"></i> Otimização automática</li>
+                </ul>
+            </div>
+            
+            <div class="deploy-option" onclick="selectOption('local')">
+                <h4><i class="fas fa-server"></i> Servidor Local</h4>
+                <p>Para desenvolvimento e testes</p>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Controle total</li>
+                    <li><i class="fas fa-check"></i> Sem limites</li>
+                    <li><i class="fas fa-check"></i> Desenvolvimento rápido</li>
+                    <li><i class="fas fa-check"></i> Testes offline</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Deploy Rápido -->
+        <div class="quick-deploy">
+            <h3><i class="fas fa-rocket"></i> Deploy Rápido - Netlify</h3>
+            <p>A maneira mais rápida de colocar seu site online em menos de 2 minutos!</p>
+            
+            <a href="https://app.netlify.com/drop" target="_blank" class="btn">
+                <i class="fas fa-upload"></i> Arrastar & Soltar no Netlify
+            </a>
+            
+            <a href="https://github.com/new" target="_blank" class="btn">
+                <i class="fab fa-github"></i> Criar Repositório GitHub
+            </a>
+        </div>
+
+        <!-- Instruções Detalhadas -->
+        <div id="instructions" style="display: none;">
+            <h3 id="instructionTitle">Instruções de Deploy</h3>
+            <div id="instructionContent"></div>
+        </div>
+
+        <!-- Links Úteis -->
+        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px; margin-top: 2rem;">
+            <h3><i class="fas fa-link"></i> Links Úteis</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <a href="GUIA-HOSPEDAGEM.md" style="color: #007bff; text-decoration: none;">
+                    <i class="fas fa-book"></i> Guia Completo de Hospedagem
+                </a>
+                <a href="README-ADMIN.md" style="color: #007bff; text-decoration: none;">
+                    <i class="fas fa-shield-alt"></i> Manual do Administrador
+                </a>
+                <a href="GUIA-EMAILJS.md" style="color: #007bff; text-decoration: none;">
+                    <i class="fas fa-envelope"></i> Configurar Notificações
+                </a>
+                <a href="tutorial.html" style="color: #007bff; text-decoration: none;">
+                    <i class="fas fa-graduation-cap"></i> Tutorial para Usuários
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #f8f9fa; padding: 2rem; text-align: center; border-top: 1px solid #e9ecef; margin-top: 3rem;">
+        <p style="margin: 0; color: #666;">&copy; 2024 Meu Bairro Alerta. Todos os direitos reservados.</p>
+        <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">
+            <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+        </p>
+    </footer>
+
+    <script>
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            const checked = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked');
+            const progress = (checked.length / checkboxes.length) * 100;
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = progress + '%';
+            progressFill.textContent = Math.round(progress) + '% Completo';
+            
+            // Update checklist items
+            checkboxes.forEach(checkbox => {
+                const item = checkbox.closest('.checklist-item');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        function selectOption(platform) {
+            const instructions = {
+                netlify: {
+                    title: 'Deploy no Netlify',
+                    content: `
+                        <h4>Opção 1: Drag & Drop (Mais Rápido)</h4>
+                        <ol>
+                            <li>Compacte todos os arquivos do projeto em um ZIP</li>
+                            <li>Acesse <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a></li>
+                            <li>Arraste o arquivo ZIP para a área de upload</li>
+                            <li>Aguarde o deploy (30 segundos)</li>
+                            <li>Seu site estará online!</li>
+                        </ol>
+                        
+                        <h4>Opção 2: GitHub Integration</h4>
+                        <ol>
+                            <li>Suba o projeto para GitHub</li>
+                            <li>Conecte Netlify com GitHub</li>
+                            <li>Selecione o repositório</li>
+                            <li>Deploy automático a cada commit</li>
+                        </ol>
+                    `
+                },
+                github: {
+                    title: 'Deploy no GitHub Pages',
+                    content: `
+                        <ol>
+                            <li>Crie uma conta no <a href="https://github.com" target="_blank">GitHub</a></li>
+                            <li>Crie um novo repositório público</li>
+                            <li>Faça upload de todos os arquivos</li>
+                            <li>Vá em Settings → Pages</li>
+                            <li>Source: Deploy from branch</li>
+                            <li>Branch: main, Folder: / (root)</li>
+                            <li>Aguarde 5-10 minutos</li>
+                            <li>Acesse: https://seu-usuario.github.io/nome-repositorio</li>
+                        </ol>
+                    `
+                },
+                vercel: {
+                    title: 'Deploy no Vercel',
+                    content: `
+                        <ol>
+                            <li>Acesse <a href="https://vercel.com" target="_blank">vercel.com</a></li>
+                            <li>Faça login com GitHub</li>
+                            <li>Clique "New Project"</li>
+                            <li>Selecione seu repositório</li>
+                            <li>Framework: Other</li>
+                            <li>Deixe configurações padrão</li>
+                            <li>Deploy automático</li>
+                        </ol>
+                    `
+                },
+                local: {
+                    title: 'Servidor Local',
+                    content: `
+                        <h4>Python (Mais Simples)</h4>
+                        <pre>cd /caminho/para/projeto
+python -m http.server 8000
+# Acesse: http://localhost:8000</pre>
+                        
+                        <h4>Node.js</h4>
+                        <pre>npm install -g http-server
+http-server -p 8000</pre>
+                        
+                        <h4>XAMPP (Windows)</h4>
+                        <ol>
+                            <li>Baixe e instale XAMPP</li>
+                            <li>Copie arquivos para C:\\xampp\\htdocs\\</li>
+                            <li>Inicie Apache</li>
+                            <li>Acesse: http://localhost</li>
+                        </ol>
+                    `
+                }
+            };
+            
+            const instructionDiv = document.getElementById('instructions');
+            const titleDiv = document.getElementById('instructionTitle');
+            const contentDiv = document.getElementById('instructionContent');
+            
+            titleDiv.textContent = instructions[platform].title;
+            contentDiv.innerHTML = instructions[platform].content;
+            instructionDiv.style.display = 'block';
+            
+            // Scroll to instructions
+            instructionDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

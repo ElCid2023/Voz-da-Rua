@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tutorial completo para usar o Meu Bairro Alerta">
+    <title>Tutorial - Meu Bairro Alerta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tutorial.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <h1>Meu Bairro Alerta</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Voltar ao Site</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main tutorial-main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="tutorial-hero">
+                <h1><i class="fas fa-graduation-cap"></i> Tutorial Completo</h1>
+                <p>Aprenda a usar todas as funcionalidades do Meu Bairro Alerta</p>
+                <div class="tutorial-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">0% Concluído</span>
+                </div>
+            </section>
+
+            <!-- Tutorial Navigation -->
+            <nav class="tutorial-nav">
+                <h3>Índice do Tutorial</h3>
+                <ul id="tutorialIndex">
+                    <li><a href="#step1" class="tutorial-nav-link active">1. Primeiro Acesso</a></li>
+                    <li><a href="#step2" class="tutorial-nav-link">2. Criando sua Conta</a></li>
+                    <li><a href="#step3" class="tutorial-nav-link">3. Fazendo Login</a></li>
+                    <li><a href="#step4" class="tutorial-nav-link">4. Criando uma Reclamação</a></li>
+                    <li><a href="#step5" class="tutorial-nav-link">5. Adicionando Fotos/Vídeos</a></li>
+                    <li><a href="#step6" class="tutorial-nav-link">6. Visualizando Reclamações</a></li>
+                    <li><a href="#step7" class="tutorial-nav-link">7. Usando Filtros e Busca</a></li>
+                    <li><a href="#step8" class="tutorial-nav-link">8. Atalhos de Teclado</a></li>
+                    <li><a href="#step9" class="tutorial-nav-link">9. Dicas e Truques</a></li>
+                </ul>
+            </nav>
+
+            <!-- Tutorial Steps -->
+            <div class="tutorial-content">
+                
+                <!-- Step 1: Primeiro Acesso -->
+                <section id="step1" class="tutorial-step active">
+                    <div class="step-header">
+                        <span class="step-number">1</span>
+                        <h2>Primeiro Acesso ao Site</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Bem-vindo ao <strong>Meu Bairro Alerta</strong>! Vamos começar explorando a página inicial.</p>
+                        
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-eye"></i> O que você verá</h4>
+                            <ul>
+                                <li><strong>Cabeçalho:</strong> Logo e menu de navegação</li>
+                                <li><strong>Estatísticas:</strong> Números de reclamações, usuários e resoluções</li>
+                                <li><strong>Botão principal:</strong> "Fazer Reclamação" (requer login)</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-demo">
+                            <h4><i class="fas fa-play"></i> Dados de Exemplo</h4>
+                            <p>O site já vem com dados de exemplo para você testar:</p>
+                            <div class="demo-login">
+                                <strong>Login de teste:</strong><br>
+                                📧 Email: <code>joao@email.com</code><br>
+                                🔒 Senha: <code>123456</code>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Dica:</strong> Explore o menu superior para navegar entre as seções do site.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 2: Criando Conta -->
+                <section id="step2" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">2</span>
+                        <h2>Criando sua Conta</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Para fazer reclamações, você precisa ter uma conta. Vamos criar uma!</p>
+                        
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse o Cadastro</h4>
+                                    <p>Clique em <strong>"Cadastro"</strong> no menu superior</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Preencha seus Dados</h4>
+                                    <p>Complete todos os campos obrigatórios:</p>
+                                    <ul>
+                                        <li>Nome completo (mínimo 2 caracteres)</li>
+                                        <li>Email válido</li>
+                                        <li>Telefone (com máscara automática)</li>
+                                        <li>Endereço, bairro e cidade</li>
+                                        <li>Senha (mínimo 6 caracteres)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Confirme e Cadastre</h4>
+                                    <p>Confirme sua senha e clique em <strong>"Cadastrar"</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Importante:</strong> Todos os campos são obrigatórios e serão validados em tempo real.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3: Fazendo Login -->
+                <section id="step3" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">3</span>
+                        <h2>Fazendo Login</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Após criar sua conta, você será redirecionado para o login. Vamos entrar!</p>
+                        
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse o Login</h4>
+                                    <p>Clique em <strong>"Login"</strong> no menu superior</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Digite suas Credenciais</h4>
+                                    <p>Insira seu email e senha cadastrados</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Entre no Sistema</h4>
+                                    <p>Clique em <strong>"Entrar"</strong> e seja redirecionado para a página inicial</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-check"></i> Após o Login</h4>
+                            <p>Você verá seu nome no canto superior direito e terá acesso a:</p>
+                            <ul>
+                                <li>Criar novas reclamações</li>
+                                <li>Visualizar todas as reclamações</li>
+                                <li>Botão "Sair" para logout</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 4: Criando Reclamação -->
+                <section id="step4" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">4</span>
+                        <h2>Criando uma Reclamação</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Agora vamos aprender a criar uma reclamação sobre problemas do seu bairro.</p>
+                        
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse Nova Reclamação</h4>
+                                    <p>Clique em <strong>"Nova Reclamação"</strong> no menu ou no botão da página inicial</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Preencha o Formulário</h4>
+                                    <p>Complete os campos obrigatórios:</p>
+                                    <ul>
+                                        <li><strong>Título:</strong> Resumo do problema (5-100 caracteres)</li>
+                                        <li><strong>Categoria:</strong> Selecione o tipo de problema</li>
+                                        <li><strong>Descrição:</strong> Detalhe o problema (10-1000 caracteres)</li>
+                                        <li><strong>Localização:</strong> Onde está o problema (mínimo 5 caracteres)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Envie a Reclamação</h4>
+                                    <p>Clique em <strong>"Enviar Reclamação"</strong> para publicar</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-tags"></i> Categorias Disponíveis</h4>
+                            <div class="categories-grid">
+                                <span class="category-tag">🔆 Iluminação Pública</span>
+                                <span class="category-tag">🛣️ Asfalto/Pavimentação</span>
+                                <span class="category-tag">🧹 Limpeza Urbana</span>
+                                <span class="category-tag">🛡️ Segurança</span>
+                                <span class="category-tag">🚌 Transporte Público</span>
+                                <span class="category-tag">💧 Água e Esgoto</span>
+                                <span class="category-tag">📋 Outros</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 5: Adicionando Mídia -->
+                <section id="step5" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">5</span>
+                        <h2>Adicionando Fotos e Vídeos</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Adicione evidências visuais para fortalecer sua reclamação!</p>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Selecione os Arquivos</h4>
+                                    <p>No formulário de reclamação, clique em <strong>"Escolher arquivos"</strong></p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Visualize o Preview</h4>
+                                    <p>Os arquivos aparecerão em miniatura abaixo do campo</p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Remova se Necessário</h4>
+                                    <p>Clique no <strong>"×"</strong> para remover arquivos indesejados</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-info-circle"></i> Especificações de Mídia</h4>
+                            <ul>
+                                <li><strong>Tipos aceitos:</strong> JPG, PNG, GIF, WebP, MP4, WebM, OGG, AVI, MOV</li>
+                                <li><strong>Tamanho máximo:</strong> 10MB por arquivo</li>
+                                <li><strong>Quantidade máxima:</strong> 5 arquivos por reclamação</li>
+                                <li><strong>Preview automático:</strong> Visualização imediata dos arquivos</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-camera"></i>
+                            <strong>Dica:</strong> Fotos e vídeos ajudam muito na resolução dos problemas!
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 6: Visualizando Reclamações -->
+                <section id="step6" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">6</span>
+                        <h2>Visualizando Reclamações</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Explore todas as reclamações da comunidade e acompanhe o progresso!</p>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Acesse as Reclamações</h4>
+                                    <p>Clique em <strong>"Reclamações"</strong> no menu superior</p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Explore os Cards</h4>
+                                    <p>Cada reclamação é exibida em um card com:</p>
+                                    <ul>
+                                        <li>Título e categoria</li>
+                                        <li>Status (Pendente, Em Andamento, Resolvida)</li>
+                                        <li>Descrição resumida</li>
+                                        <li>Localização e data</li>
+                                        <li>Indicador de mídia (se houver)</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Veja Detalhes Completos</h4>
+                                    <p>Clique em qualquer card para abrir o modal com detalhes completos</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-traffic-light"></i> Status das Reclamações</h4>
+                            <div class="status-examples">
+                                <div class="status-item">
+                                    <span class="status-badge pendente">Pendente</span>
+                                    <span>Reclamação aguardando análise</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-badge em-andamento">Em Andamento</span>
+                                    <span>Problema sendo resolvido</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-badge resolvida">Resolvida</span>
+                                    <span>Problema solucionado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 7: Filtros e Busca -->
+                <section id="step7" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">7</span>
+                        <h2>Usando Filtros e Busca</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Encontre rapidamente as reclamações que você procura!</p>
+
+                        <div class="tutorial-steps-list">
+                            <div class="mini-step">
+                                <span class="mini-step-number">1</span>
+                                <div>
+                                    <h4>Busca por Texto</h4>
+                                    <p>Use a barra de busca para procurar por:</p>
+                                    <ul>
+                                        <li>Título da reclamação</li>
+                                        <li>Descrição</li>
+                                        <li>Localização</li>
+                                        <li>Nome do usuário</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">2</span>
+                                <div>
+                                    <h4>Filtros por Categoria</h4>
+                                    <p>Selecione uma categoria específica para ver apenas reclamações desse tipo</p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">3</span>
+                                <div>
+                                    <h4>Filtros por Status</h4>
+                                    <p>Filtre por status para ver apenas pendentes, em andamento ou resolvidas</p>
+                                </div>
+                            </div>
+
+                            <div class="mini-step">
+                                <span class="mini-step-number">4</span>
+                                <div>
+                                    <h4>Ordenação</h4>
+                                    <p>Ordene os resultados por:</p>
+                                    <ul>
+                                        <li>Mais recentes</li>
+                                        <li>Mais antigas</li>
+                                        <li>Por título (A-Z)</li>
+                                        <li>Por categoria</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-search"></i>
+                            <strong>Dica:</strong> Os termos de busca são destacados em amarelo nos resultados!
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 8: Atalhos de Teclado -->
+                <section id="step8" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">8</span>
+                        <h2>Atalhos de Teclado</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Navegue mais rapidamente usando atalhos de teclado!</p>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-keyboard"></i> Atalhos Disponíveis</h4>
+                            <div class="shortcuts-grid">
+                                <div class="shortcut-item">
+                                    <kbd>Ctrl</kbd> + <kbd>1</kbd>
+                                    <span>Ir para Início</span>
+                                </div>
+                                <div class="shortcut-item">
+                                    <kbd>Ctrl</kbd> + <kbd>2</kbd>
+                                    <span>Ir para Reclamações</span>
+                                </div>
+                                <div class="shortcut-item">
+                                    <kbd>Ctrl</kbd> + <kbd>3</kbd>
+                                    <span>Nova Reclamação</span>
+                                </div>
+                                <div class="shortcut-item">
+                                    <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                                    <span>Focar na Busca</span>
+                                </div>
+                                <div class="shortcut-item">
+                                    <kbd>ESC</kbd>
+                                    <span>Fechar Modal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-tip">
+                            <i class="fas fa-apple-alt"></i>
+                            <strong>Mac:</strong> Use <kbd>Cmd</kbd> no lugar de <kbd>Ctrl</kbd>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 9: Dicas e Truques -->
+                <section id="step9" class="tutorial-step">
+                    <div class="step-header">
+                        <span class="step-number">9</span>
+                        <h2>Dicas e Truques</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>Aproveite ao máximo o Meu Bairro Alerta com essas dicas especiais!</p>
+
+                        <div class="tips-grid">
+                            <div class="tip-card">
+                                <i class="fas fa-camera"></i>
+                                <h4>Fotos Eficazes</h4>
+                                <p>Tire fotos claras e bem iluminadas. Inclua referências de localização quando possível.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-edit"></i>
+                                <h4>Descrições Detalhadas</h4>
+                                <p>Seja específico na descrição. Inclua horários, frequência do problema e impacto na comunidade.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h4>Localização Precisa</h4>
+                                <p>Forneça endereços completos ou pontos de referência conhecidos para facilitar a localização.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-users"></i>
+                                <h4>Engajamento</h4>
+                                <p>Compartilhe reclamações relevantes com vizinhos para aumentar a visibilidade dos problemas.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-clock"></i>
+                                <h4>Acompanhamento</h4>
+                                <p>Verifique regularmente o status das suas reclamações e de outras da sua região.</p>
+                            </div>
+
+                            <div class="tip-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Dados Seguros</h4>
+                                <p>Seus dados são armazenados localmente no seu navegador. Faça backup se necessário.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card">
+                            <h4><i class="fas fa-star"></i> Parabéns!</h4>
+                            <p>Você concluiu o tutorial do <strong>Meu Bairro Alerta</strong>! Agora você está pronto para:</p>
+                            <ul>
+                                <li>Criar reclamações eficazes</li>
+                                <li>Navegar pelo sistema com facilidade</li>
+                                <li>Usar todos os recursos disponíveis</li>
+                                <li>Contribuir para melhorar sua comunidade</li>
+                            </ul>
+                        </div>
+
+                        <div class="tutorial-demo">
+                            <h4><i class="fas fa-rocket"></i> Próximos Passos</h4>
+                            <p>Agora é hora de colocar em prática! Acesse o site principal e comece a fazer a diferença no seu bairro.</p>
+                            <a href="index.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-home"></i> Ir para o Site Principal
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation Buttons -->
+                <div class="tutorial-navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                        Próximo <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Meu Bairro Alerta. Todos os direitos reservados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+                <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/tutorial.js"></script>
+</body>
+</html>

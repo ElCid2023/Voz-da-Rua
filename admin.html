@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Área Administrativa - Meu Bairro Alerta">
+    <title>Administração - Meu Bairro Alerta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF para exportação PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- SheetJS para exportação Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- EmailJS para notificações -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body class="admin-body">
+    <!-- Login Admin -->
+    <div id="adminLogin" class="admin-login">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Área Administrativa</h1>
+                <p>Meu Bairro Alerta</p>
+            </div>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminEmail">Email do Administrador:</label>
+                    <input type="email" id="adminEmail" required value="admin@meubairroalerta.com">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Senha:</label>
+                    <input type="password" id="adminPassword" required value="admin123">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            <div class="login-info">
+                <h4>Credenciais de Teste:</h4>
+                <p><strong>Email:</strong> admin@meubairroalerta.com</p>
+                <p><strong>Senha:</strong> admin123</p>
+            </div>
+            <div class="back-to-site">
+                <a href="tutorial-admin.html" class="btn btn-primary" style="margin-bottom: 1rem;">
+                    <i class="fas fa-graduation-cap"></i> Tutorial de Gerenciamento
+                </a>
+                <a href="index.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar ao Site
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Admin -->
+    <div id="adminDashboard" class="admin-dashboard hidden">
+        <!-- Header Admin -->
+        <header class="admin-header">
+            <div class="admin-nav">
+                <div class="admin-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Admin - Meu Bairro Alerta</span>
+                </div>
+                <nav class="admin-menu">
+                    <button class="admin-menu-btn active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </button>
+                    <button class="admin-menu-btn" data-section="reclamacoes">
+                        <i class="fas fa-list"></i> Reclamações
+                    </button>
+                    <button class="admin-menu-btn" data-section="usuarios">
+                        <i class="fas fa-users"></i> Usuários
+                    </button>
+                    <button class="admin-menu-btn" data-section="relatorios">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </button>
+                    <button class="admin-menu-btn" data-section="notificacoes">
+                        <i class="fas fa-bell"></i> Notificações
+                    </button>
+                    <button class="admin-menu-btn" data-section="configuracoes">
+                        <i class="fas fa-cog"></i> Configurações
+                    </button>
+                </nav>
+                <div class="admin-user">
+                    <span id="adminUserName">Administrador</span>
+                    <button class="btn btn-secondary" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Dashboard Section -->
+            <section id="admin-dashboard" class="admin-section active">
+                <div class="admin-container">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalReclamacoesAdmin">0</h3>
+                                <p>Total de Reclamações</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="pendentesAdmin">0</h3>
+                                <p>Pendentes</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="emAndamentoAdmin">0</h3>
+                                <p>Em Andamento</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="resolvidasAdmin">0</h3>
+                                <p>Resolvidas</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalUsuariosAdmin">0</h3>
+                                <p>Usuários Cadastrados</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="hojeAdmin">0</h3>
+                                <p>Reclamações Hoje</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3><i class="fas fa-chart-pie"></i> Reclamações por Status</h3>
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3><i class="fas fa-chart-bar"></i> Reclamações por Categoria</h3>
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="recent-activity">
+                        <h3><i class="fas fa-history"></i> Atividade Recente</h3>
+                        <div id="recentActivityList" class="activity-list">
+                            <!-- Atividades serão carregadas aqui -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reclamações Section -->
+            <section id="admin-reclamacoes" class="admin-section">
+                <div class="admin-container">
+                    <h2><i class="fas fa-list"></i> Gerenciar Reclamações</h2>
+                    
+                    <!-- Filters -->
+                    <div class="admin-filters">
+                        <select id="adminFiltroStatus">
+                            <option value="">Todos os status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="em-andamento">Em Andamento</option>
+                            <option value="resolvida">Resolvida</option>
+                        </select>
+                        <select id="adminFiltroCategoria">
+                            <option value="">Todas as categorias</option>
+                            <option value="iluminacao">Iluminação Pública</option>
+                            <option value="asfalto">Asfalto/Pavimentação</option>
+                            <option value="limpeza">Limpeza Urbana</option>
+                            <option value="seguranca">Segurança</option>
+                            <option value="transporte">Transporte Público</option>
+                            <option value="agua">Água e Esgoto</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                        <input type="date" id="adminFiltroData" placeholder="Data">
+                        <button class="btn btn-secondary" onclick="clearAdminFilters()">
+                            <i class="fas fa-filter"></i> Limpar Filtros
+                        </button>
+                    </div>
+
+                    <!-- Reclamações Table -->
+                    <div class="admin-table-container">
+                        <table class="admin-table" id="reclamacoesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Status</th>
+                                    <th>Usuário</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reclamacoesTableBody">
+                                <!-- Reclamações serão carregadas aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Usuários Section -->
+            <section id="admin-usuarios" class="admin-section">
+                <div class="admin-container">
+                    <h2><i class="fas fa-users"></i> Gerenciar Usuários</h2>
+                    
+                    <!-- Users Table -->
+                    <div class="admin-table-container">
+                        <table class="admin-table" id="usuariosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Bairro</th>
+                                    <th>Cidade</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Reclamações</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usuariosTableBody">
+                                <!-- Usuários serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Relatórios Section -->
+            <section id="admin-relatorios" class="admin-section">
+                <div class="admin-container">
+                    <h2><i class="fas fa-chart-bar"></i> Relatórios</h2>
+                    
+                    <!-- Report Controls -->
+                    <div class="report-controls">
+                        <div class="report-filters">
+                            <select id="reportType">
+                                <option value="daily">Relatório Diário</option>
+                                <option value="weekly">Relatório Semanal</option>
+                                <option value="monthly">Relatório Mensal</option>
+                                <option value="custom">Período Personalizado</option>
+                            </select>
+                            <input type="date" id="reportStartDate">
+                            <input type="date" id="reportEndDate" class="hidden">
+                            <button class="btn btn-primary" onclick="generateReport()">
+                                <i class="fas fa-chart-line"></i> Gerar Relatório
+                            </button>
+                        </div>
+                        <div class="export-buttons">
+                            <button class="btn btn-secondary" onclick="exportToPDF()">
+                                <i class="fas fa-file-pdf"></i> Exportar PDF
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Report Content -->
+                    <div id="reportContent" class="report-content">
+                        <!-- Relatório será gerado aqui -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notificações Section -->
+            <section id="admin-notificacoes" class="admin-section">
+                <div class="admin-container">
+                    <h2><i class="fas fa-bell"></i> Configurar Notificações por Email</h2>
+
+                    <!-- Status das Notificações -->
+                    <div class="notification-status">
+                        <div class="status-card" id="notificationStatusCard">
+                            <div class="status-icon" id="statusIcon">
+                                <i class="fas fa-bell-slash"></i>
+                            </div>
+                            <div class="status-content">
+                                <h3 id="statusTitle">Notificações Desabilitadas</h3>
+                                <p id="statusDescription">Configure o EmailJS para receber alertas</p>
+                            </div>
+                            <div class="status-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notificationToggle">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuração EmailJS -->
+                    <div class="config-section">
+                        <h3><i class="fas fa-cog"></i> Configuração do EmailJS</h3>
+                        <div class="config-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emailServiceId">Service ID:</label>
+                                    <input type="text" id="emailServiceId" placeholder="Ex: service_xxxxxxx">
+                                </div>
+                                <div class="form-group">
+                                    <label for="emailTemplateId">Template ID:</label>
+                                    <input type="text" id="emailTemplateId" placeholder="Ex: template_xxxxxxx">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emailPublicKey">Public Key:</label>
+                                    <input type="text" id="emailPublicKey" placeholder="Ex: user_xxxxxxxxxxxxxxxx">
+                                </div>
+                                <div class="form-group">
+                                    <label for="adminEmailAddress">Email do Administrador:</label>
+                                    <input type="email" id="adminEmailAddress" value="cidborgesead2020@gmail.com">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary" onclick="saveEmailConfig()">
+                                    <i class="fas fa-save"></i> Salvar Configuração
+                                </button>
+                                <button class="btn btn-secondary" onclick="testEmailNotification()">
+                                    <i class="fas fa-paper-plane"></i> Enviar Teste
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instruções de Configuração -->
+                    <div class="config-instructions">
+                        <h3><i class="fas fa-info-circle"></i> Como Configurar o EmailJS</h3>
+                        <div class="instruction-steps">
+                            <div class="instruction-step">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <h4>Criar Conta no EmailJS</h4>
+                                    <p>Acesse <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> e crie uma conta gratuita</p>
+                                </div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <h4>Configurar Serviço de Email</h4>
+                                    <p>Conecte seu Gmail, Outlook ou outro provedor de email</p>
+                                </div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">3</span>
+                                <div class="step-content">
+                                    <h4>Criar Template</h4>
+                                    <p>Crie um template com as variáveis: {{to_email}}, {{reclamacao_titulo}}, {{reclamacao_categoria}}, {{reclamacao_descricao}}, {{usuario_nome}}</p>
+                                </div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">4</span>
+                                <div class="step-content">
+                                    <h4>Copiar Credenciais</h4>
+                                    <p>Copie o Service ID, Template ID e Public Key do painel do EmailJS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Template de Email Sugerido -->
+                    <div class="email-template">
+                        <h3><i class="fas fa-envelope"></i> Template de Email Sugerido</h3>
+                        <div class="template-preview">
+                            <div class="template-header">
+                                <strong>Assunto:</strong> 🚨 Nova Reclamação - Meu Bairro Alerta
+                            </div>
+                            <div class="template-body">
+                                <p><strong>Olá Administrador,</strong></p>
+                                <p>Uma nova reclamação foi registrada no sistema:</p>
+                                <ul>
+                                    <li><strong>Título:</strong> {{reclamacao_titulo}}</li>
+                                    <li><strong>Categoria:</strong> {{reclamacao_categoria}}</li>
+                                    <li><strong>Descrição:</strong> {{reclamacao_descricao}}</li>
+                                    <li><strong>Localização:</strong> {{reclamacao_localizacao}}</li>
+                                    <li><strong>Usuário:</strong> {{usuario_nome}}</li>
+                                    <li><strong>Data:</strong> {{data_reclamacao}}</li>
+                                </ul>
+                                <p><a href="{{admin_url}}">Acessar Área Administrativa</a></p>
+                                <p>Meu Bairro Alerta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Histórico de Notificações -->
+                    <div class="notification-history">
+                        <h3><i class="fas fa-history"></i> Últimas Notificações</h3>
+                        <div id="notificationHistoryList" class="history-list">
+                            <p style="text-align: center; color: #666;">Nenhuma notificação enviada ainda</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configurações Section -->
+            <section id="admin-configuracoes" class="admin-section">
+                <div class="admin-container">
+                    <h2><i class="fas fa-cog"></i> Configurações</h2>
+                    
+                    <div class="config-grid">
+                        <div class="config-card">
+                            <h3><i class="fas fa-database"></i> Backup de Dados</h3>
+                            <p>Faça backup dos dados do sistema</p>
+                            <button class="btn btn-primary" onclick="backupData()">
+                                <i class="fas fa-download"></i> Fazer Backup
+                            </button>
+                        </div>
+                        
+                        <div class="config-card">
+                            <h3><i class="fas fa-upload"></i> Restaurar Dados</h3>
+                            <p>Restaurar dados de um backup</p>
+                            <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                            <button class="btn btn-secondary" onclick="document.getElementById('restoreFile').click()">
+                                <i class="fas fa-upload"></i> Restaurar
+                            </button>
+                        </div>
+                        
+                        <div class="config-card">
+                            <h3><i class="fas fa-trash"></i> Limpar Dados</h3>
+                            <p>Remover todos os dados do sistema</p>
+                            <button class="btn btn-danger" onclick="clearAllData()">
+                                <i class="fas fa-trash"></i> Limpar Tudo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para editar reclamação -->
+    <div id="editReclamacaoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <div id="editModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Footer Admin -->
+    <footer style="background: #f8f9fa; padding: 1rem; text-align: center; border-top: 1px solid #e9ecef; margin-top: 2rem;">
+        <p style="margin: 0; color: #666; font-size: 0.9rem;">
+            &copy; 2024 Meu Bairro Alerta - Área Administrativa
+        </p>
+        <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.8rem;">
+            <i class="fas fa-code"></i> Criado por <strong>ProfBorges</strong>
+        </p>
+    </footer>
+
+    <script src="js/notifications.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

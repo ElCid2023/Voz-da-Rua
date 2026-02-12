@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema ViaCEP - Meu Bairro Alerta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #007bff;
+        }
+        .api-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: #004085;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        input[readonly] {
+            background: #f8f9fa;
+            color: #666;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-danger { background: #dc3545; }
+        .row {
+            display: flex;
+            gap: 1rem;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        .loading {
+            text-align: center;
+            color: #007bff;
+            font-style: italic;
+            margin: 1rem 0;
+            display: none;
+        }
+        .result-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #155724;
+            display: none;
+        }
+        .coord-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #856404;
+            font-family: monospace;
+            display: none;
+        }
+        .map-box {
+            background: #f8f9fa;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            text-align: center;
+            display: none;
+        }
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .debug-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .success-msg {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-search-location"></i> Sistema ViaCEP</h1>
+            <p>Localização precisa usando API brasileira oficial dos Correios</p>
+        </div>
+
+        <!-- Informações da API -->
+        <div class="api-info">
+            <h3><i class="fas fa-info-circle"></i> Sobre o ViaCEP</h3>
+            <p><strong>ViaCEP</strong> é uma API gratuita que consulta a base oficial dos Correios do Brasil.</p>
+            <ul>
+                <li>✅ <strong>Dados oficiais</strong> dos Correios</li>
+                <li>✅ <strong>Sempre atualizado</strong> com novos endereços</li>
+                <li>✅ <strong>Gratuito</strong> e sem limite de consultas</li>
+                <li>✅ <strong>Específico para Brasil</strong> - sem confusão internacional</li>
+            </ul>
+        </div>
+
+        <!-- Formulário -->
+        <form id="cepForm">
+            <div class="form-group">
+                <label for="titulo">Título da Reclamação:</label>
+                <input type="text" id="titulo" placeholder="Ex: Buraco na rua" required>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria">Categoria:</label>
+                <select id="categoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <option value="iluminacao">Iluminação Pública</option>
+                    <option value="asfalto">Asfalto/Pavimentação</option>
+                    <option value="limpeza">Limpeza Urbana</option>
+                    <option value="seguranca">Segurança</option>
+                    <option value="transporte">Transporte Público</option>
+                    <option value="agua">Água/Esgoto</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" rows="3" placeholder="Descreva o problema" required></textarea>
+            </div>
+
+            <h3 style="color: #007bff; margin: 2rem 0 1rem 0;">
+                <i class="fas fa-map-marker-alt"></i> Localização via ViaCEP
+            </h3>
+            
+            <div class="form-group">
+                <label for="cep">CEP:</label>
+                <input type="text" id="cep" placeholder="08330-310" maxlength="9" required>
+                <small>Digite seu CEP para busca automática via ViaCEP</small>
+            </div>
+            
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i> Consultando ViaCEP...
+            </div>
+
+            <div class="row">
+                <div class="form-group" style="flex: 3;">
+                    <label for="logradouro">Logradouro:</label>
+                    <input type="text" id="logradouro" placeholder="Será preenchido pelo ViaCEP" readonly>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="numero">Número:</label>
+                    <input type="text" id="numero" placeholder="123" required>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" id="bairro" placeholder="Será preenchido pelo ViaCEP" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="localidade">Cidade:</label>
+                    <input type="text" id="localidade" placeholder="Será preenchido pelo ViaCEP" readonly>
+                </div>
+                <div class="form-group" style="flex: 0.5;">
+                    <label for="uf">UF:</label>
+                    <input type="text" id="uf" placeholder="SP" readonly>
+                </div>
+            </div>
+
+            <!-- Resultado da Consulta -->
+            <div id="resultadoViaCEP" class="result-box">
+                <h4><i class="fas fa-check-circle"></i> Dados do ViaCEP</h4>
+                <div id="dadosViaCEP"></div>
+            </div>
+
+            <!-- Endereço Completo -->
+            <div id="enderecoCompleto" class="result-box">
+                <h4><i class="fas fa-home"></i> Endereço Completo</h4>
+                <div id="enderecoTexto"></div>
+            </div>
+
+            <!-- Coordenadas -->
+            <div id="coordenadasBox" class="coord-box">
+                <h4><i class="fas fa-crosshairs"></i> Coordenadas GPS</h4>
+                <div id="coordenadasTexto"></div>
+                <small>Baseadas na localização do bairro/região</small>
+            </div>
+
+            <!-- Mapa -->
+            <div id="mapaBox" class="map-box">
+                <h4><i class="fas fa-map"></i> Visualizar Localização</h4>
+                <p>Clique para abrir a localização no Google Maps</p>
+                <button type="button" class="btn btn-success" onclick="abrirGoogleMaps()">
+                    <i class="fas fa-external-link-alt"></i> Abrir no Google Maps
+                </button>
+                <button type="button" class="btn btn-warning" onclick="copiarCoordenadas()">
+                    <i class="fas fa-copy"></i> Copiar Coordenadas
+                </button>
+                <button type="button" class="btn btn-info" onclick="copiarEndereco()">
+                    <i class="fas fa-copy"></i> Copiar Endereço
+                </button>
+            </div>
+
+            <!-- Debug -->
+            <div id="debugBox" class="debug-box">
+                <h5>🔍 Debug da Consulta ViaCEP</h5>
+                <div id="debugTexto"></div>
+            </div>
+
+            <div style="text-align: center; margin: 2rem 0;">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-paper-plane"></i> Criar Reclamação
+                </button>
+                <button type="button" class="btn btn-danger" onclick="limparFormulario()">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button type="button" class="btn btn-warning" onclick="toggleDebug()">
+                    <i class="fas fa-bug"></i> Debug
+                </button>
+            </div>
+        </form>
+
+        <!-- CEPs para Teste -->
+        <h3><i class="fas fa-list"></i> CEPs para Teste</h3>
+        <div class="test-buttons">
+            <button class="btn btn-danger" onclick="testarCEP('08330-310')">
+                Seu CEP<br>08330-310
+            </button>
+            <button class="btn" onclick="testarCEP('08330-000')">
+                São Rafael<br>08330-000
+            </button>
+            <button class="btn" onclick="testarCEP('08340-000')">
+                São Mateus<br>08340-000
+            </button>
+            <button class="btn" onclick="testarCEP('01310-100')">
+                Av. Paulista<br>01310-100
+            </button>
+            <button class="btn" onclick="testarCEP('01001-000')">
+                Centro SP<br>01001-000
+            </button>
+        </div>
+
+        <!-- Informações Técnicas -->
+        <div class="success-msg">
+            <h4><i class="fas fa-cog"></i> Como Funciona</h4>
+            <ol>
+                <li><strong>Consulta ViaCEP:</strong> Busca dados oficiais do CEP</li>
+                <li><strong>Preenchimento automático:</strong> Logradouro, bairro, cidade</li>
+                <li><strong>Mapeamento de coordenadas:</strong> Baseado no bairro/região</li>
+                <li><strong>Validação:</strong> Confirma se é São Paulo capital</li>
+                <li><strong>Localização precisa:</strong> Coordenadas da Zona Leste</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let dadosViaCEP = {};
+        let coordenadas = null;
+        let debugMode = false;
+
+        // Mapeamento de coordenadas por bairro/região de São Paulo
+        const coordenadasSaoPaulo = {
+            // Zona Leste
+            'vila ester': [-23.5889, -46.4836],
+            'são rafael': [-23.5889, -46.4836],
+            'sao rafael': [-23.5889, -46.4836],
+            'são mateus': [-23.6089, -46.4736],
+            'sao mateus': [-23.6089, -46.4736],
+            'cidade tiradentes': [-23.5969, -46.4031],
+            'itaquera': [-23.5394, -46.4563],
+            'guaianases': [-23.5394, -46.4063],
+            'itaim paulista': [-23.5669, -46.3969],
+            'vila matilde': [-23.5569, -46.5169],
+            'penha': [-23.5269, -46.5369],
+            
+            // Centro
+            'centro': [-23.5505, -46.6333],
+            'sé': [-23.5505, -46.6333],
+            'república': [-23.5431, -46.6291],
+            'liberdade': [-23.5587, -46.6347],
+            'bela vista': [-23.5576, -46.6487],
+            
+            // Zona Sul
+            'vila madalena': [-23.5629, -46.6544],
+            'jardins': [-23.5629, -46.6544],
+            'consolação': [-23.5539, -46.6623],
+            
+            // Padrão para São Paulo
+            'são paulo': [-23.5505, -46.6333],
+            'sao paulo': [-23.5505, -46.6333]
+        };
+
+        // Configurar eventos
+        document.addEventListener('DOMContentLoaded', function() {
+            configurarCEP();
+            configurarFormulario();
+        });
+
+        // Configurar campo CEP
+        function configurarCEP() {
+            const cepInput = document.getElementById('cep');
+            const numeroInput = document.getElementById('numero');
+            
+            // Máscara do CEP
+            cepInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 5) {
+                    value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                }
+                e.target.value = value;
+                
+                // Auto-buscar quando CEP completo
+                if (value.length === 9) {
+                    consultarViaCEP(value);
+                }
+            });
+            
+            // Atualizar endereço quando número mudar
+            numeroInput.addEventListener('input', function() {
+                if (dadosViaCEP.cep) {
+                    atualizarEnderecoCompleto();
+                }
+            });
+        }
+
+        // Configurar formulário
+        function configurarFormulario() {
+            document.getElementById('cepForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                criarReclamacao();
+            });
+        }
+
+        // Consultar ViaCEP
+        async function consultarViaCEP(cep) {
+            const cepLimpo = cep.replace(/\D/g, '');
+            
+            if (cepLimpo.length !== 8) {
+                debug('CEP incompleto: ' + cepLimpo);
+                return;
+            }
+            
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                debug('Iniciando consulta ViaCEP para: ' + cepLimpo);
+                
+                const url = `https://viacep.com.br/ws/${cepLimpo}/json/`;
+                debug('URL da consulta: ' + url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                debug('Resposta ViaCEP: ' + JSON.stringify(data, null, 2));
+                
+                if (data.erro) {
+                    throw new Error('CEP não encontrado na base dos Correios');
+                }
+                
+                // Salvar dados
+                dadosViaCEP = {
+                    cep: data.cep,
+                    logradouro: data.logradouro || '',
+                    complemento: data.complemento || '',
+                    bairro: data.bairro || '',
+                    localidade: data.localidade || '',
+                    uf: data.uf || '',
+                    ibge: data.ibge || '',
+                    gia: data.gia || '',
+                    ddd: data.ddd || '',
+                    siafi: data.siafi || ''
+                };
+                
+                debug('Dados processados: ' + JSON.stringify(dadosViaCEP, null, 2));
+                
+                // Preencher formulário
+                preencherFormulario();
+                
+                // Mostrar resultado
+                mostrarResultadoViaCEP();
+                
+                // Determinar coordenadas
+                determinarCoordenadas();
+                
+                // Atualizar endereço completo
+                atualizarEnderecoCompleto();
+                
+                console.log('✅ Consulta ViaCEP concluída com sucesso');
+                
+            } catch (error) {
+                console.error('❌ Erro na consulta ViaCEP:', error);
+                debug('ERRO: ' + error.message);
+                alert(`Erro ao consultar CEP: ${error.message}\n\nVerifique se o CEP está correto.`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Preencher formulário
+        function preencherFormulario() {
+            document.getElementById('logradouro').value = dadosViaCEP.logradouro;
+            document.getElementById('bairro').value = dadosViaCEP.bairro;
+            document.getElementById('localidade').value = dadosViaCEP.localidade;
+            document.getElementById('uf').value = dadosViaCEP.uf;
+        }
+
+        // Mostrar resultado ViaCEP
+        function mostrarResultadoViaCEP() {
+            const resultado = document.getElementById('resultadoViaCEP');
+            const dados = document.getElementById('dadosViaCEP');
+            
+            dados.innerHTML = `
+                <p><strong>CEP:</strong> ${dadosViaCEP.cep}</p>
+                <p><strong>Logradouro:</strong> ${dadosViaCEP.logradouro || 'Não especificado'}</p>
+                <p><strong>Bairro:</strong> ${dadosViaCEP.bairro || 'Não especificado'}</p>
+                <p><strong>Cidade:</strong> ${dadosViaCEP.localidade}</p>
+                <p><strong>UF:</strong> ${dadosViaCEP.uf}</p>
+                ${dadosViaCEP.ddd ? `<p><strong>DDD:</strong> ${dadosViaCEP.ddd}</p>` : ''}
+            `;
+            
+            resultado.style.display = 'block';
+        }
+
+        // Determinar coordenadas
+        function determinarCoordenadas() {
+            const bairro = dadosViaCEP.bairro.toLowerCase();
+            const cidade = dadosViaCEP.localidade.toLowerCase();
+            
+            debug('Determinando coordenadas para: ' + bairro + ', ' + cidade);
+            
+            // Verificar se é São Paulo
+            if (!cidade.includes('são paulo') && !cidade.includes('sao paulo')) {
+                debug('ATENÇÃO: Cidade não é São Paulo: ' + cidade);
+                alert(`⚠️ Atenção: Este CEP pertence a ${dadosViaCEP.localidade}, não São Paulo.\n\nO sistema foi projetado para São Paulo capital.`);
+                return;
+            }
+            
+            // Buscar coordenadas por bairro
+            for (const [regiao, coords] of Object.entries(coordenadasSaoPaulo)) {
+                if (bairro.includes(regiao)) {
+                    coordenadas = coords;
+                    debug('Coordenadas encontradas para ' + regiao + ': ' + coords);
+                    mostrarCoordenadas();
+                    mostrarMapa();
+                    return;
+                }
+            }
+            
+            // Fallback: coordenadas padrão de São Paulo
+            coordenadas = [-23.5505, -46.6333];
+            debug('Usando coordenadas padrão de São Paulo: ' + coordenadas);
+            mostrarCoordenadas();
+            mostrarMapa();
+        }
+
+        // Mostrar coordenadas
+        function mostrarCoordenadas() {
+            if (!coordenadas) return;
+            
+            const coordBox = document.getElementById('coordenadasBox');
+            const coordTexto = document.getElementById('coordenadasTexto');
+            
+            coordTexto.innerHTML = `
+                <strong>Latitude:</strong> ${coordenadas[0].toFixed(6)}<br>
+                <strong>Longitude:</strong> ${coordenadas[1].toFixed(6)}<br>
+                <strong>Região:</strong> ${dadosViaCEP.bairro}, ${dadosViaCEP.localidade}
+            `;
+            
+            coordBox.style.display = 'block';
+        }
+
+        // Mostrar mapa
+        function mostrarMapa() {
+            const mapaBox = document.getElementById('mapaBox');
+            mapaBox.style.display = 'block';
+        }
+
+        // Atualizar endereço completo
+        function atualizarEnderecoCompleto() {
+            const numero = document.getElementById('numero').value || '[NÚMERO]';
+            const endereco = `${dadosViaCEP.logradouro}, ${numero} - ${dadosViaCEP.bairro}, ${dadosViaCEP.localidade} - ${dadosViaCEP.uf}`;
+            
+            const enderecoBox = document.getElementById('enderecoCompleto');
+            const enderecoTexto = document.getElementById('enderecoTexto');
+            
+            enderecoTexto.innerHTML = `<strong>${endereco}</strong>`;
+            enderecoBox.style.display = 'block';
+        }
+
+        // Testar CEP
+        function testarCEP(cep) {
+            document.getElementById('cep').value = cep;
+            consultarViaCEP(cep);
+        }
+
+        // Abrir Google Maps
+        function abrirGoogleMaps() {
+            if (!coordenadas) {
+                alert('Primeiro digite um CEP válido!');
+                return;
+            }
+            
+            const url = `https://www.google.com/maps?q=${coordenadas[0]},${coordenadas[1]}`;
+            window.open(url, '_blank');
+        }
+
+        // Copiar coordenadas
+        function copiarCoordenadas() {
+            if (!coordenadas) return;
+            
+            const texto = `${coordenadas[0]}, ${coordenadas[1]}`;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('Coordenadas copiadas: ' + texto);
+            });
+        }
+
+        // Copiar endereço
+        function copiarEndereco() {
+            const numero = document.getElementById('numero').value || '1';
+            const endereco = `${dadosViaCEP.logradouro}, ${numero} - ${dadosViaCEP.bairro}, ${dadosViaCEP.localidade} - ${dadosViaCEP.uf}`;
+            
+            navigator.clipboard.writeText(endereco).then(() => {
+                alert('Endereço copiado: ' + endereco);
+            });
+        }
+
+        // Criar reclamação
+        function criarReclamacao() {
+            if (!dadosViaCEP.cep) {
+                alert('Primeiro digite um CEP válido!');
+                return;
+            }
+            
+            if (!coordenadas) {
+                alert('Aguarde a determinação das coordenadas!');
+                return;
+            }
+            
+            const numero = document.getElementById('numero').value || '1';
+            const endereco = `${dadosViaCEP.logradouro}, ${numero} - ${dadosViaCEP.bairro}, ${dadosViaCEP.localidade}`;
+            
+            const reclamacao = {
+                id: Date.now().toString(),
+                titulo: document.getElementById('titulo').value.trim(),
+                categoria: document.getElementById('categoria').value,
+                descricao: document.getElementById('descricao').value.trim(),
+                localizacao: endereco,
+                cep: dadosViaCEP.cep,
+                logradouro: dadosViaCEP.logradouro,
+                numero: numero,
+                bairro: dadosViaCEP.bairro,
+                cidade: dadosViaCEP.localidade,
+                uf: dadosViaCEP.uf,
+                coordenadas: coordenadas,
+                fonteDados: 'ViaCEP',
+                dadosViaCEP: dadosViaCEP,
+                status: 'pendente',
+                usuario: 'Usuário ViaCEP',
+                usuarioId: 'viacep',
+                dataReclamacao: new Date().toISOString(),
+                midia: []
+            };
+            
+            // Validar campos obrigatórios
+            if (!reclamacao.titulo || !reclamacao.categoria || !reclamacao.descricao || !reclamacao.numero) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            // Salvar
+            let reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            reclamacoes.push(reclamacao);
+            localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+            
+            alert(`✅ Reclamação criada via ViaCEP!
+
+📝 Título: ${reclamacao.titulo}
+📍 Endereço: ${endereco}
+🗺️ Coordenadas: ${coordenadas[0].toFixed(6)}, ${coordenadas[1].toFixed(6)}
+📮 Fonte: ViaCEP (Correios)
+
+A reclamação foi salva com dados oficiais dos Correios!
+Vá para o site principal para verificar no mapa.`);
+            
+            limparFormulario();
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('cepForm').reset();
+            document.getElementById('resultadoViaCEP').style.display = 'none';
+            document.getElementById('enderecoCompleto').style.display = 'none';
+            document.getElementById('coordenadasBox').style.display = 'none';
+            document.getElementById('mapaBox').style.display = 'none';
+            dadosViaCEP = {};
+            coordenadas = null;
+        }
+
+        // Debug
+        function debug(mensagem) {
+            console.log('🔍 DEBUG:', mensagem);
+            if (debugMode) {
+                const debugBox = document.getElementById('debugBox');
+                const debugTexto = document.getElementById('debugTexto');
+                debugTexto.innerHTML += new Date().toLocaleTimeString() + ': ' + mensagem + '<br>';
+                debugBox.style.display = 'block';
+            }
+        }
+
+        // Toggle debug
+        function toggleDebug() {
+            debugMode = !debugMode;
+            const debugBox = document.getElementById('debugBox');
+            if (debugMode) {
+                debugBox.style.display = 'block';
+                debug('Debug mode ativado');
+            } else {
+                debugBox.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

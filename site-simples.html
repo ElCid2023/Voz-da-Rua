@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Bairro Alerta - Versão Simples</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <h1>Meu Bairro Alerta</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="mostrarSecao('home')" class="nav-link active">Início</a></li>
+                    <li><a href="javascript:void(0)" onclick="mostrarSecao('reclamacoes')" class="nav-link">Reclamações</a></li>
+                    <li><a href="javascript:void(0)" onclick="mostrarSecao('nova-reclamacao')" class="nav-link">Nova Reclamação</a></li>
+                    <li><a href="javascript:void(0)" onclick="mostrarSecao('login')" class="nav-link" id="loginBtn">Login</a></li>
+                </ul>
+            </nav>
+            <div class="user-info hidden" id="userInfo">
+                <span id="userName"></span>
+                <i class="fas fa-user-circle"></i>
+                <button onclick="logout()" class="btn-logout">Sair</button>
+            </div>
+        </header>
+
+        <main class="main">
+            <!-- Seção Home -->
+            <section id="home" class="section active">
+                <div class="hero">
+                    <h2>Bem-vindo ao Meu Bairro Alerta</h2>
+                    <p>Reporte problemas em seu bairro e ajude a melhorar sua comunidade</p>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <h3 id="totalReclamacoes">0</h3>
+                            <p>Total de Reclamações</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="pendentes">0</h3>
+                            <p>Pendentes</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="resolvidas">0</h3>
+                            <p>Resolvidas</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção Reclamações -->
+            <section id="reclamacoes" class="section">
+                <h2>Reclamações</h2>
+                <div id="listaReclamacoes" class="reclamacoes-lista">
+                    <p>Carregando reclamações...</p>
+                </div>
+            </section>
+
+            <!-- Seção Nova Reclamação -->
+            <section id="nova-reclamacao" class="section">
+                <h2>Nova Reclamação</h2>
+                
+                <div id="authRequired" class="auth-required">
+                    <p>Você precisa estar logado para fazer uma reclamação.</p>
+                    <button onclick="mostrarSecao('login')" class="btn">Fazer Login</button>
+                </div>
+
+                <form id="reclamacaoForm" class="reclamacao-form hidden">
+                    <div class="form-group">
+                        <label for="titulo">Título:</label>
+                        <input type="text" id="titulo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoria">Categoria:</label>
+                        <select id="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="iluminacao">Iluminação Pública</option>
+                            <option value="asfalto">Asfalto/Pavimentação</option>
+                            <option value="limpeza">Limpeza Urbana</option>
+                            <option value="seguranca">Segurança</option>
+                            <option value="transporte">Transporte Público</option>
+                            <option value="agua">Água/Esgoto</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descricao">Descrição:</label>
+                        <textarea id="descricao" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cep">CEP:</label>
+                        <input type="text" id="cep" placeholder="08330-310" maxlength="9" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rua">Rua:</label>
+                            <input type="text" id="rua" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="numero">Número:</label>
+                            <input type="text" id="numero" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bairro">Bairro:</label>
+                            <input type="text" id="bairro" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade:</label>
+                            <input type="text" id="cidade" readonly>
+                        </div>
+                    </div>
+                    
+                    <div id="localizacaoStatus" class="localizacao-status" style="display: none;">
+                        <div class="status-item" id="statusCEP">
+                            <i class="fas fa-check-circle"></i> CEP encontrado
+                        </div>
+                        <div class="status-item" id="statusCoordenadas">
+                            <i class="fas fa-crosshairs"></i> <span id="statusCoordenadasTexto">Buscando localização exata...</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Enviar Reclamação</button>
+                </form>
+            </section>
+
+            <!-- Seção Login -->
+            <section id="login" class="section">
+                <h2>Login</h2>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Senha:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn">Entrar</button>
+                </form>
+                
+                <p>Não tem conta? <a href="javascript:void(0)" onclick="mostrarSecao('cadastro')">Cadastre-se</a></p>
+            </section>
+
+            <!-- Seção Cadastro -->
+            <section id="cadastro" class="section">
+                <h2>Cadastro</h2>
+                <form id="cadastroForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn">Cadastrar</button>
+                </form>
+                
+                <p>Já tem conta? <a href="javascript:void(0)" onclick="mostrarSecao('login')">Faça login</a></p>
+            </section>
+        </main>
+    </div>
+
+    <div id="message" class="message hidden"></div>
+
+    <script>
+        // Variáveis globais
+        let currentUser = null;
+        let coordenadasExatas = null;
+        let enderecoGeocodificacao = '';
+
+        // Função para mostrar seções
+        function mostrarSecao(secaoId) {
+            console.log('Mostrando seção:', secaoId);
+            
+            // Esconder todas as seções
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar seção selecionada
+            const secao = document.getElementById(secaoId);
+            if (secao) {
+                secao.classList.add('active');
+                console.log('Seção ativada:', secaoId);
+            } else {
+                console.error('Seção não encontrada:', secaoId);
+            }
+            
+            // Atualizar navegação
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Verificar autenticação
+            if (secaoId === 'nova-reclamacao') {
+                verificarAuth();
+            }
+            
+            // Carregar reclamações se necessário
+            if (secaoId === 'reclamacoes') {
+                carregarReclamacoes();
+            }
+        }
+
+        // Verificar autenticação
+        function verificarAuth() {
+            const authRequired = document.getElementById('authRequired');
+            const reclamacaoForm = document.getElementById('reclamacaoForm');
+            
+            if (currentUser) {
+                authRequired.classList.add('hidden');
+                reclamacaoForm.classList.remove('hidden');
+            } else {
+                authRequired.classList.remove('hidden');
+                reclamacaoForm.classList.add('hidden');
+            }
+        }
+
+        // Carregar reclamações
+        function carregarReclamacoes() {
+            const container = document.getElementById('listaReclamacoes');
+            const reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            
+            if (reclamacoes.length === 0) {
+                container.innerHTML = '<p>Nenhuma reclamação encontrada.</p>';
+                return;
+            }
+            
+            container.innerHTML = reclamacoes.map(r => `
+                <div class="reclamacao-card">
+                    <h3>${r.titulo}</h3>
+                    <p><strong>Categoria:</strong> ${r.categoria}</p>
+                    <p><strong>Local:</strong> ${r.localizacao}</p>
+                    <p><strong>Status:</strong> ${r.status}</p>
+                    <p><strong>Data:</strong> ${new Date(r.dataReclamacao).toLocaleDateString()}</p>
+                    <p>${r.descricao}</p>
+                </div>
+            `).join('');
+        }
+
+        // Atualizar estatísticas
+        function atualizarStats() {
+            const reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+            
+            document.getElementById('totalReclamacoes').textContent = reclamacoes.length;
+            document.getElementById('pendentes').textContent = reclamacoes.filter(r => r.status === 'pendente').length;
+            document.getElementById('resolvidas').textContent = reclamacoes.filter(r => r.status === 'resolvida').length;
+        }
+
+        // Mostrar mensagem
+        function mostrarMensagem(texto, tipo = 'info') {
+            const message = document.getElementById('message');
+            message.textContent = texto;
+            message.className = `message ${tipo}`;
+            message.classList.remove('hidden');
+            
+            setTimeout(() => {
+                message.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('loginBtn').classList.remove('hidden');
+            
+            mostrarMensagem('Logout realizado com sucesso!', 'success');
+            mostrarSecao('home');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Site simples carregado');
+            
+            // Verificar usuário logado
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('userName').textContent = currentUser.nome;
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('loginBtn').classList.add('hidden');
+            }
+            
+            // Atualizar estatísticas
+            atualizarStats();
+            
+            // Configurar formulários
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                // Login simples
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    document.getElementById('userName').textContent = user.nome;
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('loginBtn').classList.add('hidden');
+                    
+                    mostrarMensagem('Login realizado com sucesso!', 'success');
+                    mostrarSecao('home');
+                } else {
+                    mostrarMensagem('Email ou senha incorretos!', 'error');
+                }
+            });
+            
+            document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nome = document.getElementById('nome').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                if (users.find(u => u.email === email)) {
+                    mostrarMensagem('Email já cadastrado!', 'error');
+                    return;
+                }
+                
+                const newUser = {
+                    id: Date.now().toString(),
+                    nome,
+                    email,
+                    password,
+                    dataCadastro: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                mostrarMensagem('Cadastro realizado com sucesso!', 'success');
+                mostrarSecao('login');
+            });
+            
+            console.log('Site simples inicializado');
+        });
+    </script>
+</body>
+</html>

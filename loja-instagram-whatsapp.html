@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛍️ Loja no Instagram + WhatsApp Business - Guia Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23f0f0f0"/><circle cx="75" cy="75" r="1" fill="%23f0f0f0"/><circle cx="50" cy="10" r="0.5" fill="%23e0e0e0"/><circle cx="10" cy="60" r="0.5" fill="%23e0e0e0"/><circle cx="90" cy="40" r="0.5" fill="%23e0e0e0"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.1;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .subtitle {
+            font-size: 1.3rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .platforms {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .platform {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        .platform.instagram {
+            background: linear-gradient(45deg, #E4405F, #C13584);
+            box-shadow: 0 5px 15px rgba(228, 64, 95, 0.3);
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 30px 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-header {
+            background: linear-gradient(45deg, #E4405F, #C13584);
+            color: white;
+            padding: 25px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .section-content {
+            padding: 30px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #E4405F;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #E4405F, #C13584);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .step-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .step-content li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .step-content li:before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+        }
+        
+        .whatsapp-section {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .whatsapp-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="whatsapp" width="20" height="20" patternUnits="userSpaceOnUse"><text x="10" y="15" font-size="12" text-anchor="middle" fill="rgba(255,255,255,0.1)">📱</text></pattern></defs><rect width="100" height="100" fill="url(%23whatsapp)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .whatsapp-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .whatsapp-section ul {
+            position: relative;
+            z-index: 1;
+            margin-left: 20px;
+        }
+        
+        .whatsapp-section li {
+            margin: 10px 0;
+            padding: 8px 0;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tool-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .tool-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card .price {
+            background: #E4405F;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .strategy-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #E4405F;
+        }
+        
+        .strategy-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .strategy-card ul {
+            margin-left: 20px;
+        }
+        
+        .strategy-card li {
+            margin: 8px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            padding-left: 60px;
+        }
+        
+        .warning::before {
+            content: "⚠️";
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            font-size: 2rem;
+        }
+        
+        .success-tips {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            padding-left: 60px;
+        }
+        
+        .success-tips::before {
+            content: "💡";
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            font-size: 2rem;
+        }
+        
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .checklist-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+        
+        .checklist-item.completed {
+            background: #d4edda;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #E4405F, #C13584);
+            border-radius: 15px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hero" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="25" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="2" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23hero)"/></svg>');
+        }
+        
+        .hero-image h2 {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .platforms {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-icon {
+                align-self: center;
+            }
+            
+            .strategy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .container {
+                max-width: none;
+                padding: 0;
+            }
+            
+            .section {
+                break-inside: avoid;
+                margin: 15px 0;
+            }
+            
+            .step {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ Loja no Instagram</h1>
+            <div class="subtitle">Guia Completo + WhatsApp Business</div>
+            <div class="platforms">
+                <div class="platform instagram">📸 Instagram</div>
+                <div class="platform">📱 WhatsApp Business</div>
+            </div>
+        </div>
+
+        <div class="hero-image">
+            <h2>🚀 Transforme seu Instagram em uma loja lucrativa!</h2>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">📱</div>
+                <span>CONFIGURAÇÃO INICIAL</span>
+            </div>
+            <div class="section-content">
+                <div class="step">
+                    <div class="step-icon">1️⃣</div>
+                    <div class="step-content">
+                        <h4>Configurar Instagram Business</h4>
+                        <ul>
+                            <li>Converter perfil pessoal para Business</li>
+                            <li>Conectar com Facebook Business</li>
+                            <li>Definir categoria de negócio</li>
+                            <li>Adicionar informações de contato</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-icon">2️⃣</div>
+                    <div class="step-content">
+                        <h4>Configurar WhatsApp Business</h4>
+                        <ul>
+                            <li>Baixar WhatsApp Business App</li>
+                            <li>Configurar perfil da empresa</li>
+                            <li>Adicionar descrição e horários</li>
+                            <li>Configurar mensagens automáticas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-icon">3️⃣</div>
+                    <div class="step-content">
+                        <h4>Integrar as Plataformas</h4>
+                        <ul>
+                            <li>Adicionar botão WhatsApp no Instagram</li>
+                            <li>Configurar link direto para WhatsApp</li>
+                            <li>Testar fluxo de comunicação</li>
+                            <li>Verificar sincronização</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">📸</div>
+                <span>ESTRATÉGIAS DE CONTEÚDO</span>
+            </div>
+            <div class="section-content">
+                <div class="strategy-grid">
+                    <div class="strategy-card">
+                        <h4>🎯 Posts de Produtos</h4>
+                        <ul>
+                            <li>Fotos profissionais dos produtos</li>
+                            <li>Vídeos demonstrativos</li>
+                            <li>Infográficos com benefícios</li>
+                            <li>Stories com detalhes</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>💬 Stories Interativos</h4>
+                        <ul>
+                            <li>Perguntas sobre produtos</li>
+                            <li>Enquetes de preferências</li>
+                            <li>Contagem regressiva para lançamentos</li>
+                            <li>Behind the scenes</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>📱 Reels e Vídeos</h4>
+                        <ul>
+                            <li>Tutoriais de uso</li>
+                            <li>Unboxing de produtos</li>
+                            <li>Depoimentos de clientes</li>
+                            <li>Dicas relacionadas ao nicho</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>🏷️ Hashtags Estratégicas</h4>
+                        <ul>
+                            <li>Hashtags do nicho</li>
+                            <li>Hashtags de localização</li>
+                            <li>Hashtags de tendência</li>
+                            <li>Hashtags da marca</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="whatsapp-section">
+            <h3>📱 Estratégias WhatsApp Business</h3>
+            <ul>
+                <li><strong>Mensagens de Boas-vindas:</strong> Apresentação automática da empresa</li>
+                <li><strong>Catálogo Digital:</strong> Lista organizada de produtos com preços</li>
+                <li><strong>Respostas Rápidas:</strong> Mensagens pré-definidas para perguntas comuns</li>
+                <li><strong>Etiquetas:</strong> Organizar clientes por status (novo, interessado, cliente)</li>
+                <li><strong>Estatísticas:</strong> Acompanhar mensagens, respostas e conversões</li>
+                <li><strong>Integração com Instagram:</strong> Botão direto para WhatsApp</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">💰</div>
+                <span>MONETIZAÇÃO E VENDAS</span>
+            </div>
+            <div class="section-content">
+                <div class="step">
+                    <div class="step-icon">💳</div>
+                    <div class="step-content">
+                        <h4>Processo de Venda</h4>
+                        <ul>
+                            <li>Cliente vê produto no Instagram</li>
+                            <li>Clica no botão WhatsApp</li>
+                            <li>Envia mensagem de interesse</li>
+                            <li>Recebe informações e preços</li>
+                            <li>Faz pedido via WhatsApp</li>
+                            <li>Recebe confirmação e pagamento</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-icon">📊</div>
+                    <div class="step-content">
+                        <h4>Métricas de Sucesso</h4>
+                        <ul>
+                            <li>Engajamento dos posts (likes, comentários, salvos)</li>
+                            <li>Cliques no botão WhatsApp</li>
+                            <li>Taxa de conversão de mensagens</li>
+                            <li>Tempo médio de resposta</li>
+                            <li>Valor médio do pedido</li>
+                            <li>Taxa de retorno dos clientes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">🛠️</div>
+                <span>FERRAMENTAS ESSENCIAIS</span>
+            </div>
+            <div class="section-content">
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <h4>📱 WhatsApp Business</h4>
+                        <p>App oficial para empresas</p>
+                        <div class="price">GRATUITO</div>
+                    </div>
+                    <div class="tool-card">
+                        <h4>📸 Instagram Business</h4>
+                        <p>Perfil empresarial do Instagram</p>
+                        <div class="price">GRATUITO</div>
+                    </div>
+                    <div class="tool-card">
+                        <h4>📊 Facebook Business Suite</h4>
+                        <p>Gerenciamento centralizado</p>
+                        <div class="price">GRATUITO</div>
+                    </div>
+                    <div class="tool-card">
+                        <h4>🎨 Canva</h4>
+                        <p>Criação de posts e stories</p>
+                        <div class="price">GRATUITO/PREMIUM</div>
+                    </div>
+                    <div class="tool-card">
+                        <h4>📅 Later</h4>
+                        <p>Agendamento de posts</p>
+                        <div class="price">R$ 50-200/mês</div>
+                    </div>
+                    <div class="tool-card">
+                        <h4>📈 Hootsuite</h4>
+                        <p>Gestão de redes sociais</p>
+                        <div class="price">R$ 100-500/mês</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">📋</div>
+                <span>CHECKLIST DE IMPLEMENTAÇÃO</span>
+            </div>
+            <div class="section-content">
+                <div class="checklist">
+                    <h4>✅ Checklist de Configuração</h4>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Converter Instagram para Business</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Configurar WhatsApp Business</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Adicionar botão WhatsApp no Instagram</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Criar catálogo de produtos</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Configurar mensagens automáticas</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Planejar calendário de posts</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Definir estratégia de hashtags</span>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateChecklist()">
+                        <span>Configurar processo de vendas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="warning">
+            <h4>ATENÇÃO: Desafios e Soluções</h4>
+            <ul>
+                <li><strong>Algoritmo do Instagram:</strong> Poste regularmente e mantenha engajamento</li>
+                <li><strong>Resposta rápida:</strong> Configure mensagens automáticas no WhatsApp</li>
+                <li><strong>Qualidade do conteúdo:</strong> Invista em fotos e vídeos profissionais</li>
+                <li><strong>Consistência:</strong> Mantenha frequência de posts</li>
+                <li><strong>Interação:</strong> Responda comentários e mensagens rapidamente</li>
+            </ul>
+        </div>
+
+        <div class="success-tips">
+            <h4>Dicas para o Sucesso</h4>
+            <ul>
+                <li>Poste conteúdo de valor, não apenas produtos</li>
+                <li>Use Stories para mostrar personalidade da marca</li>
+                <li>Responda mensagens do WhatsApp em até 1 hora</li>
+                <li>Teste diferentes horários de postagem</li>
+                <li>Colabore com influenciadores do seu nicho</li>
+                <li>Analise métricas e ajuste estratégias</li>
+                <li>Mantenha consistência visual na identidade da marca</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">📈</div>
+                <span>CRESCIMENTO E ESCALA</span>
+            </div>
+            <div class="section-content">
+                <div class="step">
+                    <div class="step-icon">🚀</div>
+                    <div class="step-content">
+                        <h4>Estratégias de Crescimento</h4>
+                        <ul>
+                            <li><strong>Instagram Ads:</strong> Anúncios direcionados para seu público</li>
+                            <li><strong>Colaborações:</strong> Parcerias com influenciadores</li>
+                            <li><strong>Conteúdo Viral:</strong> Posts que incentivam compartilhamento</li>
+                            <li><strong>Comunidade:</strong> Construir relacionamentos com seguidores</li>
+                            <li><strong>Cross-promoção:</strong> Integrar com outras redes sociais</li>
+                            <li><strong>Email Marketing:</strong> Capturar leads para lista de emails</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-icon">💼</div>
+                    <div class="step-content">
+                        <h4>Automação e Eficiência</h4>
+                        <ul>
+                            <li><strong>Agendamento:</strong> Programar posts com antecedência</li>
+                            <li><strong>Respostas Automáticas:</strong> WhatsApp Business com mensagens pré-definidas</li>
+                            <li><strong>Templates:</strong> Criar modelos para posts recorrentes</li>
+                            <li><strong>Analytics:</strong> Usar dados para otimizar estratégias</li>
+                            <li><strong>CRM:</strong> Sistema para gerenciar clientes</li>
+                            <li><strong>Integrações:</strong> Conectar com outras ferramentas de negócio</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateChecklist() {
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    checkbox.parentElement.classList.add('completed');
+                } else {
+                    checkbox.parentElement.classList.remove('completed');
+                }
+            });
+        }
+
+        // Adicionar interatividade aos passos
+        document.querySelectorAll('.step').forEach(step => {
+            step.addEventListener('click', function() {
+                this.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+
+        // Adicionar interatividade às estratégias
+        document.querySelectorAll('.strategy-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+
+        console.log('🛍️ Guia Loja Instagram + WhatsApp carregado com sucesso!');
+        console.log('💡 Dica: Use o checklist para acompanhar sua implementação!');
+    </script>
+</body>
+</html>

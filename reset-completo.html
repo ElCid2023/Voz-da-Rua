@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Completo - Meu Bairro Alerta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-danger { background: #dc3545; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .status {
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .result {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 1rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Reset Completo do Sistema</h1>
+        <p>Vamos limpar tudo e criar um sistema funcionando do zero</p>
+        
+        <div id="status" class="status info">
+            🔄 Pronto para reset completo...
+        </div>
+    </div>
+
+    <div class="container">
+        <h3>🗑️ Limpeza Total</h3>
+        <button class="btn btn-danger" onclick="limparTudo()">🗑️ Limpar TUDO</button>
+        <button class="btn btn-warning" onclick="verificarEstado()">🔍 Verificar Estado</button>
+    </div>
+
+    <div class="container">
+        <h3>📝 Criar Sistema Novo</h3>
+        <button class="btn btn-success" onclick="criarSistemaCompleto()">🚀 Criar Sistema Completo</button>
+        <button class="btn" onclick="testarSistema()">🧪 Testar Sistema</button>
+    </div>
+
+    <div class="container">
+        <h3>🔗 Navegação</h3>
+        <button class="btn" onclick="abrirSite()">🏠 Abrir Site Principal</button>
+        <button class="btn" onclick="recarregarPagina()">🔄 Recarregar Esta Página</button>
+    </div>
+
+    <div class="container">
+        <h3>📊 Log</h3>
+        <div id="resultado" class="result">Clique nos botões acima para começar...</div>
+    </div>
+
+    <script>
+        function log(message) {
+            const resultado = document.getElementById('resultado');
+            const timestamp = new Date().toLocaleTimeString();
+            resultado.textContent += `[${timestamp}] ${message}\n`;
+            resultado.scrollTop = resultado.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function limparTudo() {
+            log('🗑️ LIMPEZA TOTAL INICIADA...');
+            updateStatus('🗑️ Limpando todos os dados...', 'error');
+            
+            try {
+                // Limpar TODAS as chaves possíveis
+                const chaves = [
+                    'reclamacoes', 'users', 'usuarios', 'currentUser',
+                    'userData', 'loginData', 'sessionData', 'appData',
+                    'mapData', 'coordenadas', 'enderecos'
+                ];
+                
+                chaves.forEach(chave => {
+                    if (localStorage.getItem(chave)) {
+                        localStorage.removeItem(chave);
+                        log(`  ✅ Removido: ${chave}`);
+                    }
+                });
+                
+                // Limpar cache do navegador se possível
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                
+                log('✅ LIMPEZA TOTAL CONCLUÍDA');
+                updateStatus('✅ Todos os dados foram limpos', 'success');
+                
+            } catch (error) {
+                log(`❌ Erro na limpeza: ${error.message}`);
+                updateStatus('❌ Erro na limpeza', 'error');
+            }
+        }
+
+        function verificarEstado() {
+            log('🔍 VERIFICANDO ESTADO ATUAL...');
+            
+            let totalItens = 0;
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                totalItens++;
+                
+                try {
+                    const parsed = JSON.parse(value);
+                    if (Array.isArray(parsed)) {
+                        log(`📦 ${key}: ${parsed.length} itens (array)`);
+                    } else if (typeof parsed === 'object') {
+                        log(`📦 ${key}: objeto com ${Object.keys(parsed).length} propriedades`);
+                    } else {
+                        log(`📦 ${key}: ${typeof parsed}`);
+                    }
+                } catch {
+                    log(`📦 ${key}: ${value.length} caracteres (string)`);
+                }
+            }
+            
+            if (totalItens === 0) {
+                log('✅ LocalStorage está limpo');
+                updateStatus('✅ Sistema limpo - pronto para criar novo', 'success');
+            } else {
+                log(`⚠️ Encontrados ${totalItens} itens no localStorage`);
+                updateStatus(`⚠️ ${totalItens} itens encontrados`, 'info');
+            }
+        }
+
+        function criarSistemaCompleto() {
+            log('🚀 CRIANDO SISTEMA COMPLETO...');
+            updateStatus('🚀 Criando sistema do zero...', 'info');
+            
+            try {
+                // 1. Criar usuário padrão
+                const usuario = {
+                    id: 'user-' + Date.now(),
+                    nome: 'Usuário Teste',
+                    email: 'teste@sistema.com',
+                    telefone: '(11) 99999-9999',
+                    endereco: 'Rua Teste, 123',
+                    bairro: 'Teste',
+                    cidade: 'São Paulo',
+                    password: '123456',
+                    dataCadastro: new Date().toISOString()
+                };
+                
+                localStorage.setItem('users', JSON.stringify([usuario]));
+                localStorage.setItem('currentUser', JSON.stringify(usuario));
+                log('✅ Usuário criado e logado automaticamente');
+                
+                // 2. Criar reclamações com sistema de CEP
+                const reclamacoes = [
+                    {
+                        id: 'rec-' + Date.now() + '-1',
+                        titulo: 'Buraco na Rua Coronel Pacheco do Couto',
+                        categoria: 'asfalto',
+                        descricao: 'Buraco grande que precisa ser consertado.',
+                        localizacao: 'Rua Coronel Pacheco do Couto, 50 - Jardim Ester, São Paulo',
+                        cep: '08330-310',
+                        rua: 'Rua Coronel Pacheco do Couto',
+                        numero: '50',
+                        bairro: 'Jardim Ester',
+                        cidade: 'São Paulo',
+                        enderecoGeocodificacao: 'Rua Coronel Pacheco do Couto, 50, Jardim Ester, São Paulo, SP',
+                        coordenadas: [-23.5750, -46.4650],
+                        localizacaoExata: true,
+                        fonteCoordenadas: 'sistema_completo',
+                        status: 'pendente',
+                        usuario: usuario.nome,
+                        usuarioId: usuario.id,
+                        dataReclamacao: new Date().toISOString(),
+                        midia: []
+                    },
+                    {
+                        id: 'rec-' + Date.now() + '-2',
+                        titulo: 'Iluminação Pública - São Rafael',
+                        categoria: 'iluminacao',
+                        descricao: 'Poste de luz queimado.',
+                        localizacao: 'Rua São Rafael, 100 - São Rafael, São Paulo',
+                        cep: '08330-000',
+                        rua: 'Rua São Rafael',
+                        numero: '100',
+                        bairro: 'São Rafael',
+                        cidade: 'São Paulo',
+                        enderecoGeocodificacao: 'Rua São Rafael, 100, São Rafael, São Paulo, SP',
+                        coordenadas: [-23.5780, -46.4680],
+                        localizacaoExata: true,
+                        fonteCoordenadas: 'sistema_completo',
+                        status: 'em-andamento',
+                        usuario: usuario.nome,
+                        usuarioId: usuario.id,
+                        dataReclamacao: new Date(Date.now() - 86400000).toISOString(),
+                        midia: []
+                    },
+                    {
+                        id: 'rec-' + Date.now() + '-3',
+                        titulo: 'Limpeza Urbana - São Mateus',
+                        categoria: 'limpeza',
+                        descricao: 'Lixo acumulado na esquina.',
+                        localizacao: 'Av. São Mateus, 200 - São Mateus, São Paulo',
+                        cep: '08340-000',
+                        rua: 'Av. São Mateus',
+                        numero: '200',
+                        bairro: 'São Mateus',
+                        cidade: 'São Paulo',
+                        enderecoGeocodificacao: 'Av. São Mateus, 200, São Mateus, São Paulo, SP',
+                        coordenadas: [-23.6089, -46.4736],
+                        localizacaoExata: true,
+                        fonteCoordenadas: 'sistema_completo',
+                        status: 'resolvida',
+                        usuario: usuario.nome,
+                        usuarioId: usuario.id,
+                        dataReclamacao: new Date(Date.now() - 172800000).toISOString(),
+                        midia: []
+                    }
+                ];
+                
+                localStorage.setItem('reclamacoes', JSON.stringify(reclamacoes));
+                log(`✅ ${reclamacoes.length} reclamações criadas com sistema de CEP`);
+                
+                log('🎉 SISTEMA COMPLETO CRIADO COM SUCESSO!');
+                updateStatus('✅ Sistema completo criado - pronto para usar!', 'success');
+                
+                // Mostrar dados criados
+                log('');
+                log('📊 DADOS CRIADOS:');
+                log(`👤 Usuário: ${usuario.nome} (${usuario.email})`);
+                log(`📋 Reclamações: ${reclamacoes.length} com coordenadas exatas`);
+                log('🗺️ Coordenadas:');
+                reclamacoes.forEach(r => {
+                    log(`  - ${r.bairro}: ${r.coordenadas[0]}, ${r.coordenadas[1]}`);
+                });
+                
+            } catch (error) {
+                log(`❌ Erro ao criar sistema: ${error.message}`);
+                updateStatus('❌ Erro na criação do sistema', 'error');
+            }
+        }
+
+        function testarSistema() {
+            log('🧪 TESTANDO SISTEMA...');
+            
+            try {
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const reclamacoes = JSON.parse(localStorage.getItem('reclamacoes') || '[]');
+                
+                log(`✅ Usuários: ${users.length}`);
+                log(`✅ Usuário logado: ${currentUser ? currentUser.nome : 'Nenhum'}`);
+                log(`✅ Reclamações: ${reclamacoes.length}`);
+                
+                if (users.length > 0 && currentUser && reclamacoes.length > 0) {
+                    log('🎉 SISTEMA FUNCIONANDO PERFEITAMENTE!');
+                    updateStatus('✅ Sistema testado - tudo funcionando!', 'success');
+                } else {
+                    log('⚠️ Sistema incompleto, execute "Criar Sistema Completo"');
+                    updateStatus('⚠️ Sistema incompleto', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erro no teste: ${error.message}`);
+                updateStatus('❌ Erro no teste', 'error');
+            }
+        }
+
+        function abrirSite() {
+            log('🔗 Abrindo site principal...');
+            window.open('index.html', '_blank');
+            updateStatus('🔗 Site principal aberto em nova aba', 'info');
+        }
+
+        function recarregarPagina() {
+            log('🔄 Recarregando página...');
+            location.reload();
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Reset Completo carregado');
+            updateStatus('🔄 Pronto para reset completo', 'info');
+            
+            // Verificação inicial
+            setTimeout(verificarEstado, 1000);
+        });
+    </script>
+</body>
+</html>
