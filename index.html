@@ -540,7 +540,7 @@
                         <div class="form-row">
                             <div class="form-group" style="flex: 3;">
                                 <label for="rua">Rua/Logradouro:</label>
-                                <input type="text" id="rua" placeholder="Será preenchido automaticamente" readonly>
+                                <input type="text" id="rua" placeholder="Será preenchido automaticamente">
                             </div>
                             <div class="form-group" style="flex: 1;">
                                 <label for="numero">Número:</label>
@@ -550,11 +550,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="bairro">Bairro:</label>
-                                <input type="text" id="bairro" placeholder="Será preenchido automaticamente" readonly>
+                                <input type="text" id="bairro" placeholder="Será preenchido automaticamente">
                             </div>
                             <div class="form-group">
                                 <label for="cidade">Cidade:</label>
-                                <input type="text" id="cidade" placeholder="Será preenchido automaticamente" readonly>
+                                <input type="text" id="cidade" placeholder="Será preenchido automaticamente">
                             </div>
                         </div>
                         <div class="cep-loading" id="cepLoading" style="display: none;">
@@ -915,18 +915,47 @@
         });
         
         async function buscarCEP(cep) {
+            console.log('🔍 Buscando CEP:', cep);
+            
+            const ruaInput = document.getElementById('rua');
+            const bairroInput = document.getElementById('bairro');
+            const cidadeInput = document.getElementById('cidade');
+            
             try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep.replace(/\D/g, '')}/json/`);
+                const cepLimpo = cep.replace(/\D/g, '');
+                console.log('CEP limpo:', cepLimpo);
+                
+                const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
                 const data = await response.json();
                 
-                if (!data.erro) {
-                    document.getElementById('rua').value = data.logradouro || '';
-                    document.getElementById('bairro').value = data.bairro || '';
-                    document.getElementById('cidade').value = data.localidade || '';
-                    alert('CEP encontrado!');
+                console.log('Resposta ViaCEP:', data);
+                
+                if (data.erro) {
+                    alert('❌ CEP não encontrado!');
+                    return;
                 }
+                
+                // Preencher campos
+                if (ruaInput) {
+                    ruaInput.value = data.logradouro || '';
+                    console.log('✅ Rua preenchida:', data.logradouro);
+                }
+                
+                if (bairroInput) {
+                    bairroInput.value = data.bairro || '';
+                    console.log('✅ Bairro preenchido:', data.bairro);
+                }
+                
+                if (cidadeInput) {
+                    cidadeInput.value = data.localidade || '';
+                    console.log('✅ Cidade preenchida:', data.localidade);
+                }
+                
+                alert('✅ CEP encontrado! Campos preenchidos.');
+                
             } catch (error) {
-                console.log('Erro CEP:', error);
+                console.error('❌ Erro ao buscar CEP:', error);
+                alert('❌ Erro ao buscar CEP. Tente novamente.');
             }
         }
         
