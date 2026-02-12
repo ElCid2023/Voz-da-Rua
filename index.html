@@ -1057,7 +1057,13 @@
             
             // Inicializar mapa se for a seção de mapa
             if (sectionId === 'mapa') {
-                setTimeout(() => inicializarMapa(), 300);
+                setTimeout(() => {
+                    inicializarMapa();
+                    // Forçar recarregamento dos marcadores
+                    if (mapaObj && markersLayer) {
+                        carregarMarcadores();
+                    }
+                }, 300);
             }
         }
         
