@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Configuração - Email e SMS | Voz da Rua</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .step h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .code-block .comment {
+            color: #6a9955;
+        }
+        
+        .code-block .string {
+            color: #ce9178;
+        }
+        
+        .code-block .keyword {
+            color: #569cd6;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            align-items: start;
+            gap: 15px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .checklist {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .checklist li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checklist li i {
+            color: #28a745;
+            font-size: 20px;
+        }
+        
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .template-box {
+            background: white;
+            border: 2px dashed #007bff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .template-box h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .step {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-envelope"></i> Guia de Configuração</h1>
+            <p>Email e SMS - Voz da Rua</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Introdução -->
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle" style="font-size: 24px;"></i>
+                <div>
+                    <strong>Sistema Atual:</strong> O sistema de email está implementado e funcionando em modo simulação. 
+                    Para ativar o envio REAL de emails, siga os passos abaixo (leva apenas 5 minutos).
+                </div>
+            </div>
+
+            <!-- Passo 1 -->
+            <div class="step">
+                <h2>
+                    <span class="step-number">1</span>
+                    Criar Conta no EmailJS
+                </h2>
+                <p>O EmailJS é um serviço gratuito que permite enviar emails diretamente do navegador.</p>
+                
+                <div style="margin: 20px 0;">
+                    <a href="https://www.emailjs.com/" target="_blank" class="btn">
+                        <i class="fas fa-external-link-alt"></i> Acessar EmailJS
+                    </a>
+                </div>
+                
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>Clique em <strong>"Sign Up"</strong></li>
+                    <li>Preencha seus dados</li>
+                    <li>Confirme seu email</li>
+                    <li>Faça login no dashboard</li>
+                </ol>
+                
+                <div class="alert alert-success" style="margin-top: 15px;">
+                    <i class="fas fa-gift"></i>
+                    <div>
+                        <strong>Plano Gratuito:</strong> 200 emails por mês - suficiente para começar!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passo 2 -->
+            <div class="step">
+                <h2>
+                    <span class="step-number">2</span>
+                    Configurar Serviço de Email
+                </h2>
+                <p>Conecte sua conta de email (Gmail, Outlook, etc.) ao EmailJS.</p>
+                
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>No dashboard, clique em <strong>"Email Services"</strong></li>
+                    <li>Clique em <strong>"Add New Service"</strong></li>
+                    <li>Escolha seu provedor (recomendado: <strong>Gmail</strong>)</li>
+                    <li>Conecte sua conta seguindo as instruções</li>
+                    <li>Copie o <strong>Service ID</strong> (ex: <code>service_abc123</code>)</li>
+                </ol>
+                
+                <div class="alert alert-warning" style="margin-top: 15px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Importante:</strong> Guarde o Service ID, você vai precisar dele no Passo 5.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passo 3 -->
+            <div class="step">
+                <h2>
+                    <span class="step-number">3</span>
+                    Criar Template de Email
+                </h2>
+                <p>Configure o modelo do email que será enviado aos usuários.</p>
+                
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>Clique em <strong>"Email Templates"</strong></li>
+                    <li>Clique em <strong>"Create New Template"</strong></li>
+                    <li>Cole o template abaixo:</li>
+                </ol>
+                
+                <div class="template-box">
+                    <h4><i class="fas fa-file-alt"></i> Template do Email</h4>
+                    <p><strong>Assunto:</strong></p>
+                    <div class="code-block">Confirmação de Reclamação #{{protocolo}} - Voz da Rua</div>
+                    
+                    <p><strong>Corpo do Email:</strong></p>
+                    <div class="code-block">Olá {{to_name}},
+
+Sua reclamação foi registrada com sucesso!
+
+DETALHES DA RECLAMAÇÃO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Protocolo: #{{protocolo}}
+Data: {{data}}
+Título: {{titulo}}
+Categoria: {{categoria}}
+Endereço: {{endereco}}
+CEP: {{cep}}
+
+Descrição:
+{{descricao}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Acompanhe o status da sua reclamação em:
+{{site_url}}
+
+Atenciosamente,
+Equipe Voz da Rua
+by Prof. Borges</div>
+                </div>
+                
+                <ol start="4" style="margin-left: 20px; margin-top: 15px;">
+                    <li>Clique em <strong>"Save"</strong></li>
+                    <li>Copie o <strong>Template ID</strong> (ex: <code>template_xyz789</code>)</li>
+                </ol>
+            </div>
+
+            <!-- Passo 4 -->
+            <div class="step">
+                <h2>
+                    <span class="step-number">4</span>
+                    Obter Chave Pública
+                </h2>
+                <p>A chave pública permite que seu site se conecte ao EmailJS.</p>
+                
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>Clique em <strong>"Account"</strong> no menu</li>
+                    <li>Vá em <strong>"General"</strong></li>
+                    <li>Copie a <strong>Public Key</strong> (ex: <code>abc123xyz789</code>)</li>
+                </ol>
+            </div>
+
+            <!-- Passo 5 -->
+            <div class="step">
+                <h2>
+                    <span class="step-number">5</span>
+                    Configurar no Código
+                </h2>
+                <p>Agora vamos inserir as chaves no código do site.</p>
+                
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>Abra o arquivo <code>index.html</code></li>
+                    <li>Procure por <strong>"YOUR_PUBLIC_KEY"</strong> (linha ~730)</li>
+                    <li>Substitua pelas suas chaves:</li>
+                </ol>
+                
+                <div class="code-block" style="margin-top: 15px;">
+<span class="comment">// Substituir na linha ~730</span>
+emailjs.init({
+    publicKey: <span class="string">"SUA_PUBLIC_KEY_AQUI"</span>, <span class="comment">// Cole sua Public Key</span>
+});
+
+<span class="comment">// Substituir na linha ~820</span>
+emailjs.send(<span class="string">'SEU_SERVICE_ID'</span>, <span class="string">'SEU_TEMPLATE_ID'</span>, templateParams)
+</div>
+
+                <p style="margin-top: 15px;"><strong>Exemplo com valores reais:</strong></p>
+                <div class="code-block">
+emailjs.init({
+    publicKey: <span class="string">"abc123xyz789"</span>,
+});
+
+emailjs.send(<span class="string">'service_abc123'</span>, <span class="string">'template_xyz789'</span>, templateParams)
+</div>
+            </div>
+
+            <!-- Passo 6 -->
+            <div class="step">
+                <h2>
+                    <span class="step-number">6</span>
+                    Testar o Sistema
+                </h2>
+                <p>Vamos verificar se tudo está funcionando corretamente.</p>
+                
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>Salve o arquivo <code>index.html</code></li>
+                    <li>Faça commit e push para o GitHub:</li>
+                </ol>
+                
+                <div class="code-block" style="margin-top: 15px;">
+git add .
+git commit -m <span class="string">"Configurado EmailJS"</span>
+git push
+</div>
+                
+                <ol start="3" style="margin-left: 20px; margin-top: 15px;">
+                    <li>Aguarde 2 minutos para o GitHub Pages atualizar</li>
+                    <li>Acesse: <a href="https://elcid2023.github.io/Voz-da-Rua/" target="_blank">https://elcid2023.github.io/Voz-da-Rua/</a></li>
+                    <li>Cadastre uma reclamação de teste</li>
+                    <li>Verifique seu email!</li>
+                </ol>
+                
+                <div class="alert alert-success" style="margin-top: 15px;">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Sucesso!</strong> Se recebeu o email, está tudo funcionando perfeitamente!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Atual -->
+            <div class="step" style="border-left-color: #28a745; background: #d4edda;">
+                <h2 style="color: #28a745;">
+                    <i class="fas fa-check-circle"></i>
+                    Status Atual do Sistema
+                </h2>
+                
+                <ul class="checklist">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Simulação visual de email funcionando</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Protocolo único para cada reclamação</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Notificação na tela implementada</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Log completo no console (F12)</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>EmailJS integrado e pronto</span>
+                    </li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <strong>Próximo Passo:</strong> Configure as 3 chaves (Public Key, Service ID, Template ID) 
+                        para ativar o envio real de emails. Leva apenas 5 minutos!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alternativa SMS -->
+            <div class="step" style="border-left-color: #17a2b8;">
+                <h2 style="color: #17a2b8;">
+                    <i class="fas fa-mobile-alt"></i>
+                    Alternativa: Envio de SMS
+                </h2>
+                <p>Para enviar SMS em vez de email, use o serviço Twilio.</p>
+                
+                <div style="margin: 20px 0;">
+                    <a href="https://www.twilio.com/" target="_blank" class="btn btn-success">
+                        <i class="fas fa-external-link-alt"></i> Acessar Twilio
+                    </a>
+                </div>
+                
+                <p><strong>Passos básicos:</strong></p>
+                <ol style="margin-left: 20px; margin-top: 15px;">
+                    <li>Crie conta no Twilio (crédito gratuito para teste)</li>
+                    <li>Obtenha um número de telefone</li>
+                    <li>Copie Account SID e Auth Token</li>
+                    <li>Use a API REST do Twilio no código</li>
+                </ol>
+                
+                <div class="alert alert-info" style="margin-top: 15px;">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Nota:</strong> SMS tem custo por mensagem. Email é gratuito até 200/mês.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefícios -->
+            <div class="step" style="border-left-color: #ffc107; background: #fff3cd;">
+                <h2 style="color: #856404;">
+                    <i class="fas fa-star"></i>
+                    Benefícios do Sistema de Email
+                </h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-check" style="font-size: 30px; color: #28a745; margin-bottom: 10px;"></i>
+                        <p><strong>Confirmação Automática</strong></p>
+                        <p style="font-size: 14px; color: #666;">Usuário recebe email instantâneo</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-hashtag" style="font-size: 30px; color: #007bff; margin-bottom: 10px;"></i>
+                        <p><strong>Protocolo Único</strong></p>
+                        <p style="font-size: 14px; color: #666;">Para acompanhamento</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-award" style="font-size: 30px; color: #ffc107; margin-bottom: 10px;"></i>
+                        <p><strong>Profissionalismo</strong></p>
+                        <p style="font-size: 14px; color: #666;">Aumenta credibilidade</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-history" style="font-size: 30px; color: #17a2b8; margin-bottom: 10px;"></i>
+                        <p><strong>Histórico</strong></p>
+                        <p style="font-size: 14px; color: #666;">Usuário guarda o email</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success" style="margin-top: 20px;">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div>
+                        <strong>Custo:</strong> GRATUITO até 200 emails por mês!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links Úteis -->
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="margin-bottom: 20px;">Links Úteis</h3>
+                <a href="https://www.emailjs.com/docs/" target="_blank" class="btn">
+                    <i class="fas fa-book"></i> Documentação EmailJS
+                </a>
+                <a href="https://elcid2023.github.io/Voz-da-Rua/" target="_blank" class="btn btn-success">
+                    <i class="fas fa-globe"></i> Acessar Voz da Rua
+                </a>
+                <a href="https://github.com/ElCid2023/Voz-da-Rua" target="_blank" class="btn">
+                    <i class="fab fa-github"></i> Ver no GitHub
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h3>Voz da Rua</h3>
+            <p style="margin: 15px 0;">Sistema de Reclamações Urbanas</p>
+            <p style="font-size: 14px; opacity: 0.8;">
+                <i class="fas fa-user"></i> by Prof. Borges
+            </p>
+            <p style="margin-top: 20px; font-size: 12px; opacity: 0.7;">
+                © 2025 - Todos os direitos reservados
+            </p>
+        </div>
+    </div>
+</body>
+</html>
