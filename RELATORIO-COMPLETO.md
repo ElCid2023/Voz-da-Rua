@@ -603,7 +603,7 @@ Este projeto é de código aberto para fins educacionais.
 
 ## 👤 Autor
 
-**ElCid2023**
+**Prof. Borges**  
 - GitHub: https://github.com/ElCid2023
 - Email: profborges2016@gmail.com
 
