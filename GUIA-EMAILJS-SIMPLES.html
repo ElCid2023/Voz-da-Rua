@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Simplificado - EmailJS | Voz da Rua</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 8px solid #007bff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .step h2 {
+            color: #007bff;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .alert i {
+            font-size: 24px;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border-left: 5px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,123,255,0.4);
+        }
+        
+        .btn-large {
+            font-size: 18px;
+            padding: 20px 40px;
+        }
+        
+        .keys-box {
+            background: white;
+            border: 3px dashed #007bff;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .key-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .key-item strong {
+            color: #007bff;
+            font-size: 16px;
+        }
+        
+        .key-item code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        ol {
+            margin-left: 25px;
+            margin-top: 15px;
+        }
+        
+        ol li {
+            margin: 10px 0;
+            padding-left: 10px;
+        }
+        
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .visual-flow {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .flow-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flow-arrow {
+            font-size: 30px;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .step {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> Guia SIMPLIFICADO</h1>
+            <p style="font-size: 1.2rem; margin-top: 10px;">Configuração EmailJS em 5 Passos</p>
+            <div class="badge">⚡ Atualizado 2025</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Alerta Inicial -->
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Situação Atual:</strong> O sistema está em modo SIMULAÇÃO. 
+                    Siga este guia para ativar o envio REAL de emails. Leva apenas 5 minutos! ⏱️
+                </div>
+            </div>
+
+            <!-- Passo 1 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2>Criar Conta</h2>
+                </div>
+                
+                <p style="font-size: 16px; margin-bottom: 20px;">Primeiro, vamos criar sua conta gratuita no EmailJS.</p>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="https://dashboard.emailjs.com/sign-up" target="_blank" class="btn btn-large">
+                        <i class="fas fa-user-plus"></i> Criar Conta Grátis
+                    </a>
+                </div>
+                
+                <ol>
+                    <li>Preencha: Email e Senha</li>
+                    <li>Clique em <strong>"Sign Up"</strong></li>
+                    <li>Confirme seu email (verifique spam)</li>
+                    <li>Faça login em: <a href="https://dashboard.emailjs.com/sign-in" target="_blank">dashboard.emailjs.com</a></li>
+                </ol>
+                
+                <div class="alert alert-success" style="margin-top: 20px;">
+                    <i class="fas fa-gift"></i>
+                    <div>
+                        <strong>Plano Gratuito:</strong> 200 emails por mês - perfeito para começar!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passo 2 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2>Adicionar Serviço</h2>
+                </div>
+                
+                <p style="font-size: 16px; margin-bottom: 20px;">Conecte sua conta de email (Gmail recomendado).</p>
+                
+                <ol>
+                    <li>No menu lateral, clique em <strong>"Email Services"</strong></li>
+                    <li>Clique em <strong>"Add New Service"</strong></li>
+                    <li>Escolha <strong>"Gmail"</strong> ✅</li>
+                    <li>Clique em <strong>"Connect Account"</strong></li>
+                    <li>Faça login com sua conta Google</li>
+                    <li>Autorize o EmailJS</li>
+                </ol>
+                
+                <div class="keys-box">
+                    <h4 style="color: #007bff; margin-bottom: 15px;">
+                        <i class="fas fa-key"></i> COPIE ESTA CHAVE:
+                    </h4>
+                    <div class="key-item">
+                        <strong>Service ID:</strong><br>
+                        <code>service_xxxxxxx</code>
+                        <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                            Exemplo: service_abc1234
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Importante:</strong> Anote este Service ID! Você vai precisar no Passo 5.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passo 3 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2>Criar Template</h2>
+                </div>
+                
+                <p style="font-size: 16px; margin-bottom: 20px;">Configure o modelo do email que será enviado.</p>
+                
+                <ol>
+                    <li>No menu lateral, clique em <strong>"Email Templates"</strong></li>
+                    <li>Clique em <strong>"Create New Template"</strong></li>
+                    <li>Preencha os campos abaixo:</li>
+                </ol>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #007bff;">📝 Template Name:</h4>
+                <div class="code-box">
+                    <button class="copy-btn" onclick="copiarTexto(this, 'Confirmação Reclamação Voz da Rua')">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+Confirmação Reclamação Voz da Rua
+                </div>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #007bff;">📧 Subject (Assunto):</h4>
+                <div class="code-box">
+                    <button class="copy-btn" onclick="copiarTexto(this, 'Confirmação de Reclamação #{{protocolo}} - Voz da Rua')">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+Confirmação de Reclamação #{{protocolo}} - Voz da Rua
+                </div>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #007bff;">📄 Content (Corpo):</h4>
+                <div class="code-box">
+                    <button class="copy-btn" onclick="copiarTexto(this, `Olá {{to_name}},
+
+Sua reclamação foi registrada com sucesso!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DETALHES DA RECLAMAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Protocolo: #{{protocolo}}
+Data: {{data}}
+Título: {{titulo}}
+Categoria: {{categoria}}
+Endereço: {{endereco}}
+CEP: {{cep}}
+
+Descrição:
+{{descricao}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Acompanhe em: {{site_url}}
+
+Atenciosamente,
+Equipe Voz da Rua
+by Prof. Borges`)">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+Olá {{to_name}},
+
+Sua reclamação foi registrada com sucesso!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DETALHES DA RECLAMAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Protocolo: #{{protocolo}}
+Data: {{data}}
+Título: {{titulo}}
+Categoria: {{categoria}}
+Endereço: {{endereco}}
+CEP: {{cep}}
+
+Descrição:
+{{descricao}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Acompanhe em: {{site_url}}
+
+Atenciosamente,
+Equipe Voz da Rua
+by Prof. Borges
+                </div>
+                
+                <ol start="4">
+                    <li>Clique em <strong>"Save"</strong> (canto superior direito)</li>
+                </ol>
+                
+                <div class="keys-box">
+                    <h4 style="color: #007bff; margin-bottom: 15px;">
+                        <i class="fas fa-key"></i> COPIE ESTA CHAVE:
+                    </h4>
+                    <div class="key-item">
+                        <strong>Template ID:</strong><br>
+                        <code>template_xxxxxxx</code>
+                        <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                            Exemplo: template_xyz7890
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passo 4 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2>Obter Public Key</h2>
+                </div>
+                
+                <p style="font-size: 16px; margin-bottom: 20px;">A chave pública conecta seu site ao EmailJS.</p>
+                
+                <ol>
+                    <li>No menu lateral, clique em <strong>"Account"</strong></li>
+                    <li>Você verá: <strong>"Public Key"</strong></li>
+                </ol>
+                
+                <div class="keys-box">
+                    <h4 style="color: #007bff; margin-bottom: 15px;">
+                        <i class="fas fa-key"></i> COPIE ESTA CHAVE:
+                    </h4>
+                    <div class="key-item">
+                        <strong>Public Key:</strong><br>
+                        <code>xxxxxxxxxxxxxxx</code>
+                        <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                            Exemplo: AbC123XyZ789
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo das Chaves -->
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>✅ Você agora tem 3 chaves:</strong><br>
+                    1️⃣ Service ID<br>
+                    2️⃣ Template ID<br>
+                    3️⃣ Public Key
+                </div>
+            </div>
+
+            <!-- Passo 5 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <h2>Configurar no Código</h2>
+                </div>
+                
+                <p style="font-size: 16px; margin-bottom: 20px;">Agora vamos inserir as 3 chaves no código.</p>
+                
+                <ol>
+                    <li>Abra o arquivo: <code>index.html</code></li>
+                    <li>Pressione <strong>Ctrl+F</strong> e procure: <code>YOUR_PUBLIC_KEY</code></li>
+                    <li>Substitua pelas suas chaves:</li>
+                </ol>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #dc3545;">❌ ANTES (linha ~730):</h4>
+                <div class="code-box">
+emailjs.init({
+    publicKey: <span style="color: #dc3545;">"YOUR_PUBLIC_KEY"</span>,
+});
+                </div>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #28a745;">✅ DEPOIS:</h4>
+                <div class="code-box">
+emailjs.init({
+    publicKey: <span style="color: #28a745;">"AbC123XyZ789"</span>,  <span style="color: #6a9955;">// Sua Public Key</span>
+});
+                </div>
+                
+                <hr style="margin: 30px 0; border: none; border-top: 2px dashed #ddd;">
+                
+                <ol start="4">
+                    <li>Procure: <code>service_id</code> (linha ~820)</li>
+                    <li>Substitua:</li>
+                </ol>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #dc3545;">❌ ANTES:</h4>
+                <div class="code-box">
+emailjs.send(<span style="color: #dc3545;">'service_id'</span>, <span style="color: #dc3545;">'template_id'</span>, templateParams)
+                </div>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #28a745;">✅ DEPOIS:</h4>
+                <div class="code-box">
+emailjs.send(<span style="color: #28a745;">'service_abc1234'</span>, <span style="color: #28a745;">'template_xyz7890'</span>, templateParams)
+                </div>
+                
+                <ol start="6">
+                    <li>Salve o arquivo (<strong>Ctrl+S</strong>)</li>
+                    <li>Execute no terminal:</li>
+                </ol>
+                
+                <div class="code-box" style="margin-top: 15px;">
+git add .
+git commit -m "Configurado EmailJS"
+git push
+                </div>
+                
+                <div class="alert alert-info" style="margin-top: 20px;">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        Aguarde 2-3 minutos para o GitHub Pages atualizar.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fluxo Visual -->
+            <div class="visual-flow">
+                <h3 style="color: #007bff; margin-bottom: 20px;">📊 Resumo Visual</h3>
+                <div class="flow-item">1️⃣ Email Services → Gmail → Service ID</div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-item">2️⃣ Email Templates → Criar → Template ID</div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-item">3️⃣ Account → Public Key</div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-item">4️⃣ Editar index.html → Colar 3 chaves</div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-item">5️⃣ git push → Aguardar 2 min → TESTAR</div>
+            </div>
+
+            <!-- Testar -->
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="margin-bottom: 20px;">🎯 Testar Agora</h3>
+                <a href="https://elcid2023.github.io/Voz-da-Rua/" target="_blank" class="btn btn-large">
+                    <i class="fas fa-rocket"></i> Acessar Voz da Rua
+                </a>
+            </div>
+
+            <!-- Problemas Comuns -->
+            <div class="step" style="border-left-color: #dc3545;">
+                <h2 style="color: #dc3545;">
+                    <i class="fas fa-exclamation-circle"></i> Problemas Comuns
+                </h2>
+                
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i>
+                    <div>
+                        <strong>Email não chegou?</strong><br>
+                        • Verifique SPAM<br>
+                        • Confirme as 3 chaves<br>
+                        • Aguarde 5 minutos
+                    </div>
+                </div>
+                
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i>
+                    <div>
+                        <strong>Erro no Console (F12)?</strong><br>
+                        • Verifique aspas: <code>"sua_chave"</code><br>
+                        • Sem espaços extras<br>
+                        • Salvou o arquivo?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alternativas -->
+            <div class="alert alert-info">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Ainda com dificuldade?</strong><br>
+                    Posso implementar alternativas mais simples:<br>
+                    • WhatsApp automático<br>
+                    • Telegram Bot<br>
+                    • Apenas protocolo na tela
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h3>Voz da Rua</h3>
+            <p style="margin: 15px 0;">by Prof. Borges</p>
+            <p style="font-size: 12px; opacity: 0.7; margin-top: 20px;">
+                © 2025 - Guia Atualizado
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function copiarTexto(btn, texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '#007bff';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
