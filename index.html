@@ -398,7 +398,7 @@
                     <li><a href="javascript:void(0)" onclick="showSection('reclamacoes')" class="nav-link">Reclamações</a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('mapa')" class="nav-link">Mapa</a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('nova-reclamacao')" class="nav-link">Nova Reclamação</a></li>
-                    <li><a href="javascript:void(0)" onclick="showSection('admin')" class="nav-link">Admin</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('admin')" class="nav-link hidden" id="adminBtn">Admin</a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('login')" class="nav-link" id="loginBtn">Login</a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('cadastro')" class="nav-link" id="cadastroBtn">Cadastro</a></li>
                     <li><a href="javascript:void(0)" class="nav-link hidden" id="logoutBtn" onclick="doLogout()">Sair</a></li>
@@ -1037,6 +1037,7 @@
             const loginBtn = document.getElementById('loginBtn');
             const cadastroBtn = document.getElementById('cadastroBtn');
             const logoutBtn = document.getElementById('logoutBtn');
+            const adminBtn = document.getElementById('adminBtn');
             const userInfo = document.getElementById('userInfo');
             const userName = document.getElementById('userName');
             const userAvatar = document.getElementById('userAvatar');
@@ -1048,6 +1049,14 @@
                 loginBtn.classList.add('hidden');
                 cadastroBtn.classList.add('hidden');
                 logoutBtn.classList.remove('hidden');
+                
+                // Mostrar Admin APENAS para profborges2016@gmail.com
+                if (currentUser.email === 'profborges2016@gmail.com') {
+                    adminBtn.classList.remove('hidden');
+                    console.log('✅ Acesso Admin liberado para:', currentUser.email);
+                } else {
+                    adminBtn.classList.add('hidden');
+                }
                 
                 // Mostrar info do usuário
                 userInfo.classList.remove('hidden');
@@ -1069,6 +1078,7 @@
                 loginBtn.classList.remove('hidden');
                 cadastroBtn.classList.remove('hidden');
                 logoutBtn.classList.add('hidden');
+                adminBtn.classList.add('hidden');
                 userInfo.classList.add('hidden');
             }
         }
@@ -1105,6 +1115,15 @@
                     console.log('❌ Usuário NÃO logado - pedindo login');
                     authRequired.classList.remove('hidden');
                     reclamacaoForm.classList.add('hidden');
+                }
+            }
+            
+            // Verificar acesso Admin
+            if (sectionId === 'admin') {
+                if (!currentUser || currentUser.email !== 'profborges2016@gmail.com') {
+                    alert('❌ Acesso negado! Apenas administradores podem acessar esta área.');
+                    showSection('home');
+                    return;
                 }
             }
             
