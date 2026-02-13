@@ -686,16 +686,29 @@
         let currentUser = null;
         let usuarios = JSON.parse(localStorage.getItem('users') || localStorage.getItem('usuarios') || '[]');
         
-        // Adicionar usuário de exemplo
+        // Adicionar usuário de exemplo e admin
         if (usuarios.length === 0) {
-            usuarios.push({
-                id: '1',
-                nome: 'Usuário Exemplo',
-                email: 'usuario@exemplo.com',
-                password: '123456'
-            });
+            usuarios.push(
+                {
+                    id: '1',
+                    nome: 'Usuário Exemplo',
+                    email: 'usuario@exemplo.com',
+                    password: '123456'
+                },
+                {
+                    id: 'admin',
+                    nome: 'Prof. Borges',
+                    email: 'profborges2016@gmail.com',
+                    password: '123456',
+                    telefone: '(11) 99999-9999',
+                    endereco: 'Rua Admin, 1',
+                    bairro: 'Centro',
+                    cidade: 'São Paulo'
+                }
+            );
             localStorage.setItem('users', JSON.stringify(usuarios));
             localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            console.log('✅ Usuário Admin criado automaticamente');
         }
         
         function doLogin() {
